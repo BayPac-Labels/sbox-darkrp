@@ -85,8 +85,10 @@ This whole folder (`darkrp`, `DarkRP2`, `SETUP.md`) is one git repo. The origina
 On the other computer you still need Steam **s&box** + **s&box editor**, Git, and the .NET 10 SDK. Then:
 
 ```powershell
-git clone <this-repo-url> C:\sbox-darkrp
+git clone https://github.com/BayPac-Labels/sbox-darkrp.git C:\sbox-darkrp
 ```
+
+Repo (public): https://github.com/BayPac-Labels/sbox-darkrp
 
 Open `C:\sbox-darkrp\DarkRP2` (the folder) or `DarkRP2\sandbox.sbproj` in the s&box editor.
 
