@@ -1,0 +1,95 @@
+{
+  "RootObject": {
+    "__guid": "d64e72c0-5e0f-47ec-9e2e-4f8e9f0a5441",
+    "__version": 2,
+    "Flags": 0,
+    "Name": "keys",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,1",
+    "Tags": "",
+    "Enabled": true,
+    "NetworkMode": 1,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 1,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
+    "Components": [
+      {
+        "__type": "KeyWeapon",
+        "__guid": "1ceacbb2-e855-4e63-9a8a-bd6d7ed51369",
+        "__enabled": true,
+        "Flags": 0,
+        "Damage": 0,
+        "DisplayIcon": {
+          "$compiler": "texture",
+          "$source": "svgsource",
+          "data": {
+            "Size": "512,512",
+            "Source": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\">\n  <path fill=\"#fff\" d=\"M196 104c-70 0-128 57-128 128s58 128 128 128c48 0 90-27 112-66h42v54h54v-54h40v-54H324c0-3 0-5 0-8 0-71-58-128-128-128zm0 74c30 0 54 24 54 54s-24 54-54 54-54-24-54-54 24-54 54-54z\"/>\n</svg>\n",
+            "Colorize": true,
+            "TargetColor": "1,1,1,1",
+            "Scale": 1,
+            "Offset": "0,0",
+            "Rotate": 0,
+            "FlipVertical": false,
+            "FlipHorizontal": false
+          },
+          "compiled": null
+        },
+        "DisplayName": "Keys",
+        "DroppedGameObject": null,
+        "HitSound": null,
+        "HoldType": "None",
+        "ItemPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/keys/keys.prefab"
+        },
+        "MissSwingDelay": 0.75,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "ParentBone": "hold_r",
+        "Range": 128,
+        "SwingDelay": 0.5,
+        "SwingForce": 0,
+        "SwingRadius": 10,
+        "SwingSound": null,
+        "Value": 0,
+        "ViewModelPrefab": null,
+        "WorldModelPrefab": null
+      }
+    ],
+    "Children": [],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": false,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": "",
+        "CustomBounds": false
+      }
+    },
+    "__variables": []
+  },
+  "ResourceVersion": 2,
+  "ShowInMenu": true,
+  "MenuPath": "DarkRP/Weapons/Keys",
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "__references": [],
+  "__version": 2
+}

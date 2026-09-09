@@ -1,0 +1,189 @@
+﻿@using Sandbox;
+@using Sandbox.UI;
+@using Sandbox.Utility
+@namespace Sandbox
+@inherits PanelComponent
+
+<root>
+
+    <div class="output">
+        @foreach (var entry in Entries)
+        {
+            <div class="chat_entry">
+                @if (entry.steamid > 0)
+                {
+                    <div class="avatar" style="background-image: url( avatar:@entry.steamid )"></div>
+                }
+                <div class="author">@entry.author</div>
+                <div class="message">@entry.message</div>
+            </div>
+        }
+    </div>
+
+    <div class="input">
+        <TextEntry @ref="InputBox" onsubmit="@ChatFinished"></TextEntry>
+        @if (Suggestions.Count > 0)
+        {
+            <div class="command_preview">
+                @foreach (var suggestion in Suggestions)
+                {
+                    <div class="command_suggestion">
+                        <div class="command_usage">@suggestion.Usage</div>
+                        <div class="command_description">@suggestion.Description</div>
+                        @if (!string.IsNullOrWhiteSpace(suggestion.AccessText))
+                        {
+                            <div class="command_access">@suggestion.AccessText</div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+</root>
+
+@code
+{
+    TextEntry InputBox = default;
+    string LastInputText = "";
+    bool LastInputFocused;
+
+    public record Entry( ulong steamid, string author, string message, RealTimeSince timeSinceAdded );
+    List<Entry> Entries = new();
+    List<ChatCommandPreview> Suggestions = new();
+
+    protected override void OnUpdate()
+    {
+        if (InputBox is null)
+            return;
+
+        Panel.AcceptsFocus = false;
+
+        if ( Input.Pressed( "chat" ) )
+        {
+            InputBox.Focus();
+        }
+
+        UpdateCommandSuggestions();
+
+        if ( Entries.RemoveAll( x => x.timeSinceAdded > 20.0f ) > 0 )
+        {
+            StateHasChanged();
+        }
+
+        SetClass( "open", InputBox.HasFocus );
+        SetClass( "hide", Player.FindLocalPlayer()?.WantsHideHud ?? false );
+    }
+
+    void ChatFinished()
+    {
+        var text = InputBox.Text;
+        InputBox.Text = "";
+        Suggestions.Clear();
+        LastInputText = "";
+        LastInputFocused = false;
+
+        if (string.IsNullOrWhiteSpace(text))
+            return;
+
+        if (ChatCommandSystem.IsCommandInput(text))
+        {
+            RequestRunCommand(text);
+            StateHasChanged();
+            return;
+        }
+
+        AddText( text );
+    }
+
+    void UpdateCommandSuggestions()
+    {
+        var text = InputBox.Text ?? "";
+        var focused = InputBox.HasFocus;
+        if (text == LastInputText && focused == LastInputFocused)
+            return;
+
+        LastInputText = text;
+        LastInputFocused = focused;
+        Suggestions = focused
+            ? ChatCommandSystem.GetPreviews(text, Player.FindLocalPlayer()).ToList()
+            : new();
+        StateHasChanged();
+    }
+
+	[Rpc.Host]
+    public void RequestRunCommand( string message )
+    {
+        message = message.Truncate(300);
+
+        if (string.IsNullOrWhiteSpace(message))
+            return;
+
+        ChatCommandSystem.TryExecute(Rpc.Caller, message);
+    }
+
+    [ConCmd( "say" )]
+    private static void Say( string msg )
+    {
+       var chat = Game.ActiveScene.GetAll<Chat>()
+                                .FirstOrDefault();
+
+       if ( Application.IsDedicatedServer )
+       {
+           chat.AddSystemText( msg );
+       }
+       else
+       {
+           chat.AddText( msg );
+       }
+    }
+
+	[Rpc.Broadcast]
+    public void AddText( string message )
+    {
+        message = message.Truncate( 300 );
+
+        if (string.IsNullOrWhiteSpace(message))
+            return;
+
+        var author = Rpc.Caller.DisplayName;
+        var steamid = Rpc.Caller.SteamId;
+
+		Log.Info($"{author}: {message}");
+
+		if ( Rpc.Caller == Connection.Local && message.Contains( "colmore", StringComparison.OrdinalIgnoreCase ) )
+		{
+			Sandbox.Services.Stats.Increment( "secret_phrase", 1 );
+        }
+
+        var filteredName = Steam.FilterName(author, steamid);
+        message = Steam.FilterChat(message, steamid);
+
+        Entries.Add(new Entry(steamid, filteredName, message, 0.0f));
+		StateHasChanged();
+	}
+
+	[Rpc.Broadcast( NetFlags.HostOnly )]
+    public void AddSystemText( string message, string icon = "ℹ️" )
+    {
+        message = message.Truncate(300);
+
+        if (string.IsNullOrWhiteSpace(message))
+            return;
+
+        Entries.Add(new Entry(0, icon, message, 0.0f));
+        StateHasChanged();
+    }
+
+    public void AddSystemTextTo( Connection target, string message, string icon = "ℹ️" )
+    {
+        if (!Networking.IsHost || target is null)
+            return;
+
+        using (Rpc.FilterInclude(target))
+        {
+            AddSystemText(message, icon);
+        }
+    }
+
+}

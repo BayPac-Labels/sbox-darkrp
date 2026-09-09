@@ -1,0 +1,9 @@
+Layer0
+{
+	shader "shaders/complex.shader_c"
+
+	TextureColor "materials/money/money_color.png"
+	TextureAmbientOcclusion "materials/default/default_ao.tga"
+	TextureNormal "materials/money/money_normal.png"
+	TextureRoughness "materials/money/money_rough.png"
+}

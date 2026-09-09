@@ -1,0 +1,9 @@
+{
+  "Prefab": "weapons/medkit/medkit.prefab",
+  "Title": "Medkit",
+  "Description": "Heal targeted players or yourself over time.",
+  "Category": "Weapon",
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}

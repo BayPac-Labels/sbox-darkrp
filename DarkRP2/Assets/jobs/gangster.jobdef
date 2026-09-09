@@ -1,0 +1,22 @@
+{
+  "Title": "Gangster",
+  "Description": "Low-level criminal role built for street crime and supporting organized crews.",
+  "Category": "Criminal",
+  "AccentColor": "0.84265,0.39459,0.88372,1",
+  "Salary": 55,
+  "MaxPlayers": 8,
+  "Command": "/gangster",
+  "Order": 40,
+  "StartingItems": [
+    "weapons/crowbar/crowbar.prefab"
+  ],
+  "Clothing": [
+    "models/citizen_clothes/jacket/hoodie/hoodie_black.clothing",
+    "models/citizen_clothes/trousers/jeans/jeans_black.clothing",
+    "models/citizen_clothes/shoes/sneakers/sneakers.clothing",
+    "models/citizen_clothes/gloves/fingerless_gloves/fingerless_gloves.clothing"
+  ],
+  "IsDefault": false,
+  "__references": [],
+  "__version": 0
+}

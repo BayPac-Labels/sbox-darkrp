@@ -1,0 +1,10 @@
+{
+  "Prefab": "weapons/hand/hand.prefab",
+  "Title": "Hands",
+  "Description": "Let's fight !",
+  "Category": "Weapon",
+  "IncludeCode": false,
+  "Developer": false,
+  "__references": [],
+  "__version": 0
+}

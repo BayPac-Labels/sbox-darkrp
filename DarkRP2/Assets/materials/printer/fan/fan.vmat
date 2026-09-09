@@ -1,0 +1,22 @@
+// THIS FILE IS AUTO-GENERATED
+
+Layer0
+{
+	shader "shaders/complex.shader"
+	F_METALNESS_TEXTURE 1
+	F_SPECULAR 1
+	g_flModelTintAmount "1.000"
+	g_vColorTint "[1.000000 1.000000 1.000000 0.000000]"
+	TextureColor "materials/printer/fan/tintable/moneyprinter_fan_tintable_albedo.png"
+	g_flFadeExponent "1.000"
+	g_bFogEnabled "1"
+	TextureMetalness "materials/printer/fan/tintable/moneyprinter_fan_tintable_metallic.png"
+	TextureNormal "materials/printer/fan/tintable/moneyprinter_fan_tintable_normal.png"
+	g_flRoughnessScaleFactor "1.000"
+	TextureRoughness "materials/printer/fan/tintable/moneyprinter_fan_tintable_roughness.png"
+	g_nScaleTexCoordUByModelScaleAxis "0"
+	g_nScaleTexCoordVByModelScaleAxis "0"
+	g_vTexCoordOffset "[0.000 0.000]"
+	g_vTexCoordScale "[1.000 1.000]"
+	g_vTexCoordScrollSpeed "[0.000 0.000]"
+}

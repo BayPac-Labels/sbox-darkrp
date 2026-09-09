@@ -1,0 +1,301 @@
+{
+  "RootObject": {
+    "__guid": "39a5b3c1-17fd-4d7a-a9f8-2660f46f9c1e",
+    "__version": 2,
+    "Flags": 0,
+    "Name": "medkit",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,1",
+    "Tags": "",
+    "Enabled": true,
+    "NetworkMode": 1,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 1,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
+    "Components": [
+      {
+        "__type": "MedkitWeapon",
+        "__guid": "6a0ec4ef-7445-4cf0-9095-163ab586f88e",
+        "__enabled": true,
+        "Flags": 0,
+        "CanCancelReload": false,
+        "ClipContents": 0,
+        "ClipMaxSize": 0,
+        "DeployTime": 0.35,
+        "DisplayIcon": {
+          "$compiler": "texture",
+          "$source": "svgsource",
+          "data": {
+            "Size": "512,512",
+            "Source": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\">\n  <rect x=\"72\" y=\"132\" width=\"368\" height=\"276\" rx=\"34\" fill=\"#fff\"/>\n  <rect x=\"178\" y=\"84\" width=\"156\" height=\"76\" rx=\"22\" fill=\"#fff\"/>\n  <rect x=\"222\" y=\"194\" width=\"68\" height=\"154\" rx=\"10\" fill=\"#d92535\"/>\n  <rect x=\"179\" y=\"237\" width=\"154\" height=\"68\" rx=\"10\" fill=\"#d92535\"/>\n</svg>\n",
+            "Colorize": false,
+            "TargetColor": "1,1,1,1",
+            "Scale": 1,
+            "Offset": "0,0",
+            "Rotate": 0,
+            "FlipVertical": false,
+            "FlipHorizontal": false
+          },
+          "compiled": null
+        },
+        "DisplayName": "Medkit",
+        "DroppedGameObject": {
+          "_type": "gameobject",
+          "go": "ce35156b-b698-442f-8a19-4db6a3582079"
+        },
+        "HealAmount": 4,
+        "HealInterval": 0.25,
+        "OverhealMaxHealth": 130,
+        "HealRange": 128,
+        "HealSound": "sounds/ui/ui.select.sound",
+        "HoldType": "HoldItem",
+        "IncrementalReloading": false,
+        "ItemPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/medkit/medkit.prefab"
+        },
+        "MaxReserveAmmo": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "ParentBone": "hold_r",
+        "ReloadTime": 0,
+        "ReserveAmmo": 0,
+        "SecondaryInput": {
+          "IsEnabled": false,
+          "Action": null
+        },
+        "ShootInput": {
+          "IsEnabled": false,
+          "Action": null
+        },
+        "StartingAmmo": 0,
+        "TraceRadius": 10,
+        "UsesAmmo": false,
+        "UsesClips": false,
+        "Value": 1,
+        "ViewModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/medkit/medkit_vm.prefab"
+        },
+        "WorldModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "weapons/medkit/medkit_wm.prefab"
+        }
+      },
+      {
+        "__type": "DroppedWeapon",
+        "__guid": "93aca833-c5ec-4c67-9678-71eab37f3d5d",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+      {
+        "__type": "Sandbox.ModelCollider",
+        "__guid": "e3328154-8069-4ec5-86a1-b39c1060ad66",
+        "__enabled": true,
+        "Flags": 0,
+        "ColliderFlags": 0,
+        "Elasticity": null,
+        "Friction": null,
+        "IsTrigger": false,
+        "Model": "models/items/medkit.vmdl",
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OnObjectTriggerEnter": null,
+        "OnObjectTriggerExit": null,
+        "OnTriggerEnter": null,
+        "OnTriggerExit": null,
+        "RollingResistance": null,
+        "Static": false,
+        "Surface": null,
+        "SurfaceVelocity": "0,0,0"
+      },
+      {
+        "__type": "Sandbox.Rigidbody",
+        "__guid": "509242d4-d667-4ec4-b9bc-618dedf5119b",
+        "__enabled": true,
+        "Flags": 0,
+        "AngularDamping": 0,
+        "EnableImpactDamage": true,
+        "EnhancedCcd": false,
+        "Gravity": true,
+        "GravityScale": 1,
+        "ImpactDamage": 0,
+        "LinearDamping": 0,
+        "Locking": {
+          "X": false,
+          "Y": false,
+          "Z": false,
+          "Pitch": false,
+          "Yaw": false,
+          "Roll": false
+        },
+        "MassCenterOverride": "0,0,0",
+        "MassOverride": 0,
+        "MinImpactDamageSpeed": 500,
+        "MotionEnabled": true,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "OverrideMassCenter": false,
+        "RigidbodyFlags": 0,
+        "StartAsleep": false
+      }
+    ],
+    "Children": [
+      {
+        "__guid": "ce35156b-b698-442f-8a19-4db6a3582079",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "standalone_wm",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "WorldModel",
+            "__guid": "eb897b20-feba-4db1-9e30-f38c95c16e34",
+            "__enabled": true,
+            "Flags": 0,
+            "EjectBrass": null,
+            "EjectTransform": null,
+            "MuzzleEffect": null,
+            "MuzzleTransform": null,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Renderer": {
+              "_type": "component",
+              "component_id": "019521ac-cf47-46b9-9f04-fb61bf4be510",
+              "go": "ce35156b-b698-442f-8a19-4db6a3582079",
+              "component_type": "SkinnedModelRenderer"
+            },
+            "TracerEffect": null
+          },
+          {
+            "__type": "Sandbox.SkinnedModelRenderer",
+            "__guid": "019521ac-cf47-46b9-9f04-fb61bf4be510",
+            "__enabled": true,
+            "Flags": 0,
+            "AnimationGraph": null,
+            "BodyGroups": 18446744073709551615,
+            "BoneMergeTarget": null,
+            "CreateAttachments": true,
+            "CreateBoneObjects": false,
+            "LodOverride": null,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Materials": null,
+            "Model": "models/items/medkit.vmdl",
+            "Morphs": {},
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Parameters": {
+              "bools": {},
+              "ints": {},
+              "floats": {},
+              "vectors": {},
+              "rotations": {}
+            },
+            "PlaybackRate": 1,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "On",
+            "Sequence": {
+              "Name": null,
+              "Looping": true,
+              "Blending": false
+            },
+            "Tint": "1,1,1,1",
+            "UseAnimGraph": false
+          }
+        ],
+        "Children": [
+          {
+            "__guid": "b7c97826-e3fa-4218-afe5-c0226406acd8",
+            "__version": 2,
+            "Flags": 8,
+            "Name": "center",
+            "Position": "0,0,0",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
+            "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
+            "Components": [],
+            "Children": []
+          }
+        ]
+      }
+    ],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": false,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": "",
+        "CustomBounds": false
+      }
+    },
+    "__variables": []
+  },
+  "ResourceVersion": 2,
+  "ShowInMenu": true,
+  "MenuPath": "DarkRP/Weapons/Medkit",
+  "MenuIcon": null,
+  "DontBreakAsTemplate": true,
+  "__references": [
+    "fish.medkit#12819"
+  ],
+  "__version": 2
+}

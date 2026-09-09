@@ -1,0 +1,16 @@
+{
+  "Title": "Citizen",
+  "Description": "Standard civilian role with no special authority and no built-in combat gear.",
+  "Category": "Civilian",
+  "AccentColor": "0.8471,0.9098,1,1",
+  "Salary": 45,
+  "MaxPlayers": 0,
+  "Command": "/citizen",
+  "Order": 0,
+  "StartingItems": [],
+  "UseOwnerAvatarAppearance": true,
+  "Clothing": [],
+  "IsDefault": true,
+  "__references": [],
+  "__version": 0
+}

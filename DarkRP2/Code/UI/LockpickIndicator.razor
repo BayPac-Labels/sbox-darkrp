@@ -1,0 +1,36 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+
+@if ( !Player.IsValid() || !ShouldShow )
+    return;
+
+<root>
+    <div class="lockpick-indicator">
+        <div class="lockpick-content">
+            <label class="title">Lockpicking...</label>
+            <div class="progress-container">
+                <div class="progress-bar" style="width: @(Progress * 100)%"></div>
+            </div>
+            <label class="percent">@ProgressPercent%</label>
+        </div>
+    </div>
+</root>
+
+@code
+{
+	private global::Player Player => global::Player.FindLocalPlayer();
+
+	private bool ShouldShow => Player.IsValid() && Player.IsDoorLockpickHolding;
+	private float Progress => Player.IsValid() ? Player.DoorLockpickHoldProgress : 0.0f;
+	private int ProgressPercent => (int)MathF.Round( Progress * 100.0f );
+
+	protected override int BuildHash()
+	{
+		if ( !Player.IsValid() || !ShouldShow )
+			return 0;
+
+		return System.HashCode.Combine( Progress );
+	}
+}

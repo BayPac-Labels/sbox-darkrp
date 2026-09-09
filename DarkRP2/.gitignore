@@ -1,0 +1,13 @@
+# Regenerated caches only — source, assets, and project files stay in git
+.vs/
+.idea/
+obj/
+bin/
+.sbox/
+Exports/
+*.user
+*.generated.*
+*.los
+*.vpk
+*_c
+!*.shader_c

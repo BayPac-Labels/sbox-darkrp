@@ -1,0 +1,1222 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+
+<root>
+    <div class="body">
+        <div class="title">
+            <label class="big">DarkRP</label>
+
+            @if ( !string.IsNullOrEmpty( _mapTitle ) )
+            {
+                <label class="small">Playing on @(_mapTitle)</label>
+            }
+        </div>
+
+        <div class="menu">
+            <div class="tabs menu-segmented-group">
+                @foreach ( var item in NavigationItems )
+                {
+                    <div class="menu-mode-button section-button @(_currentPage == item.Page ? "active" : "")"
+                         @onmouseover="@(() => OnSectionHover( item.Page ))"
+                         @onmouseleave="@(() => _hoveredPage = null)"
+                         @onclick="@(() => SelectPage( item.Page ))">
+                        <div class="title">@item.Title</div>
+                    </div>
+                }
+            </div>
+
+            <div class="page-container">
+                <div class="page-root @(_currentPage == ScoreboardPage.Dashboard ? "active" : "hidden")">
+                    <SpawnMenuContent>
+                        <Body>
+                            <div class="page-center">
+                                <div class="dashboard-layout">
+                                    <div class="dashboard-left menuinner">
+                                        <h1>Session</h1>
+
+                                        <div class="info-row">
+                                            <label class="key">Name</label>
+                                            <label class="value">@LocalPlayerName</label>
+                                        </div>
+
+                                        <div class="info-row">
+                                            <label class="key">Current Job</label>
+                                            <label class="value">@LocalPlayerJob</label>
+                                        </div>
+
+                                        <div class="info-row">
+                                            <label class="key">Wallet</label>
+                                            <label class="value">@FormatCurrency( LocalPlayerMoney )</label>
+                                        </div>
+
+                                        <div class="info-row">
+                                            <label class="key">Salary</label>
+                                            <label class="value">@FormatCurrency( LocalPlayerSalary )</label>
+                                        </div>
+
+                                        <div class="info-row">
+                                            <label class="key">Server</label>
+                                            <label class="value">@SessionType</label>
+                                        </div>
+
+                                        <div class="money-drop-wrap">
+                                            <div class="money-drop-panel">
+                                                <label class="money-drop-label">Drop Money</label>
+                                                <div class="money-drop-controls">
+                                                    <MoneyDropEntry @ref="DropMoneyEntry"
+                                                                    class="menu-input money-drop-input"
+                                                                    Placeholder="Amount"
+                                                                    Value:bind=@_dropMoneyValue
+                                                                    OnTabPressed="@CloseFromDropEntry"
+                                                                    @onsubmit="@DropMoney" />
+                                                    <Button Text="Drop"
+                                                            Icon="$"
+                                                            class="menu-action primary"
+                                                            Disabled="@(!CanDropMoney)"
+                                                            @onclick="@DropMoney" />
+                                                </div>
+                                            </div>
+
+                                            <div class="roleplay-name-panel">
+                                                <label class="money-drop-label">Set RP Name</label>
+                                                <div class="money-drop-controls">
+                                                    <TabTextEntry @ref="RoleplayNameEntry"
+                                                                  class="menu-input money-drop-input"
+                                                                  Placeholder="Roleplay name"
+                                                                  Value:bind=@_roleplayNameValue
+                                                                  OnTabPressed="@CloseFromRoleplayNameEntry"
+                                                                  @onsubmit="@SubmitRoleplayName" />
+                                                    <Button Text="Set"
+                                                            Icon="person"
+                                                            class="menu-action primary"
+                                                            Disabled="@(!CanSubmitRoleplayName)"
+                                                            @onclick="@SubmitRoleplayName" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="dashboard-right menuinner city-laws-panel">
+                                        <h1>City Laws</h1>
+                                        <label class="laws-description">Public laws posted by the mayor and mirrored on every lawboard.</label>
+
+                                        <div class="laws-list">
+                                        @if ( CityLaws.Count == 0 )
+                                        {
+                                            <div class="law-empty">
+                                                <label>No city laws posted.</label>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            @for ( var i = 0; i < CityLaws.Count; i++ )
+                                            {
+                                                var lawIndex = i;
+                                                var law = CityLaws[i];
+
+                                                <div class="law-row">
+                                                    <label class="law-number">@(i + 1)</label>
+                                                    <label class="law-text">@law</label>
+
+                                                    @if ( CanManageCityLaws )
+                                                    {
+                                                        <Button Text="Remove"
+                                                                Icon="delete"
+                                                                class="menu-action law-remove"
+                                                                @onclick="@(() => RemoveCityLaw( lawIndex ))" />
+                                                    }
+                                                </div>
+                                            }
+                                        }
+                                        </div>
+
+                                        @if ( CanManageCityLaws )
+                                        {
+                                            <div class="law-editor">
+                                                <label class="law-editor-label">Add City Law</label>
+                                                <div class="law-editor-controls">
+                                                    <TabTextEntry @ref="LawEntry"
+                                                                  class="menu-input law-input"
+                                                                  Placeholder="New city law"
+                                                                  Value:bind=@_cityLawValue
+                                                                  OnTabPressed="@CloseFromLawEntry"
+                                                                  @onsubmit="@SubmitCityLaw" />
+                                                    <Button Text="Add"
+                                                            Icon="gavel"
+                                                            class="menu-action primary"
+                                                            Disabled="@(!CanSubmitCityLaw)"
+                                                            @onclick="@SubmitCityLaw" />
+                                                </div>
+                                                <label class="law-limit">@CityLawTextLength / @CityLawManager.MaxLawLength</label>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <label class="law-hint">Only the Mayor can change city laws.</label>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </Body>
+                    </SpawnMenuContent>
+                </div>
+
+                <div class="page-root @(_currentPage == ScoreboardPage.Players ? "active" : "hidden")">
+                    <SpawnMenuContent>
+                        <Body>
+                            <div class="page-center">
+                                <div class="table">
+                                    <div class="col">
+                                        <div class="header row">
+                                            <div class="avatar-spacer"></div>
+                                            <div class="name">Player</div>
+                                            <div class="stat">Kills</div>
+                                            <div class="stat">Deaths</div>
+                                            <div class="stat">Ping</div>
+                                            <div class="mute-spacer"></div>
+                                        </div>
+
+                                        @foreach ( var entry in GetPlayers() )
+                                        {
+                                            <ScoreboardRow Entry="@entry" />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </Body>
+                    </SpawnMenuContent>
+                </div>
+
+                <div class="page-root @(_currentPage == ScoreboardPage.Jobs ? "active" : "hidden")">
+                    <SpawnMenuContent>
+                        <Body>
+                            <div class="page-center jobs-page-center">
+                                <div class="jobs-scroll-wrapper">
+                                    <div class="jobs-list">
+                                        @foreach ( var job in JobDefinitions )
+                                        {
+                                            var isCurrentJob = IsCurrentJob( job );
+                                            var canSelectJob = CanSelectJob( job );
+
+                                            <div class="job-entry @(isCurrentJob ? "current" : "") @(!canSelectJob && !isCurrentJob ? "full" : "") @(canSelectJob ? "selectable" : "")"
+                                                 @onclick="@(() => SelectJob( job ))">
+                                                <div class="job-main">
+                                                    <div class="job-topline">
+                                                        <label class="job-name" style="@GetJobAccentStyle( job )">@job.Title</label>
+                                                        <label class="job-category">@job.Category</label>
+                                                    </div>
+
+                                                    <label class="job-description">@job.Description</label>
+                                                    <label class="job-gear">@GetJobStartingGearText( job )</label>
+                                                </div>
+
+                                                <div class="job-meta">
+                                                    <label class="job-meta-item">Salary: @FormatCurrency( job.Salary )</label>
+                                                    <label class="job-meta-item">Slots: @GetJobSlotsText( job )</label>
+                                                    @if ( job.RequiresVote )
+                                                    {
+                                                        <label class="job-meta-item">Vote required</label>
+                                                    }
+
+                                                    @if ( isCurrentJob )
+                                                    {
+                                                        <label class="job-status current">Current</label>
+                                                    }
+                                                    else if ( !canSelectJob )
+                                                    {
+                                                        <label class="job-status full">Full</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <Button Text="@GetJobSelectText( job )"
+                                                                class="menu-action primary job-select"
+                                                                @onclick:stopPropagation="true"
+                                                                @onclick="@(() => SelectJob( job ))" />
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </Body>
+                    </SpawnMenuContent>
+                </div>
+
+                <div class="page-root @(_currentPage == ScoreboardPage.Shop ? "active" : "hidden")">
+                    <SpawnMenuPage>
+                        <Left>
+                            <div class="shop-categories menuinner">
+                                <h1>Categories</h1>
+
+                                <div class="shop-category-list">
+                                    @foreach ( var shopSection in ShopSections )
+                                    {
+                                        <div class="shop-category-option @(_selectedShopSection == shopSection.Title ? "active" : "")"
+                                             @onclick="@(() => SelectShopSection( shopSection.Title ))">
+                                            <label>@shopSection.Title</label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </Left>
+
+                        <Body>
+                            <div class="shop-body menuinner">
+                                <h1>@CurrentShopSection.Title</h1>
+                                <label class="shop-description-header">@CurrentShopSection.Description</label>
+
+                                <div class="shop-list">
+                                    @foreach ( var item in GetVisibleShopItems() )
+                                    {
+                                        <div class="shop-entry">
+                                            <div class="shop-copy">
+                                                <label class="shop-name">@item.Name</label>
+                                                <label class="shop-description">@item.Description</label>
+                                            </div>
+
+                                            <div class="shop-meta">
+                                                <label class="shop-price">@FormatCurrency( item.Price )</label>
+                                                @if ( !string.IsNullOrWhiteSpace( item.PrinterDefinitionPath ) )
+                                                {
+                                                    <label class="shop-meta-item">@GetPrinterRateText( item )</label>
+                                                    <label class="shop-meta-item">Owned: @LocalOwnedPrinterCount / @MoneyPrinterDefinition.MaxOwnedPerPlayer</label>
+                                                    <Button Text="Buy"
+                                                            class="menu-action primary shop-buy"
+                                                            Disabled="@(!CanBuyPrinter( item ))"
+                                                            @onclick="@(() => BuyPrinter( item ))" />
+                                                }
+                                                else if ( !string.IsNullOrWhiteSpace( item.WeaponPrefabPath ) )
+                                                {
+                                                    <Button Text="Buy"
+                                                            class="menu-action primary shop-buy"
+                                                            Disabled="@(!CanBuyWeapon( item ))"
+                                                            @onclick="@(() => BuyWeapon( item ))" />
+                                                }
+                                                else if ( !string.IsNullOrWhiteSpace( item.ShipmentWeaponPrefabPath ) )
+                                                {
+                                                    <label class="shop-meta-item">@item.ShipmentCount x weapons</label>
+                                                    <Button Text="Buy"
+                                                            class="menu-action primary shop-buy"
+                                                            Disabled="@(!CanBuyShipment( item ))"
+                                                            @onclick="@(() => BuyShipment( item ))" />
+                                                }
+                                                else if ( !string.IsNullOrWhiteSpace( item.AmmoPrefabPath ) )
+                                                {
+                                                    <label class="shop-meta-item">@GetAmmoReserveText( item )</label>
+                                                    <Button Text="Buy"
+                                                            class="menu-action primary shop-buy"
+                                                            Disabled="@(!CanBuyAmmo( item ))"
+                                                            @onclick="@(() => BuyAmmo( item ))" />
+                                                }
+                                                else if ( !string.IsNullOrWhiteSpace( item.MiscPrefabPath ) )
+                                                {
+                                                    @if ( string.Equals( item.MiscPrefabPath, TipJar.PrefabPath, StringComparison.OrdinalIgnoreCase ) )
+                                                    {
+                                                        <label class="shop-meta-item">Owned: @TipJar.CountOwned( Connection.Local ) / @TipJar.MaxOwnedPerPlayer</label>
+                                                    }
+                                                    else if ( string.Equals( item.MiscPrefabPath, Lawboard.PrefabPath, StringComparison.OrdinalIgnoreCase ) )
+                                                    {
+                                                        <label class="shop-meta-item">Owned: @Lawboard.CountOwned( Connection.Local ) / @Lawboard.MaxOwnedPerPlayer</label>
+                                                    }
+
+                                                    <Button Text="Buy"
+                                                            class="menu-action primary shop-buy"
+                                                            Disabled="@(!CanBuyMiscItem( item ))"
+                                                            @onclick="@(() => BuyMiscItem( item ))" />
+                                                }
+                                                else
+                                                {
+                                                    <label class="placeholder-tag">Placeholder</label>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </Body>
+                    </SpawnMenuPage>
+                </div>
+
+                @if ( CanAccessAdministration )
+                {
+                    <div class="page-root @(_currentPage == ScoreboardPage.Administration ? "active" : "hidden")">
+                        <SpawnMenuContent>
+                            <Body>
+                                <div class="page-center">
+                                    <div class="dashboard-layout">
+                                        <div class="dashboard-left menuinner">
+                                            <h1>Administration</h1>
+
+                                            <div class="info-row admin-info-row">
+                                                <label class="key">Your Role</label>
+                                                <label class="value">@GetRoleLabel( LocalPlayerAdminRole )</label>
+                                            </div>
+
+                                            <div class="info-row admin-info-row">
+                                                <label class="key">Server</label>
+                                                <label class="value">@SessionType</label>
+                                            </div>
+
+                                            <div class="info-row admin-info-row">
+                                                <label class="key">Moderation</label>
+                                                <label class="value">Right click a player to kick, ban or manage roles.</label>
+                                            </div>
+
+                                            @if ( CanManageAdminRoles )
+                                            {
+                                                <div class="admin-panel">
+                                                    <label class="admin-panel-label">Manage By SteamID</label>
+                                                    <TabTextEntry @ref="AdminSteamIdEntry"
+                                                                  class="menu-input admin-steam-input"
+                                                                  Placeholder="Steam ID64"
+                                                                  Value:bind=@_adminSteamIdValue
+                                                                  OnTabPressed="@CloseFromAdminEntry" />
+                                                    <div class="admin-actions">
+                                                        <Button Text="Set Admin"
+                                                                Icon="security"
+                                                                class="menu-action primary"
+                                                                Disabled="@(!CanSubmitAdminSteamId)"
+                                                                @onclick="@(() => SubmitAdminRole( AdminRole.Admin ))" />
+                                                        <Button Text="Set SuperAdmin"
+                                                                Icon="stars"
+                                                                class="menu-action primary"
+                                                                Disabled="@(!CanSubmitAdminSteamId)"
+                                                                @onclick="@(() => SubmitAdminRole( AdminRole.SuperAdmin ))" />
+                                                        <Button Text="Remove"
+                                                                Icon="person_off"
+                                                                class="menu-action primary"
+                                                                Disabled="@(!CanSubmitAdminSteamId)"
+                                                                @onclick="@(() => SubmitAdminRole( AdminRole.None ))" />
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <div class="dashboard-right menuinner">
+                                            <h1>Online Staff</h1>
+
+                                            @{
+                                                var onlineStaff = GetOnlineStaff().ToArray();
+                                            }
+
+                                            @if ( onlineStaff.Length == 0 )
+                                            {
+                                                <div class="action-row admin-staff-row">
+                                                    <div class="action-copy admin-action-copy">
+                                                        <label class="action-title">No staff online</label>
+                                                        <label class="action-description">Admins and superadmins currently connected will appear here.</label>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                @foreach ( var staff in onlineStaff )
+                                                {
+                                                    <div class="action-row admin-staff-row">
+                                                        <div class="action-copy admin-action-copy">
+                                                            <label class="action-title">@staff.DisplayName</label>
+                                                            <label class="action-description">SteamID: @staff.Connection?.SteamId</label>
+                                                        </div>
+
+                                                        <label class="admin-role @GetRoleClass( GetPlayerAdminRole( staff ) )">@GetRoleLabel( GetPlayerAdminRole( staff ) )</label>
+                                                    </div>
+                                                }
+                                            }
+
+                                            @{
+                                                var savedStaff = GetSavedStaffEntries().ToArray();
+                                            }
+
+                                            @if ( Networking.IsHost && CanManageAdminRoles )
+                                            {
+                                                <h1>Offline Staff</h1>
+
+                                                @if ( savedStaff.Length == 0 )
+                                                {
+                                                    <div class="action-row admin-staff-row">
+                                                        <div class="action-copy admin-action-copy">
+                                                            <label class="action-title">No offline staff</label>
+                                                            <label class="action-description">Add a SteamID here or use the player list context menu.</label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    @foreach ( var entry in savedStaff )
+                                                    {
+                                                        <div class="action-row admin-staff-row">
+                                                            <div class="action-copy admin-action-copy">
+                                                                <label class="action-title">@entry.Value.DisplayName</label>
+                                                                <label class="action-description">SteamID: @entry.Key</label>
+                                                            </div>
+
+                                                            <label class="admin-role @GetRoleClass( entry.Value.Role )">@GetRoleLabel( entry.Value.Role )</label>
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </Body>
+                        </SpawnMenuContent>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="menu-overlay" @ref="MenuOverlay"></div>
+</root>
+
+@code
+{
+    enum ScoreboardPage
+    {
+        Dashboard,
+        Players,
+        Jobs,
+        Shop,
+        Administration
+    }
+
+    sealed class NavigationItem
+    {
+        public NavigationItem( ScoreboardPage page, string title )
+        {
+            Page = page;
+            Title = title;
+        }
+
+        public ScoreboardPage Page { get; }
+        public string Title { get; }
+    }
+
+    sealed class ShopSection
+    {
+        public ShopSection( string title, string description, ShopItem[] items )
+        {
+            Title = title;
+            Description = description;
+            Items = items;
+        }
+
+        public string Title { get; }
+        public string Description { get; }
+        public ShopItem[] Items { get; }
+    }
+
+    sealed class ShopItem
+    {
+        public ShopItem(
+            string name,
+            int price,
+            string description,
+            string printerDefinitionPath = null,
+            string weaponPrefabPath = null,
+            string shipmentWeaponPrefabPath = null,
+            string ammoPrefabPath = null,
+            string miscPrefabPath = null,
+            int shipmentCount = 0 )
+        {
+            Name = name;
+            Price = price;
+            Description = description;
+            PrinterDefinitionPath = printerDefinitionPath;
+            WeaponPrefabPath = weaponPrefabPath;
+            ShipmentWeaponPrefabPath = shipmentWeaponPrefabPath;
+            AmmoPrefabPath = ammoPrefabPath;
+            MiscPrefabPath = miscPrefabPath;
+            ShipmentCount = shipmentCount;
+        }
+
+        public string Name { get; }
+        public int Price { get; }
+        public string Description { get; }
+        public string PrinterDefinitionPath { get; }
+        public string WeaponPrefabPath { get; }
+        public string ShipmentWeaponPrefabPath { get; }
+        public string AmmoPrefabPath { get; }
+        public string MiscPrefabPath { get; }
+        public int ShipmentCount { get; }
+    }
+
+    ScoreboardPage _currentPage = ScoreboardPage.Dashboard;
+    ScoreboardPage? _hoveredPage;
+    string _mapTitle = null;
+    string _selectedShopSection = "Printers";
+    string _dropMoneyValue = "";
+    string _roleplayNameValue = "";
+    string _cityLawValue = "";
+    string _adminSteamIdValue = "";
+    bool _isOpen;
+    static Panel _currentMenuOverlay;
+    MoneyDropEntry DropMoneyEntry = default;
+    TabTextEntry RoleplayNameEntry = default;
+    TabTextEntry LawEntry = default;
+    TabTextEntry AdminSteamIdEntry = default;
+    Panel MenuOverlay = default;
+    int PlayerCount => Scene.GetAll<PlayerData>().Count();
+    Player LocalPlayer => Player.FindLocalPlayer();
+    int LocalPlayerMoney => LocalPlayer?.Money ?? 0;
+    int LocalPlayerSalary => LocalPlayer?.CurrentJobDefinition?.Salary ?? 0;
+    int LocalOwnedPrinterCount => MoneyPrinter.CountOwned( Connection.Local );
+    string LocalPlayerJob => string.IsNullOrWhiteSpace( LocalPlayer?.JobTitle ) ? "Citizen" : LocalPlayer.JobTitle;
+    bool CanDropMoney => TryGetDropMoneyAmount( out var amount ) && LocalPlayer?.CanAfford( amount ) == true;
+    bool CanSubmitRoleplayName => TryGetRoleplayName( out var roleplayName ) && !string.Equals( LocalPlayerName, roleplayName, StringComparison.Ordinal );
+    IReadOnlyList<string> CityLaws => CityLawManager.Current?.Laws ?? Array.Empty<string>();
+    bool CanManageCityLaws => LocalPlayer?.IsMayor == true;
+    bool CanSubmitCityLaw => CanManageCityLaws && TryGetCityLawText( out _ ) && CityLaws.Count < CityLawManager.MaxLaws;
+    int CityLawTextLength => Math.Min( (_cityLawValue ?? string.Empty).Trim().Length, CityLawManager.MaxLawLength );
+    bool CanAccessAdministration => LocalPlayer?.HasAdminAccess == true;
+    bool CanManageAdminRoles => LocalPlayer?.HasSuperAdminAccess == true;
+    bool CanSubmitAdminSteamId => TryGetAdminSteamId( out _ );
+    AdminRole LocalPlayerAdminRole => LocalPlayer?.HasSuperAdminAccess == true ? AdminRole.SuperAdmin : LocalPlayer?.AdminRole ?? AdminRole.None;
+    IReadOnlyList<MoneyPrinterDefinition> PrinterDefinitions => MoneyPrinterDefinition.GetAll();
+    IReadOnlyList<JobDefinition> JobDefinitions => BuildJobDefinitions();
+    ShopSection[] ShopSections => BuildShopSections();
+    NavigationItem[] NavigationItems => BuildNavigationItems();
+
+    string LocalPlayerName
+        => Scene.GetAll<PlayerData>().FirstOrDefault( x => x.IsMe )?.DisplayName ?? "Current Player";
+
+    string SessionType => Networking.IsHost ? "Host" : "Client";
+
+    ShopSection CurrentShopSection
+        => ShopSections.FirstOrDefault( x => x.Title == _selectedShopSection ) ?? ShopSections.First();
+
+    IEnumerable<ShopItem> GetVisibleShopItems()
+    {
+        if ( CurrentShopSection.Title == "Weapons" )
+        {
+            return CurrentShopSection.Items.Where( item =>
+            {
+                if ( string.IsNullOrWhiteSpace( item.WeaponPrefabPath ) )
+                    return true;
+
+                var definition = WeaponShopCatalog.Get( item.WeaponPrefabPath );
+                return WeaponShopCatalog.ShouldShowInShop( LocalPlayer, definition );
+            } );
+        }
+
+        if ( CurrentShopSection.Title == "Shipments" )
+        {
+            return CurrentShopSection.Items.Where( item =>
+            {
+                if ( string.IsNullOrWhiteSpace( item.ShipmentWeaponPrefabPath ) )
+                    return true;
+
+                var definition = WeaponShipmentCatalog.Get( item.ShipmentWeaponPrefabPath );
+                return WeaponShipmentCatalog.ShouldShowInShop( LocalPlayer, definition );
+            } );
+        }
+
+        if ( CurrentShopSection.Title == "Ammo" )
+        {
+            return CurrentShopSection.Items.Where( item =>
+            {
+                if ( string.IsNullOrWhiteSpace( item.AmmoPrefabPath ) )
+                    return true;
+
+                var definition = AmmoShopCatalog.Get( item.AmmoPrefabPath );
+                return AmmoShopCatalog.ShouldShowInShop( LocalPlayer, definition );
+            } );
+        }
+
+        if ( CurrentShopSection.Title == "Miscellaneous" )
+        {
+            return CurrentShopSection.Items.Where( item =>
+            {
+                if ( string.IsNullOrWhiteSpace( item.MiscPrefabPath ) )
+                    return true;
+
+                var definition = MiscShopCatalog.Get( item.MiscPrefabPath );
+                return MiscShopCatalog.ShouldShowInShop( LocalPlayer, definition );
+            } );
+        }
+
+        return CurrentShopSection.Items;
+    }
+
+    protected override void OnTreeFirstBuilt()
+    {
+        base.OnTreeFirstBuilt();
+        FetchMap();
+    }
+
+    void SelectPage( ScoreboardPage page )
+    {
+        _currentPage = page;
+    }
+
+    NavigationItem[] BuildNavigationItems()
+    {
+        var items = new List<NavigationItem>
+        {
+            new( ScoreboardPage.Dashboard, "Dashboard" ),
+            new( ScoreboardPage.Players, "Players" ),
+            new( ScoreboardPage.Jobs, "Jobs" ),
+            new( ScoreboardPage.Shop, "Shop" )
+        };
+
+        if ( CanAccessAdministration )
+        {
+            items.Add( new NavigationItem( ScoreboardPage.Administration, "Administration" ) );
+        }
+
+        return items.ToArray();
+    }
+
+    void OnSectionHover( ScoreboardPage page )
+    {
+        if ( _hoveredPage == page ) return;
+
+        _hoveredPage = page;
+        Sound.Play( "sounds/kenney/ui/ui.button.over.sound" );
+    }
+
+    void SelectShopSection( string name )
+    {
+        _selectedShopSection = name;
+    }
+
+    bool IsCurrentJob( JobDefinition job )
+    {
+        return job is not null
+            && string.Equals( LocalPlayer?.JobDefinitionPath, job.ResourcePath, StringComparison.OrdinalIgnoreCase );
+    }
+
+    bool CanSelectJob( JobDefinition job )
+    {
+        return job is not null
+            && LocalPlayer is not null
+            && JobManager.CanJoin( LocalPlayer, job, out _ )
+            && !IsCurrentJob( job );
+    }
+
+    string GetJobAccentStyle( JobDefinition job )
+    {
+        return $"color: {FormatColorCss( job?.GetDisplayColor() ?? Color.White )};";
+    }
+
+    static string FormatColorCss( Color color )
+    {
+        return $"rgba({(int)(color.r * 255f)}, {(int)(color.g * 255f)}, {(int)(color.b * 255f)}, {color.a:0.###})";
+    }
+
+    string GetJobSlotsText( JobDefinition job ) => JobManager.FormatSlots( job );
+    string GetJobSelectText( JobDefinition job ) => job?.RequiresVote == true ? "Start Vote" : "Choose";
+
+    string GetJobStartingGearText( JobDefinition job )
+    {
+        if ( job?.StartingItems is null || job.StartingItems.Length == 0 )
+            return "Starting Gear: None";
+
+        var names = job.StartingItems
+            .Select( GetStartingItemName )
+            .Where( x => !string.IsNullOrWhiteSpace( x ) )
+            .ToArray();
+
+        return names.Length == 0
+            ? "Starting Gear: None"
+            : $"Starting Gear: {string.Join( ", ", names )}";
+    }
+
+    string GetStartingItemName( string prefabPath )
+    {
+        if ( string.IsNullOrWhiteSpace( prefabPath ) )
+            return null;
+
+        var prefab = GameObject.GetPrefab( prefabPath );
+        var carryable = prefab?.GetComponent<BaseCarryable>( true );
+        if ( carryable.IsValid() && !string.IsNullOrWhiteSpace( carryable.DisplayName ) )
+            return carryable.DisplayName;
+
+        return System.Globalization.CultureInfo.InvariantCulture.TextInfo
+            .ToTitleCase( System.IO.Path.GetFileNameWithoutExtension( prefabPath ).Replace( "_", " " ) );
+    }
+
+    void SelectJob( JobDefinition job )
+    {
+        if ( job is null || !CanSelectJob( job ) )
+            return;
+
+        LocalPlayer?.RequestSetJob( job.ResourcePath );
+    }
+
+    bool CanBuyPrinter( ShopItem item )
+    {
+        return !string.IsNullOrWhiteSpace( item.PrinterDefinitionPath )
+            && LocalPlayer?.CanAfford( item.Price ) == true
+            && LocalOwnedPrinterCount < MoneyPrinterDefinition.MaxOwnedPerPlayer;
+    }
+
+    bool CanBuyWeapon( ShopItem item )
+    {
+        return !string.IsNullOrWhiteSpace( item.WeaponPrefabPath )
+            && LocalPlayer?.CanAfford( item.Price ) == true
+            && WeaponShopCatalog.CanPlayerBuy( LocalPlayer, item.WeaponPrefabPath, out _ );
+    }
+
+    bool CanBuyShipment( ShopItem item )
+    {
+        return !string.IsNullOrWhiteSpace( item.ShipmentWeaponPrefabPath )
+            && LocalPlayer?.CanAfford( item.Price ) == true
+            && WeaponShipmentCatalog.CanPlayerBuy( LocalPlayer, item.ShipmentWeaponPrefabPath, out _ );
+    }
+
+    bool CanBuyAmmo( ShopItem item )
+    {
+        return !string.IsNullOrWhiteSpace( item.AmmoPrefabPath )
+            && LocalPlayer?.CanAfford( item.Price ) == true
+            && AmmoShopCatalog.CanPlayerBuy( LocalPlayer, item.AmmoPrefabPath, out _ )
+            && AmmoShopCatalog.TryGetPickupAmmo( item.AmmoPrefabPath, out _, out _ );
+    }
+
+    bool CanBuyMiscItem( ShopItem item )
+    {
+        return !string.IsNullOrWhiteSpace( item.MiscPrefabPath )
+            && LocalPlayer?.CanAfford( item.Price ) == true
+            && MiscShopCatalog.CanPlayerBuy( LocalPlayer, item.MiscPrefabPath, out _ )
+            && (!string.Equals( item.MiscPrefabPath, TipJar.PrefabPath, StringComparison.OrdinalIgnoreCase )
+                || TipJar.CountOwned( Connection.Local ) < TipJar.MaxOwnedPerPlayer)
+            && (!string.Equals( item.MiscPrefabPath, Lawboard.PrefabPath, StringComparison.OrdinalIgnoreCase )
+                || Lawboard.CountOwned( Connection.Local ) < Lawboard.MaxOwnedPerPlayer);
+    }
+
+    string GetPrinterRateText( ShopItem item )
+    {
+        if ( string.IsNullOrWhiteSpace( item.PrinterDefinitionPath ) )
+            return string.Empty;
+
+        var definition = MoneyPrinterDefinition.Get( item.PrinterDefinitionPath );
+        if ( definition is null )
+            return string.Empty;
+
+        return $"{FormatCurrency( definition.MoneyPerTick )} / {definition.Interval:0}s";
+    }
+
+    string GetAmmoReserveText( ShopItem item )
+    {
+        if ( string.IsNullOrWhiteSpace( item.AmmoPrefabPath ) )
+            return string.Empty;
+
+        if ( !AmmoShopCatalog.TryGetPickupAmmo( item.AmmoPrefabPath, out _, out var ammoAmount ) )
+            return string.Empty;
+
+        return $"+{ammoAmount} ammo";
+    }
+
+    void BuyPrinter( ShopItem item )
+    {
+        if ( string.IsNullOrWhiteSpace( item.PrinterDefinitionPath ) )
+            return;
+
+        LocalPlayer?.RequestBuyPrinter( item.PrinterDefinitionPath );
+    }
+
+    void BuyWeapon( ShopItem item )
+    {
+        if ( string.IsNullOrWhiteSpace( item.WeaponPrefabPath ) )
+            return;
+
+        LocalPlayer?.RequestBuyWeapon( item.WeaponPrefabPath );
+    }
+
+    void BuyShipment( ShopItem item )
+    {
+        if ( string.IsNullOrWhiteSpace( item.ShipmentWeaponPrefabPath ) )
+            return;
+
+        LocalPlayer?.RequestBuyWeaponShipment( item.ShipmentWeaponPrefabPath );
+    }
+
+    void BuyAmmo( ShopItem item )
+    {
+        if ( string.IsNullOrWhiteSpace( item.AmmoPrefabPath ) )
+            return;
+
+        LocalPlayer?.RequestBuyAmmo( item.AmmoPrefabPath );
+    }
+
+    void BuyMiscItem( ShopItem item )
+    {
+        if ( string.IsNullOrWhiteSpace( item.MiscPrefabPath ) )
+            return;
+
+        LocalPlayer?.RequestBuyMiscItem( item.MiscPrefabPath );
+    }
+
+    ShopSection[] BuildShopSections()
+    {
+        return
+        [
+            new ShopSection(
+                "Printers",
+                "Buy money printers to generate cash over time.",
+                PrinterDefinitions
+                    .Select( x => new ShopItem( x.Title, x.Price, x.Description, x.ResourcePath ) )
+                    .ToArray()
+            ),
+            new ShopSection(
+                "Weapons",
+                "Sandbox weapons available for individual purchase.",
+                WeaponShopCatalog.GetAll()
+                    .Select( x => new ShopItem( x.Title, x.Price, x.Description, weaponPrefabPath: x.PrefabPath ) )
+                    .ToArray()
+            ),
+            new ShopSection(
+                "Shipments",
+                "Buy crate shipments that dispense 10 pickup-ready weapons.",
+                WeaponShipmentCatalog.GetAll()
+                    .Select( x => new ShopItem(
+                        x.Title,
+                        x.Price,
+                        x.Description,
+                        shipmentWeaponPrefabPath: x.WeaponPrefabPath,
+                        shipmentCount: x.WeaponsPerShipment ) )
+                    .ToArray()
+            ),
+            new ShopSection(
+                "Ammo",
+                "Buy ammo packs for shared weapon reserves.",
+                AmmoShopCatalog.GetAll()
+                    .Select( x => new ShopItem( x.Title, x.Price, x.Description, ammoPrefabPath: x.PrefabPath ) )
+                    .ToArray()
+            ),
+            new ShopSection(
+                "Miscellaneous",
+                "Job utility items and roleplay equipment.",
+                MiscShopCatalog.GetAll()
+                    .Select( x => new ShopItem( x.Title, x.Price, x.Description, miscPrefabPath: x.PrefabPath ) )
+                    .ToArray()
+            )
+        ];
+    }
+
+    IReadOnlyList<JobDefinition> BuildJobDefinitions()
+    {
+        var jobs = JobDefinition.GetAll().ToList();
+
+        var thief = JobDefinition.Get( Player.ThiefJobDefinitionPath );
+        if ( thief is not null && !jobs.Any( x => string.Equals( x.ResourcePath, thief.ResourcePath, StringComparison.OrdinalIgnoreCase ) ) )
+        {
+            jobs.Add( thief );
+            jobs = jobs
+                .OrderBy( x => x.Order )
+                .ThenBy( x => x.Category )
+                .ThenBy( x => x.Title )
+                .ToList();
+        }
+
+        return jobs;
+    }
+
+    IEnumerable<PlayerData> GetPlayers()
+    {
+        return Scene.GetAll<PlayerData>()
+            .OrderByDescending( x => x.Kills )
+            .ThenBy( x => x.DisplayName );
+    }
+
+    IEnumerable<PlayerData> GetOnlineStaff()
+    {
+        return GetPlayers().Where( x => GetPlayerAdminRole( x ) != AdminRole.None );
+    }
+
+    IEnumerable<KeyValuePair<SteamId, AdminSystem.Entry>> GetSavedStaffEntries()
+    {
+        if ( !Networking.IsHost )
+            return Enumerable.Empty<KeyValuePair<SteamId, AdminSystem.Entry>>();
+
+        return AdminSystem.Current?.GetEntries()
+            .OrderByDescending( x => x.Value.Role )
+            .ThenBy( x => x.Value.DisplayName )
+            ?? Enumerable.Empty<KeyValuePair<SteamId, AdminSystem.Entry>>();
+    }
+
+    AdminRole GetPlayerAdminRole( PlayerData entry )
+    {
+        if ( entry?.Connection?.IsHost == true )
+            return AdminRole.SuperAdmin;
+
+        return Player.For( entry?.PlayerId ?? Guid.Empty )?.AdminRole ?? AdminRole.None;
+    }
+
+    string GetRoleLabel( AdminRole role )
+    {
+        return role switch
+        {
+            AdminRole.Admin => "Admin",
+            AdminRole.SuperAdmin => "SuperAdmin",
+            _ => "Player"
+        };
+    }
+
+    string GetRoleClass( AdminRole role )
+    {
+        return role switch
+        {
+            AdminRole.Admin => "admin",
+            AdminRole.SuperAdmin => "superadmin",
+            _ => "none"
+        };
+    }
+
+    string FormatCurrency( int amount ) => $"${amount:n0}";
+
+    bool TryGetDropMoneyAmount( out int amount )
+    {
+        return int.TryParse( _dropMoneyValue, out amount ) && amount > 0;
+    }
+
+    bool TryGetRoleplayName( out string roleplayName )
+    {
+        roleplayName = string.Join( " ", (_roleplayNameValue ?? string.Empty).Trim().Split( ' ', StringSplitOptions.RemoveEmptyEntries ) );
+        return !string.IsNullOrWhiteSpace( roleplayName );
+    }
+
+    bool TryGetCityLawText( out string lawText )
+    {
+        lawText = string.Join( " ", (_cityLawValue ?? string.Empty).Trim().Split( ' ', StringSplitOptions.RemoveEmptyEntries ) );
+        if ( lawText.Length > CityLawManager.MaxLawLength )
+        {
+            lawText = lawText[..CityLawManager.MaxLawLength].Trim();
+        }
+
+        return !string.IsNullOrWhiteSpace( lawText );
+    }
+
+    bool TryGetAdminSteamId( out long steamId )
+    {
+        steamId = 0;
+        return ulong.TryParse( _adminSteamIdValue, out var parsed ) && parsed > 0 && (steamId = (long)parsed) > 0;
+    }
+
+    void DropMoney()
+    {
+        if ( !TryGetDropMoneyAmount( out var amount ) )
+            return;
+
+        LocalPlayer?.RequestDropMoney( amount );
+        _dropMoneyValue = "";
+        DropMoneyEntry?.Blur();
+    }
+
+    void SubmitRoleplayName()
+    {
+        if ( !TryGetRoleplayName( out var roleplayName ) )
+            return;
+
+        LocalPlayer?.RequestSetRoleplayName( roleplayName );
+        _roleplayNameValue = "";
+        RoleplayNameEntry?.Blur();
+    }
+
+    void SubmitCityLaw()
+    {
+        if ( !CanManageCityLaws || !TryGetCityLawText( out var lawText ) )
+            return;
+
+        CityLawManager.Current?.RequestAddLaw( lawText );
+        _cityLawValue = "";
+        LawEntry?.Blur();
+    }
+
+    void RemoveCityLaw( int index )
+    {
+        if ( !CanManageCityLaws )
+            return;
+
+        CityLawManager.Current?.RequestRemoveLaw( index );
+    }
+
+    void SubmitAdminRole( AdminRole role )
+    {
+        if ( !TryGetAdminSteamId( out var steamId ) )
+            return;
+
+        LocalPlayer?.RequestSetAdminRole( steamId, role );
+        _adminSteamIdValue = "";
+        AdminSteamIdEntry?.Blur();
+    }
+
+    void SetOpen( bool open )
+    {
+        if ( _isOpen == open )
+            return;
+
+        _isOpen = open;
+
+        if ( !open )
+        {
+            DropMoneyEntry?.Blur();
+            RoleplayNameEntry?.Blur();
+            LawEntry?.Blur();
+            AdminSteamIdEntry?.Blur();
+        }
+    }
+
+    void CloseFromDropEntry()
+    {
+        SetOpen( false );
+    }
+
+    void CloseFromRoleplayNameEntry()
+    {
+        SetOpen( false );
+    }
+
+    void CloseFromLawEntry()
+    {
+        SetOpen( false );
+    }
+
+    void CloseFromAdminEntry()
+    {
+        SetOpen( false );
+    }
+
+    public static Panel GetMenuOverlay()
+    {
+        return _currentMenuOverlay.IsValid() ? _currentMenuOverlay : null;
+    }
+
+    async void FetchMap()
+    {
+        var ident = Networking.MapName;
+
+        var pkg = await Package.FetchAsync( ident, false );
+        if ( pkg is not null )
+        {
+            _mapTitle = pkg.Title;
+        }
+    }
+
+    protected override void OnUpdate()
+    {
+        if ( MenuOverlay.IsValid() )
+        {
+            _currentMenuOverlay = MenuOverlay;
+        }
+
+        Panel.AcceptsFocus = false;
+        var dropMoneyHasFocus = DropMoneyEntry?.HasFocus ?? false;
+        var roleplayNameHasFocus = RoleplayNameEntry?.HasFocus ?? false;
+        var lawEntryHasFocus = LawEntry?.HasFocus ?? false;
+        var adminSteamIdHasFocus = AdminSteamIdEntry?.HasFocus ?? false;
+
+        var host = Game.ActiveScene.Get<SpawnMenuHost>();
+        if ( host?.Panel?.HasClass( "open" ) ?? false )
+        {
+            SetOpen( false );
+            Input.Clear( "Score" );
+        }
+
+        if ( !CanAccessAdministration && _currentPage == ScoreboardPage.Administration )
+        {
+            _currentPage = ScoreboardPage.Players;
+        }
+
+        if ( (Input.Pressed( "Score" ) || Input.Keyboard.Pressed( "Tab" )) && !dropMoneyHasFocus && !roleplayNameHasFocus && !lawEntryHasFocus && !adminSteamIdHasFocus )
+        {
+            SetOpen( !_isOpen );
+        }
+
+        SetClass( "visible", _isOpen );
+    }
+
+    protected override int BuildHash()
+    {
+        var hash = new System.HashCode();
+        hash.Add( _currentPage );
+        hash.Add( CanAccessAdministration );
+        hash.Add( CanManageAdminRoles );
+
+        foreach ( var item in NavigationItems )
+            hash.Add( item.Title );
+
+        switch ( _currentPage )
+        {
+            case ScoreboardPage.Dashboard:
+                hash.Add( LocalPlayerName );
+                hash.Add( LocalPlayerJob );
+                hash.Add( LocalPlayerMoney );
+                hash.Add( LocalPlayerSalary );
+                hash.Add( SessionType );
+                hash.Add( _dropMoneyValue );
+                hash.Add( _roleplayNameValue );
+                hash.Add( _cityLawValue );
+                hash.Add( CanManageCityLaws );
+                hash.Add( CityLawManager.Current?.Revision ?? 0 );
+
+                foreach ( var law in CityLaws )
+                    hash.Add( law );
+                break;
+
+            case ScoreboardPage.Players:
+                hash.Add( PlayerCount );
+
+                foreach ( var player in GetPlayers() )
+                {
+                    hash.Add( player.PlayerId );
+                    hash.Add( player.DisplayName );
+                    hash.Add( player.JobDefinitionPath );
+                    hash.Add( player.JobTitle );
+                    hash.Add( player.Kills );
+                    hash.Add( player.Deaths );
+                    hash.Add( (int)GetPlayerAdminRole( player ) );
+                }
+                break;
+
+            case ScoreboardPage.Jobs:
+                hash.Add( LocalPlayer?.JobDefinitionPath );
+
+                foreach ( var job in JobDefinitions )
+                {
+                    hash.Add( job.ResourcePath );
+                    hash.Add( job.GetDisplayColor() );
+                    hash.Add( JobManager.CountPlayers( job ) );
+                }
+                break;
+
+            case ScoreboardPage.Shop:
+                hash.Add( _selectedShopSection );
+                hash.Add( LocalPlayerMoney );
+                hash.Add( LocalPlayer?.JobDefinitionPath );
+                hash.Add( LocalOwnedPrinterCount );
+                hash.Add( TipJar.CountOwned( Connection.Local ) );
+                hash.Add( Lawboard.CountOwned( Connection.Local ) );
+                hash.Add( PrinterDefinitions.Count );
+
+                foreach ( var definition in PrinterDefinitions )
+                    hash.Add( definition.ResourcePath );
+
+                foreach ( var definition in AmmoShopCatalog.GetAll() )
+                    hash.Add( definition.PrefabPath );
+                break;
+
+            case ScoreboardPage.Administration:
+                hash.Add( (int)LocalPlayerAdminRole );
+                hash.Add( _adminSteamIdValue );
+
+                foreach ( var staff in GetOnlineStaff() )
+                {
+                    hash.Add( staff.PlayerId );
+                    hash.Add( (int)GetPlayerAdminRole( staff ) );
+                }
+
+                foreach ( var entry in GetSavedStaffEntries() )
+                {
+                    hash.Add( entry.Key.Value );
+                    hash.Add( entry.Value.DisplayName );
+                    hash.Add( (int)entry.Value.Role );
+                }
+                break;
+        }
+
+        return hash.ToHashCode();
+    }
+}

@@ -1,0 +1,78 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+@namespace Sandbox
+
+<root class="tip-jar-donation-popup">
+    <div class="tip-jar-panel" onclick:preventDefault=@true>
+        <label class="tip-title">Donate</label>
+        <label class="tip-recipient">@RecipientName</label>
+
+        <div class="tip-row">
+            <div class="tip-button @(CanDonate( 25 ) ? "" : "disabled")" @onclick="@(() => Donate( 25 ))">
+                <label>$25</label>
+            </div>
+            <div class="tip-button @(CanDonate( 100 ) ? "" : "disabled")" @onclick="@(() => Donate( 100 ))">
+                <label>$100</label>
+            </div>
+            <div class="tip-button @(CanDonate( 500 ) ? "" : "disabled")" @onclick="@(() => Donate( 500 ))">
+                <label>$500</label>
+            </div>
+            <div class="tip-button secondary" @onclick="@(() => Delete())">
+                <label>Cancel</label>
+            </div>
+        </div>
+    </div>
+</root>
+
+@code
+{
+    TipJar Target { get; set; }
+    string RecipientName { get; set; } = "Unknown";
+
+    bool CanDonate( int amount )
+    {
+        return amount > 0
+            && amount <= TipJar.MaxDonationAmount
+            && Player.FindLocalPlayer()?.CanAfford( amount ) == true;
+    }
+
+    public static void Open( TipJar target, string recipientName )
+    {
+        if ( !target.IsValid() )
+            return;
+
+        var parent = Game.ActiveScene.Get<PressableHud>()?.Panel?.FindRootPanel()
+            ?? Game.ActiveScene.Get<Scoreboard>()?.Panel?.FindRootPanel()
+            ?? Game.ActiveScene.Get<PressableHud>()?.Panel
+            ?? Game.ActiveScene.Get<Scoreboard>()?.Panel;
+
+        if ( parent is null )
+            return;
+
+        foreach ( var existing in parent.Children.OfType<TipJarDonationPopup>().ToArray() )
+        {
+            existing.Delete();
+        }
+
+        var popup = new TipJarDonationPopup
+        {
+            Target = target,
+            RecipientName = string.IsNullOrWhiteSpace( recipientName ) ? "Unknown" : recipientName,
+            Parent = parent
+        };
+    }
+
+    protected override void OnAfterTreeRender( bool firstTime )
+    {
+    }
+
+    void Donate( int amount )
+    {
+        if ( !CanDonate( amount ) || !Target.IsValid() )
+            return;
+
+        Target.RequestDonate( amount );
+        Delete();
+    }
+}

@@ -1,0 +1,22 @@
+{
+  "Title": "Cook",
+  "Description": "Food service role focused on utility, survival, and civilian support.",
+  "Category": "Services",
+  "AccentColor": "0.9843,0.7451,0.3098,1",
+  "Salary": 40,
+  "MaxPlayers": 3,
+  "Command": "/cook",
+  "Order": 80,
+  "StartingItems": [
+    "weapons/crowbar/crowbar.prefab"
+  ],
+  "Clothing": [
+    "models/citizen_clothes/hat/chefs_hat/chefs_hat.clothing",
+    "models/citizen_clothes/shirt/chef_shirt/chef_shirt.clothing",
+    "models/citizen_clothes/trousers/loosetrousers/loose_trousers.clothing",
+    "models/citizen_clothes/shoes/boots/black_boots.clothing"
+  ],
+  "IsDefault": false,
+  "__references": [],
+  "__version": 0
+}

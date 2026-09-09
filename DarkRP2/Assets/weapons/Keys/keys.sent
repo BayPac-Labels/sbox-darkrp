@@ -1,0 +1,9 @@
+{
+  "Prefab": "weapons/keys/keys.prefab",
+  "Title": "Keys",
+  "Description": "Lock owned doors with primary fire and unlock them with secondary fire.",
+  "Category": "Weapon",
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}

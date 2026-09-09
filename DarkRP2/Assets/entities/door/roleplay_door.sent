@@ -1,0 +1,9 @@
+{
+  "Prefab": "entities/door/roleplay_door.prefab",
+  "Title": "Roleplay Door",
+  "Description": "Hold E to buy. Right-click to lock or unlock, R to sell when owned.",
+  "Category": "World",
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}

@@ -1,0 +1,24 @@
+{
+  "Title": "Hobo",
+  "Description": "Street-level survival role with minimal gear and a rough civilian outfit.",
+  "Category": "Civilian",
+  "AccentColor": "0.7294,0.7569,0.8275,1",
+  "Salary": 0,
+  "MaxPlayers": 3,
+  "Command": "/hobo",
+  "Order": 90,
+  "StartingItems": [
+    "weapons/crowbar/crowbar.prefab",
+    "weapons/ragebait/ragebait.prefab"
+  ],
+  "Clothing": [
+    "models/citizen_clothes/hat/flatcap/flatcap.clothing",
+    "models/citizen_clothes/jumper/cardigan/cardigan_dirty.clothing",
+    "models/citizen_clothes/trousers/loosejeans/loose_jeans.clothing",
+    "models/citizen_clothes/shoes/slippers/slippers.clothing",
+    "models/citizen_clothes/gloves/fingerless_gloves/fingerless_gloves.clothing"
+  ],
+  "IsDefault": false,
+  "__references": [],
+  "__version": 0
+}

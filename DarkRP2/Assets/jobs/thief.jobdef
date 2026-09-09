@@ -1,0 +1,26 @@
+{
+  "Title": "Thief",
+  "Description": "Break into locked homes and slip out before the law arrives.",
+  "Category": "Criminal",
+  "AccentColor": "0.9059,0.3569,0.3569,1",
+  "Salary": 60,
+  "MaxPlayers": 6,
+  "RequiresVote": false,
+  "Command": "/thief",
+  "Order": 45,
+  "StartingItems": [
+    "weapons/lockpick/lockpick.prefab"
+  ],
+  "UseOwnerAvatarAppearance": false,
+  "PreserveOwnerAvatarAppearance": true,
+  "Clothing": [
+    "models/citizen_clothes/hat/beanie/beanie_black.clothing",
+    "models/citizen_clothes/jacket/hoodie/hoodie_black.clothing",
+    "models/citizen_clothes/trousers/jeans/jeans_black.clothing",
+    "models/citizen_clothes/shoes/sneakers/sneakers_black.clothing",
+    "models/citizen_clothes/gloves/fingerless_gloves/fingerless_gloves.clothing"
+  ],
+  "IsDefault": false,
+  "__references": [],
+  "__version": 0
+}

@@ -1,0 +1,23 @@
+{
+  "Title": "Civil Protection",
+  "Description": "Frontline police role focused on patrols, arrests, and street control.",
+  "Category": "Government",
+  "AccentColor": "0.3373,0.7176,0.9765,1",
+  "Salary": 65,
+  "MaxPlayers": 8,
+  "Command": "/cp",
+  "Order": 10,
+  "StartingItems": [
+    "weapons/glock/glock.prefab",
+    "weapons/arreststick/arrest_stick.prefab"
+  ],
+  "Clothing": [
+    "models/citizen_clothes/hat/police_hat/police_hat.clothing",
+    "models/citizen_clothes/shirt/jumpsuit/blue_jumpsuit.clothing",
+    "models/citizen_clothes/vest/tactical_vest/models/tactical_vest.clothing",
+    "models/citizen_clothes/shoes/boots/black_boots.clothing"
+  ],
+  "IsDefault": false,
+  "__references": [],
+  "__version": 0
+}

@@ -1,0 +1,100 @@
+{
+  "RootObject": {
+    "__guid": "eb13d793-e834-4af4-bcf7-0cc871c4d1ee",
+    "__version": 2,
+    "Flags": 0,
+    "Name": "shatter_glass",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,1",
+    "Tags": "",
+    "Enabled": true,
+    "NetworkMode": 2,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
+    "Components": [],
+    "Children": [
+      {
+        "__guid": "fa7ba4d0-359e-4b5c-9228-4611906acb8f",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "glass",
+        "Position": "0,0,50",
+        "Rotation": "0.7071068,0,0,0.7071068",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "ShatterGlassEntity",
+            "__guid": "84882231-301c-4afb-9d2f-de8bd7281aba",
+            "__enabled": true,
+            "Flags": 0,
+            "AutoRebuild": true,
+            "GlassSize": "100,100",
+            "Material": "materials/glass/glass_c.vmat",
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Points": [
+              "-50,-50",
+              "50,-50",
+              "50,50",
+              "-50,50"
+            ],
+            "RebuildDelay": 300,
+            "ShardLifeTime": 3,
+            "Surface": "surfaces/glass.surface",
+            "TextureAxisU": "1,0,0",
+            "TextureAxisV": "0,-1,0",
+            "TextureOffset": "0,0",
+            "TextureScale": "1,1",
+            "TextureSize": "512,512",
+            "Thickness": 1,
+            "UseGlassSize": true
+          }
+        ],
+        "Children": []
+      }
+    ],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": false,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": "",
+        "CustomBounds": false
+      }
+    },
+    "__variables": []
+  },
+  "ResourceVersion": 2,
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "__references": [
+    "facepunch.glass_c#111270"
+  ],
+  "__version": 2
+}

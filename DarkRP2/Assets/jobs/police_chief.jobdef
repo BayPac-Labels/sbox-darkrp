@@ -1,0 +1,25 @@
+{
+  "Title": "Police Chief",
+  "Description": "Leads Civil Protection and responds to high-risk situations with heavier gear.",
+  "Category": "Government",
+  "AccentColor": "0.251,0.651,0.9412,1",
+  "Salary": 90,
+  "MaxPlayers": 1,
+  "RequiresVote": true,
+  "Command": "/chief",
+  "Order": 20,
+  "StartingItems": [
+    "weapons/glock/glock.prefab",
+    "weapons/arreststick/arrest_stick.prefab",
+    "weapons/shotgun/shotgun.prefab"
+  ],
+  "Clothing": [
+    "models/citizen_clothes/hat/police_hat/police_hat.clothing",
+    "models/citizen_clothes/shirt/army_shirt/army_shirt.clothing",
+    "models/citizen_clothes/trousers/cargopants/cargo_pants_army.clothing",
+    "models/citizen_clothes/vest/tactical_vest/models/tactical_vest.clothing",
+    "models/citizen_clothes/shoes/boots/black_boots.clothing"
+  ],
+  "__references": [],
+  "__version": 0
+}

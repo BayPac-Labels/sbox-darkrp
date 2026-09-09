@@ -1,0 +1,97 @@
+@import "/UI/Theme.scss";
+
+TipJarDonationPopup,
+.tip-jar-donation-popup
+{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	pointer-events: none;
+	z-index: 10001;
+}
+
+TipJarDonationPopup .tip-jar-panel,
+.tip-jar-donation-popup .tip-jar-panel
+{
+	position: absolute;
+	left: 50%;
+	bottom: 180px;
+	transform: translateX( -50% );
+	width: 360px;
+	min-height: 112px;
+	padding: 14px;
+	background-color: $menu-panel-bg;
+	border-radius: 8px;
+	flex-direction: column;
+	gap: 10px;
+	pointer-events: all;
+	box-shadow: 0px 8px 24px #0008;
+	font-family: $body-font;
+}
+
+TipJarDonationPopup .tip-title,
+.tip-jar-donation-popup .tip-title
+{
+	font-size: 22px;
+	font-weight: 700;
+	color: $menu-text-strong;
+	height: 26px;
+}
+
+TipJarDonationPopup .tip-recipient,
+.tip-jar-donation-popup .tip-recipient
+{
+	font-size: 14px;
+	color: $menu-text;
+	height: 20px;
+}
+
+TipJarDonationPopup .tip-row,
+.tip-jar-donation-popup .tip-row
+{
+	flex-direction: row;
+	gap: 8px;
+	height: 38px;
+}
+
+TipJarDonationPopup .tip-button,
+.tip-jar-donation-popup .tip-button
+{
+	height: 38px;
+	min-width: 72px;
+	padding: 0px 12px;
+	background-color: $menu-accent-soft;
+	border-radius: 6px;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+
+	&:hover
+	{
+		background-color: rgba( $color-accent, 0.28 );
+		sound-in: ui.button.over;
+	}
+}
+
+TipJarDonationPopup .tip-button label,
+.tip-jar-donation-popup .tip-button label
+{
+	font-size: 15px;
+	font-weight: 700;
+	color: $menu-text-strong;
+	pointer-events: none;
+}
+
+TipJarDonationPopup .tip-button.secondary,
+.tip-jar-donation-popup .tip-button.secondary
+{
+	background-color: $menu-surface-soft;
+}
+
+TipJarDonationPopup .tip-button.disabled,
+.tip-jar-donation-popup .tip-button.disabled
+{
+	opacity: 0.35;
+}

@@ -1,0 +1,9 @@
+{
+  "Prefab": "entities/sents/shatter_glass.prefab",
+  "Title": "Shatter Glass",
+  "Description": "A breakable glass pane.",
+  "Category": "World",
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}

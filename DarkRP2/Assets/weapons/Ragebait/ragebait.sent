@@ -1,0 +1,9 @@
+{
+  "Prefab": "weapons/ragebait/ragebait.prefab",
+  "Title": "Ragebait",
+  "Description": "A hobo weapon that throws dirty bait.",
+  "Category": "Weapon",
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}

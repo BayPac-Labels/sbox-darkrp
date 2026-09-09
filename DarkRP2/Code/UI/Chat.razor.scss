@@ -1,0 +1,141 @@
+@import "/UI/Theme.scss";
+
+Chat
+{
+	position: absolute;
+	left: 64px;
+	bottom: 20%;
+	width: 600px;
+	justify-content: center;
+	align-items: center;
+	border-radius: 20px;
+	flex-direction: column;
+	align-items: stretch;
+	font-size: 20px;
+	font-family: $body-font;
+	font-weight: 600;
+	gap: 10px;
+	z-index: -1000;
+
+	&.hide
+	{
+		opacity: 0;
+	}
+
+	.output
+	{
+		flex-grow: 1;
+		flex-direction: column;
+		justify-content: flex-end;
+		align-items: stretch;
+		gap: 5px;
+		background-color: rgba( #0c202fcc, 0.7 );
+		border-radius: 8px;
+		backdrop-filter: blur( 10px );
+
+		.chat_entry
+		{
+			padding: 10px;
+			gap: 8px;
+			border-radius: 2px;
+			align-items: center;
+
+			.avatar
+			{
+				width: 24px;
+				height: 24px;
+				background-position: center;
+				background-size: cover;
+				border-radius: 100%;
+			}
+
+			.author
+			{
+				color: $color-accent;
+				font-weight: 800;
+				white-space: nowrap;
+				flex-shrink: 0;
+			}
+
+			.message
+			{
+				font-weight: 500;
+				font-size: 18px;
+				color: #fff;
+			}
+		}
+	}
+
+	.input
+	{
+		color: white;
+		flex-direction: column;
+		gap: 6px;
+
+		.textentry
+		{
+			align-items: flex-start;
+			white-space: normal;
+		}
+
+		.command_preview
+		{
+			flex-direction: column;
+			gap: 4px;
+			padding: 6px;
+			background-color: rgba( #07131d, 0.86 );
+			border-radius: 8px;
+			backdrop-filter: blur( 8px );
+		}
+
+		.command_suggestion
+		{
+			align-items: center;
+			gap: 8px;
+			padding: 5px 6px;
+			border-radius: 4px;
+			background-color: rgba( #ffffff, 0.04 );
+		}
+
+		.command_usage
+		{
+			min-width: 150px;
+			flex-shrink: 0;
+			color: $color-accent;
+			font-weight: 800;
+			font-size: 16px;
+		}
+
+		.command_description
+		{
+			flex-grow: 1;
+			color: rgba( #fff, 0.88 );
+			font-size: 15px;
+			font-weight: 500;
+		}
+
+		.command_access
+		{
+			flex-shrink: 0;
+			padding: 2px 6px;
+			border-radius: 4px;
+			background-color: rgba( $color-accent, 0.14 );
+			color: $color-accent;
+			font-size: 12px;
+			font-weight: 800;
+			text-transform: uppercase;
+		}
+	}
+
+	&.open
+	{
+		.input
+		{
+			background-color: rgba( #0c202fcc, 0.5 );
+			backdrop-filter: blur( 3px );
+			border-radius: 8px;
+			font-weight: 400;
+			font-size: 18px;
+		}
+	}
+}

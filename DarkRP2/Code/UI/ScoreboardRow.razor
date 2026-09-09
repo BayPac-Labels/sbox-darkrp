@@ -1,0 +1,241 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits Panel
+
+<root class="row player">
+
+	@if ( Entry is not null && Entry.Connection is not null )
+	{
+		var steamId = Entry.Connection.SteamId;
+		bool isMuted = SandboxVoice.IsMuted( steamId );
+		var role = GetEntryAdminRole();
+		var targetPlayer = GetEntryPlayer();
+
+		<img class="avatar" src="avatar:@steamId" />
+		<div class="name">
+			<div class="identity">
+				<div class="display-name">@Entry.DisplayName</div>
+				<label class="player-job" style="@GetJobAccentStyle()">@GetJobTitle()</label>
+				@if ( targetPlayer?.IsWanted == true )
+				{
+					<label class="row-role admin">Wanted</label>
+				}
+				@if ( targetPlayer?.IsArrested == true )
+				{
+					<label class="row-role none">Arrested</label>
+				}
+			</div>
+			@if ( role != AdminRole.None )
+			{
+				<label class="admin-role row-role @GetRoleClass( role )">@GetRoleLabel( role )</label>
+			}
+		</div>
+		<div class="stat">@Entry.Kills</div>
+		<div class="stat">@Entry.Deaths</div>
+		<div class="stat">@(Entry.Ping.CeilToInt())</div>
+		@if ( !Entry.IsMe )
+		{
+			<div class="mute-btn @(isMuted ? "muted" : "")" onclick="@( () => SandboxVoice.Mute( steamId ) )">
+				<i>@(isMuted ? "volume_off" : "volume_up")</i>
+			</div>
+		}
+		else
+		{
+			<div class="mute-spacer"></div>
+		}
+	}
+
+</root>
+
+@code
+{
+	public PlayerData Entry { get; set; }
+
+	public override void Tick()
+	{
+		if ( Entry is null ) return;
+		SetClass( "me", Entry.IsMe );
+		if ( Entry.Connection is not null )
+			SetClass( "friend", new Friend( Entry.Connection.SteamId ).IsFriend );
+	}
+
+	protected override void OnRightClick( MousePanelEvent e )
+	{
+		if ( Entry is null || Entry.Connection is null ) return;
+
+		var steamId = Entry.Connection.SteamId;
+		var localPlayer = Player.FindLocalPlayer();
+		var canKick = localPlayer?.HasAdminAccess == true;
+		var canSuperAdminModerate = localPlayer?.HasSuperAdminAccess == true;
+		var canManageRoles = localPlayer?.HasSuperAdminAccess == true;
+		var targetRole = GetEntryAdminRole();
+		var menu = Sandbox.MenuPanel.Open( this, Scoreboard.GetMenuOverlay() ?? GetMenuSourcePanel() );
+
+		menu.AddOption( "content_copy", "Copy Steam ID", () =>
+		{
+			Clipboard.SetText( steamId.ToString() );
+			Notices.AddNotice( "copy_all", Color.Cyan, $"Copied {Entry.Connection.DisplayName}'s SteamID to your clipboard", 5 );
+		} );
+
+		if ( !Entry.IsMe )
+		{
+			bool isMuted = SandboxVoice.IsMuted( steamId );
+			menu.AddOption( isMuted ? "volume_up" : "volume_off", isMuted ? "Unmute" : "Mute", () => SandboxVoice.Mute( steamId ) );
+
+			if ( canKick && !Entry.Connection.IsHost )
+			{
+				menu.AddSpacer();
+				menu.AddOption( "person_remove", "Kick", () => OpenKickConfirm( Entry ) );
+			}
+
+			if ( canSuperAdminModerate && !Entry.Connection.IsHost )
+			{
+				if ( !canKick )
+					menu.AddSpacer();
+
+				menu.AddOption( "gavel", "Ban", () => OpenBanConfirm( Entry ) );
+			}
+
+			if ( canManageRoles && !Entry.Connection.IsHost )
+			{
+				menu.AddSpacer();
+
+				if ( targetRole != AdminRole.Admin )
+					menu.AddOption( "security", "Set Admin", () => SetAdminRole( AdminRole.Admin ) );
+
+				if ( targetRole != AdminRole.SuperAdmin )
+					menu.AddOption( "stars", "Set SuperAdmin", () => SetAdminRole( AdminRole.SuperAdmin ) );
+
+				if ( targetRole != AdminRole.None )
+					menu.AddOption( "person_off", "Remove Staff", () => SetAdminRole( AdminRole.None ) );
+			}
+
+			if ( localPlayer?.CanIssueWantedStatus == true )
+			{
+				menu.AddSpacer();
+
+				if ( GetEntryPlayer()?.IsWanted == true )
+					menu.AddOption( "check_circle", "Clear Wanted", () => localPlayer.RequestSetWantedStatus( Entry.PlayerId, string.Empty, false ) );
+				else
+					menu.AddOption( "warning", "Mark Wanted", () => OpenWantedConfirm( Entry ) );
+			}
+
+			if ( localPlayer?.CanArrestPlayers == true && GetEntryPlayer()?.IsArrested == true )
+			{
+				menu.AddOption( "check_circle", "Unarrest", () => localPlayer.RequestReleaseArrestPlayer( Entry.PlayerId ) );
+			}
+
+		}
+
+		e.StopPropagation();
+	}
+
+	void OpenWantedConfirm( PlayerData entry )
+	{
+		var popup = new StringQueryPopup
+		{
+			Title = "Mark Wanted",
+			Prompt = $"Why is {entry.DisplayName} wanted?",
+			ConfirmLabel = "Confirm",
+			OnConfirm = x => Player.FindLocalPlayer()?.RequestSetWantedStatus( entry.PlayerId, x, true )
+		};
+		popup.Parent = FindPopupPanel();
+	}
+
+	void OpenKickConfirm( PlayerData entry )
+	{
+		var popup = new StringQueryPopup
+		{
+			Title = "Kick Player",
+			Prompt = $"Why do you want to kick {entry.DisplayName}?",
+			ConfirmLabel = "Kick",
+			OnConfirm = x => Player.FindLocalPlayer()?.RequestKickPlayer( (long)entry.Connection.SteamId.Value, x )
+		};
+		popup.Parent = FindPopupPanel();
+	}
+
+	void OpenBanConfirm( PlayerData entry )
+	{
+		var popup = new StringQueryPopup
+		{
+			Title = "Ban Player",
+			Prompt = $"Why do you want to ban {entry.DisplayName}?",
+			ConfirmLabel = "Ban",
+			OnConfirm = x => Player.FindLocalPlayer()?.RequestBanPlayer( (long)entry.Connection.SteamId.Value, x )
+		};
+		popup.Parent = FindPopupPanel();
+	}
+
+	AdminRole GetEntryAdminRole()
+	{
+		if ( Entry?.Connection?.IsHost == true )
+			return AdminRole.SuperAdmin;
+
+		return Player.For( Entry?.PlayerId ?? Guid.Empty )?.AdminRole ?? AdminRole.None;
+	}
+
+	Player GetEntryPlayer()
+	{
+		return Player.For( Entry?.PlayerId ?? Guid.Empty );
+	}
+
+	string GetRoleLabel( AdminRole role )
+	{
+		return role switch
+		{
+			AdminRole.Admin => "Admin",
+			AdminRole.SuperAdmin => "SuperAdmin",
+			_ => string.Empty
+		};
+	}
+
+	string GetRoleClass( AdminRole role )
+	{
+		return role switch
+		{
+			AdminRole.Admin => "admin",
+			AdminRole.SuperAdmin => "superadmin",
+			_ => "none"
+		};
+	}
+
+	void SetAdminRole( AdminRole role )
+	{
+		if ( Entry?.Connection is null )
+			return;
+
+		Player.FindLocalPlayer()?.RequestSetAdminRole( (long)Entry.Connection.SteamId.Value, role );
+	}
+
+	string GetJobTitle()
+	{
+		return string.IsNullOrWhiteSpace( Entry?.JobTitle ) ? "Citizen" : Entry.JobTitle;
+	}
+
+	string GetJobAccentStyle()
+	{
+		var color = JobDefinition.Get( Entry?.JobDefinitionPath )?.GetDisplayColor() ?? Color.White;
+		return $"color: rgba({(int)(color.r * 255f)}, {(int)(color.g * 255f)}, {(int)(color.b * 255f)}, {color.a:0.###});";
+	}
+
+	Panel GetMenuSourcePanel()
+	{
+		return Game.ActiveScene.Get<Scoreboard>()?.Panel ?? this;
+	}
+
+	protected override int BuildHash()
+	{
+		var hash = new HashCode();
+		hash.Add( Entry?.PlayerId );
+		hash.Add( Entry?.DisplayName );
+		hash.Add( Entry?.JobDefinitionPath );
+		hash.Add( Entry?.JobTitle );
+		hash.Add( Entry?.Kills );
+		hash.Add( Entry?.Deaths );
+		hash.Add( Entry?.Ping );
+		hash.Add( Entry?.IsWanted );
+		hash.Add( Entry?.IsArrested );
+		hash.Add( (int)GetEntryAdminRole() );
+		return hash.ToHashCode();
+	}
+}

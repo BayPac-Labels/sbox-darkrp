@@ -1,0 +1,9 @@
+{
+  "Prefab": "entities/misc/tip_jar.prefab",
+  "Title": "Tip Jar",
+  "Description": "A donation jar for hobo roleplay.",
+  "Category": "Miscellaneous",
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}

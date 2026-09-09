@@ -1,0 +1,23 @@
+{
+  "Title": "Mob Boss",
+  "Description": "High-ranking criminal leader with better equipment and control over gang operations.",
+  "Category": "Criminal",
+  "AccentColor": "0.55612,0.19782,0.5907,1",
+  "Salary": 85,
+  "MaxPlayers": 1,
+  "Command": "/mobboss",
+  "Order": 50,
+  "StartingItems": [
+    "weapons/colt1911/colt1911.prefab",
+    "weapons/mp5/mp5.prefab"
+  ],
+  "Clothing": [
+    "models/citizen_clothes/hat/fedora/fedora.clothing",
+    "models/citizen_clothes/jacket/brown_leather_jacket/black_leather_jacket.clothing",
+    "models/citizen_clothes/trousers/smarttrousers/trousers.smart.clothing",
+    "models/citizen_clothes/shoes/boots/black_boots.clothing"
+  ],
+  "IsDefault": false,
+  "__references": [],
+  "__version": 0
+}

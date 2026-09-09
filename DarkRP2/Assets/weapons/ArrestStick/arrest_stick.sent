@@ -1,0 +1,9 @@
+{
+  "Prefab": "weapons/arreststick/arrest_stick.prefab",
+  "Title": "Arrest Stick",
+  "Description": "Arrest players with primary fire and release them with secondary fire.",
+  "Category": "Weapon",
+  "IncludeCode": false,
+  "__references": [],
+  "__version": 0
+}
