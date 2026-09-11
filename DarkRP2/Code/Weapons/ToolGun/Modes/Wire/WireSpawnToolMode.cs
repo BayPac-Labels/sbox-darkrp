@@ -9,13 +9,17 @@ public abstract class WireSpawnToolMode : ToolMode
 	protected abstract void AddWireComponent( GameObject go );
 	protected virtual string UndoName => TypeDescription?.Title ?? "Wire";
 	protected virtual string UndoIcon => TypeDescription?.Icon ?? "⚡";
+	protected virtual bool RegisterNoWeldSecondary => true;
 
 	protected override void OnStart()
 	{
 		base.OnStart();
 		RegisterAction( ToolInput.Primary, () => "#tool.hint.wire.place", OnPlace );
-		RegisterAction( ToolInput.Secondary, () => "#tool.hint.wire.place_no_weld", OnPlaceNoWeld );
+		if ( RegisterNoWeldSecondary )
+			RegisterAction( ToolInput.Secondary, () => "#tool.hint.wire.place_no_weld", OnPlaceNoWeld );
 	}
+
+	protected void Place( bool weld ) => TrySpawn( weld );
 
 	void OnPlace() => TrySpawn( true );
 	void OnPlaceNoWeld() => TrySpawn( false );

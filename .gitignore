@@ -13,8 +13,8 @@ Exports/
 !*.shader_c
 .tools/
 
-# Official Wirebox checkout + junctions (see SETUP.md)
-External/
+# Wirebox is vendored under External/wirebox.
+# These DarkRP2 paths are Windows junctions into External — do not commit duplicates.
 DarkRP2/Assets/materials/wirebox/
 DarkRP2/Assets/models/wirebox/
 DarkRP2/Assets/particles/wirebox/

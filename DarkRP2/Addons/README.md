@@ -8,4 +8,5 @@ Wirebox is installed with the official layout from https://github.com/wiremod/wi
 
 Do not add `wiremod.wireboxaddon` as a cloud package. It loads SandboxPlus and breaks DarkRP2.
 
-Official `Code/wirebox` tools are not compiled here. They still require SandboxPlus (`BaseTool`, `PropHelper`). DarkRP2 lists `ToolMode` in Q → Tools, so the Wire group lives in `Code/Weapons/ToolGun/Modes/Wire`.
+Official SandboxPlus `BaseTool` sources under `Addons/wirebox` are not compiled here.
+DarkRP2 ports Wire tools as `ToolMode` under `Code/Weapons/ToolGun/Modes/Wire`, with components in `Code/Wirebox`.

@@ -106,8 +106,9 @@ DarkRP2 is Facepunch Sandbox (`ToolMode`). Wirebox tools are SandboxPlus `BaseTo
 
 Do **not** add `wiremod.wireboxaddon` or `wiremod.sbox_tool_auto` as `PackageReferences`.
 
+Wirebox source/assets are vendored in `External/wirebox`. After clone, recreate the junctions (once per machine):
+
 ```powershell
-git clone --depth 1 https://github.com/wiremod/wirebox.git C:\sbox-darkrp\External\wirebox
 cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Libraries\WireLib\Code C:\sbox-darkrp\External\wirebox\wirelib\Code
 cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Assets\materials\wirebox C:\sbox-darkrp\External\wirebox\Assets\materials\wirebox
 cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Assets\models\wirebox C:\sbox-darkrp\External\wirebox\Assets\models\wirebox

@@ -271,3 +271,270 @@ public class WireGateTool : WireSpawnToolMode
 		go.AddComponent<WireGateComponent>().GateType = string.IsNullOrWhiteSpace( GateType ) ? "Add" : GateType;
 	}
 }
+
+[Icon( "monitor" )]
+[Title( "#tool.name.wiredigitalscreen" )]
+[ClassName( "wiredigitalscreen" )]
+[Group( "#tool.group.wire" )]
+public class WireDigitalScreenTool : WireSpawnToolMode
+{
+	public override string Description => "#tool.hint.wiredigitalscreen.description";
+
+	protected override void OnStart()
+	{
+		if ( string.IsNullOrWhiteSpace( SpawnModel ) )
+			SpawnModel = "models/television/flatscreen_tv.vmdl";
+		base.OnStart();
+	}
+
+	protected override void AddWireComponent( GameObject go ) => go.AddComponent<WireDigitalScreenComponent>();
+}
+
+[Icon( "videocam" )]
+[Title( "#tool.name.wirecamerascreen" )]
+[ClassName( "wirecamerascreen" )]
+[Group( "#tool.group.wire" )]
+public class WireCameraScreenTool : WireSpawnToolMode
+{
+	[Property, Title( "Camera Model" )]
+	public string CameraModel { get; set; } = "models/wirebox/katlatze/apc.vmdl";
+
+	protected override bool RegisterNoWeldSecondary => false;
+	public override string Description => "#tool.hint.wirecamerascreen.description";
+
+	protected override void OnStart()
+	{
+		if ( string.IsNullOrWhiteSpace( SpawnModel ) )
+			SpawnModel = "models/television/flatscreen_tv.vmdl";
+		base.OnStart();
+		RegisterAction( ToolInput.Secondary, () => "#tool.hint.wirecamerascreen.place_camera", OnPlaceCamera );
+	}
+
+	protected override void AddWireComponent( GameObject go )
+	{
+		var screen = go.AddComponent<WireCameraScreenComponent>();
+		var renderer = go.GetComponent<ModelRenderer>();
+		if ( renderer.IsValid() )
+			screen.OnNewModel( renderer.Model );
+	}
+
+	void OnPlaceCamera()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+		if ( string.IsNullOrWhiteSpace( CameraModel ) ) return;
+
+		SpawnCamera( select, CameraModel, GetPlacement( select ) );
+		ShootEffects( select );
+	}
+
+	[Rpc.Host]
+	void SpawnCamera( SelectionPoint point, string modelPath, Transform tx )
+	{
+		if ( !CanUseToolOn( point ) ) return;
+		if ( string.IsNullOrWhiteSpace( modelPath ) ) return;
+		if ( !TryUseToolSpawnLimit() ) return;
+		if ( !TryUseToolActionCooldown() ) return;
+
+		var model = Model.Load( modelPath );
+		if ( !model.IsValid() )
+			model = Model.Load( "models/wirebox/katlatze/apc.vmdl" );
+		if ( !model.IsValid() ) return;
+
+		var go = new GameObject( false, "wire" );
+		go.Tags.Add( "removable" );
+		go.WorldTransform = tx;
+
+		var prop = go.AddComponent<Prop>();
+		prop.Model = model;
+
+		if ( (model.Physics?.Parts?.Count ?? 0) == 0 )
+		{
+			var collider = go.AddComponent<BoxCollider>();
+			collider.Scale = model.Bounds.Size;
+			collider.Center = model.Bounds.Center;
+			go.AddComponent<Rigidbody>();
+		}
+
+		go.AddComponent<WireCameraComponent>();
+
+		if ( !point.IsWorld )
+		{
+			var joint = go.AddComponent<FixedJoint>();
+			joint.Attachment = Joint.AttachmentMode.LocalFrames;
+			joint.LocalFrame2 = point.GameObject.WorldTransform.WithScale( 1 ).ToLocal( tx );
+			joint.LocalFrame1 = new Transform();
+			joint.AngularFrequency = 0;
+			joint.LinearFrequency = 0;
+			joint.Body = point.GameObject;
+			joint.EnableCollision = false;
+		}
+
+		ApplyPhysicsProperties( go );
+		RegisterToolSpawnedObject( go );
+		go.NetworkSpawn( true, null );
+		Track( go );
+
+		var undo = Player.Undo.Create();
+		undo.Name = "Wire Camera";
+		undo.Icon = "videocam";
+		undo.Add( go );
+	}
+}
+
+[Icon( "keyboard" )]
+[Title( "#tool.name.wirekeyboard" )]
+[ClassName( "wirekeyboard" )]
+[Group( "#tool.group.wire" )]
+public class WireKeyboardTool : WireSpawnToolMode
+{
+	public override string Description => "#tool.hint.wirekeyboard.description";
+
+	protected override void OnStart()
+	{
+		if ( string.IsNullOrWhiteSpace( SpawnModel ) )
+			SpawnModel = "models/wirebox/katlatze/button.vmdl";
+		base.OnStart();
+	}
+
+	protected override void AddWireComponent( GameObject go ) => go.AddComponent<WireKeyboardComponent>();
+}
+
+[Icon( "view_stream" )]
+[Title( "#tool.name.wirelightbridge" )]
+[ClassName( "wirelightbridge" )]
+[Group( "#tool.group.wire" )]
+public class WireLightBridgeTool : WireSpawnToolMode
+{
+	public override string Description => "#tool.hint.wirelightbridge.description";
+
+	protected override void OnStart()
+	{
+		if ( string.IsNullOrWhiteSpace( SpawnModel ) )
+			SpawnModel = "models/wirebox/katlatze/lightbridge.vmdl";
+		base.OnStart();
+	}
+
+	protected override void AddWireComponent( GameObject go ) => go.AddComponent<WireLightBridgeComponent>();
+}
+
+[Icon( "scale" )]
+[Title( "#tool.name.wireweightscale" )]
+[ClassName( "wireweightscale" )]
+[Group( "#tool.group.wire" )]
+public class WireWeightScaleTool : WireSpawnToolMode
+{
+	public override string Description => "#tool.hint.wireweightscale.description";
+
+	protected override void OnStart()
+	{
+		if ( string.IsNullOrWhiteSpace( SpawnModel ) )
+			SpawnModel = "models/sbox_props/pallet/pallet.vmdl";
+		base.OnStart();
+	}
+
+	protected override void AddWireComponent( GameObject go )
+	{
+		go.AddComponent<WireWeightScaleComponent>();
+		var prop = go.GetComponent<Prop>();
+		if ( prop.IsValid() )
+			prop.Health = 0;
+	}
+}
+
+[Icon( "bug_report" )]
+[Title( "#tool.name.wiredebugger" )]
+[ClassName( "wiredebugger" )]
+[Group( "#tool.group.wire" )]
+public class WireDebuggerTool : ToolMode
+{
+	public static HashSet<IWireComponent> TrackedEntities { get; } = new();
+
+	public override string Description => "#tool.hint.wiredebugger.description";
+
+	protected override void OnStart()
+	{
+		base.OnStart();
+		RegisterAction( ToolInput.Primary, () => "#tool.hint.wiredebugger.add", OnAdd );
+		RegisterAction( ToolInput.Secondary, () => "#tool.hint.wiredebugger.remove", OnRemove );
+		RegisterAction( ToolInput.Reload, () => "#tool.hint.wiredebugger.clear", OnClear );
+	}
+
+	void OnAdd()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() || select.IsWorld ) return;
+		if ( select.GameObject.GetComponent<IWireComponent>() is not IWireComponent wire )
+			return;
+
+		TrackedEntities.Add( wire );
+		ShootEffects( select );
+	}
+
+	void OnRemove()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() || select.IsWorld ) return;
+		if ( select.GameObject.GetComponent<IWireComponent>() is not IWireComponent wire )
+			return;
+
+		TrackedEntities.Remove( wire );
+		ShootEffects( select );
+	}
+
+	void OnClear()
+	{
+		TrackedEntities.Clear();
+	}
+
+	public override void DrawHud( HudPainter painter, Vector2 crosshair )
+	{
+		base.DrawHud( painter, crosshair );
+
+		TrackedEntities.RemoveWhere( ent => ent is not BaseWireComponent component || !component.IsValid() );
+		if ( TrackedEntities.Count == 0 )
+			return;
+
+		var y = 80f;
+		DrawDebuggerLine( painter, "Wire Debugger", 24, y, Color.Orange, 18 );
+		y += 26f;
+
+		foreach ( var ent in TrackedEntities )
+		{
+			var title = ent is Component c
+				? (c.GameObject?.Name ?? "Wire")
+				: "Wire";
+			DrawDebuggerLine( painter, title, 24, y, Color.White, 15 );
+			y += 18f;
+
+			if ( ent is IWireInputComponent input )
+			{
+				foreach ( var name in input.GetInputNames() )
+				{
+					DrawDebuggerLine( painter, $"  In  {name}: {input.GetInput( name ).value}", 24, y, Color.Gray, 13 );
+					y += 16f;
+				}
+			}
+
+			if ( ent is IWireOutputComponent output )
+			{
+				foreach ( var name in output.GetOutputNames() )
+				{
+					DrawDebuggerLine( painter, $"  Out {name}: {output.GetOutput( name ).value}", 24, y, Color.Gray, 13 );
+					y += 16f;
+				}
+			}
+
+			y += 8f;
+			if ( y > Screen.Height - 80f )
+				break;
+		}
+	}
+
+	static void DrawDebuggerLine( HudPainter painter, string text, float x, float y, Color color, float size )
+	{
+		var scope = new TextRendering.Scope( text, color, size );
+		scope.FontName = "Consolas";
+		painter.DrawText( scope, new Rect( x, y, 640, size + 4 ), TextFlag.Left );
+	}
+}
