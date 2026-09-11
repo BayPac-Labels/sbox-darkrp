@@ -488,7 +488,7 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 
 	public T GetWeapon<T>() where T : BaseCarryable
 	{
-		return GetComponent<PlayerInventory>().GetWeapon<T>();
+		return GetComponent<PlayerInventory>()?.GetWeapon<T>();
 	}
 
 	public void SwitchWeapon<T>() where T : BaseCarryable

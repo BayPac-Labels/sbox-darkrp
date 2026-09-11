@@ -49,9 +49,9 @@
 @code
 {
     ToolMode CurrentMode => Player.FindLocalPlayer()?.GetWeapon<Toolgun>()?.GetCurrentMode();
-    PostProcessManager PostProcessManager => Game.ActiveScene.GetSystem<PostProcessManager>();
+    PostProcessManager PostProcessManager => Game.ActiveScene?.GetSystem<PostProcessManager>();
 
-    protected override int BuildHash() => HashCode.Combine(CurrentMode, PostProcessManager?.SelectedPath, PostProcessManager?.GetSelectedComponents().Count);
+    protected override int BuildHash() => HashCode.Combine(CurrentMode, PostProcessManager?.SelectedPath, PostProcessManager?.GetSelectedComponents()?.Count);
 
 	bool IsActiveMode( TypeDescription t )
 	{
@@ -92,7 +92,7 @@
 
 	static bool FilterProperties(SerializedProperty o)
 	{
-		if (o.PropertyType is null) return false;
+		if (o is null || o.PropertyType is null) return false;
 		if (o.PropertyType.IsAssignableTo(typeof(Delegate))) return false;
 
 		if (o.IsMethod) return true;
@@ -101,4 +101,3 @@
 		return true;
 	}
 }
-

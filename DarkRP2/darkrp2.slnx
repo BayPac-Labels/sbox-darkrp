@@ -4,8 +4,8 @@
   </Configurations>
   <Project Path="Code/darkrp2.csproj" />
   <Project Path="Editor/darkrp2.editor.csproj" />
-  <Folder Name="/Addons/">
-    <Project Path="../../Program Files (x86)/Steam/steamapps/common/sbox/addons/base/code/Base Library.csproj" />
+  <Folder Name="/Libraries/">
+    <Project Path="../External/wirebox/wirelib/Code/wirelib.csproj" />
   </Folder>
   <Folder Name="/Tools/">
     <Project Path="../../Program Files (x86)/Steam/steamapps/common/sbox/addons/tools/Code/Base Editor Library.csproj" />

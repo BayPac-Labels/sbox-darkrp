@@ -12,3 +12,12 @@ Exports/
 *_c
 !*.shader_c
 .tools/
+
+# Official Wirebox checkout + junctions (see SETUP.md)
+External/
+DarkRP2/Assets/materials/wirebox/
+DarkRP2/Assets/models/wirebox/
+DarkRP2/Assets/particles/wirebox/
+DarkRP2/Assets/entity/wirebox/
+DarkRP2/Assets/spawnlists/wirebox/
+DarkRP2/Libraries/WireLib/Code/

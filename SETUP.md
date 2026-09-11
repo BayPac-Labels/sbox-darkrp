@@ -92,6 +92,32 @@ Repo (public): https://github.com/BayPac-Labels/sbox-darkrp
 
 Open `C:\sbox-darkrp\DarkRP2` (the folder) or `DarkRP2\sandbox.sbproj` in the s&box editor.
 
+## Installed addons (Wiremod)
+
+Official Wirebox is a **SandboxPlus workshop addon**, not a DarkRP2 package.
+
+On [SandboxPlus](https://sbox.game/wiremod/sandboxplus) the install is a launch-config addon list:
+
+`Addons: wiremod.wireboxaddon`
+
+`wiremod.wireboxaddon` also references `wiremod.sandboxplus`. Adding that package to DarkRP2’s `PackageReferences` loads a second `Player` type and breaks spawn, physgun, and the Q menu. That is why a Workshop “add package” install cannot be used here.
+
+DarkRP2 is Facepunch Sandbox (`ToolMode`). Wirebox tools are SandboxPlus `BaseTool`. This game’s Q → Tools tab only lists `ToolMode`, so Wire tools are registered in `Code/Weapons/ToolGun/Modes/Wire`. WireLib is the official library in `Libraries/WireLib`.
+
+Do **not** add `wiremod.wireboxaddon` or `wiremod.sbox_tool_auto` as `PackageReferences`.
+
+```powershell
+git clone --depth 1 https://github.com/wiremod/wirebox.git C:\sbox-darkrp\External\wirebox
+cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Libraries\WireLib\Code C:\sbox-darkrp\External\wirebox\wirelib\Code
+cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Assets\materials\wirebox C:\sbox-darkrp\External\wirebox\Assets\materials\wirebox
+cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Assets\models\wirebox C:\sbox-darkrp\External\wirebox\Assets\models\wirebox
+cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Assets\particles\wirebox C:\sbox-darkrp\External\wirebox\Assets\particles\wirebox
+cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Assets\entity\wirebox C:\sbox-darkrp\External\wirebox\Assets\entity\wirebox
+cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Assets\spawnlists\wirebox C:\sbox-darkrp\External\wirebox\Assets\spawnlists
+```
+
+WireLib is installed as a Facepunch library (`Libraries/WireLib`). Official Wirebox tools stay in `External/wirebox/Code/wirebox` because they are SandboxPlus `BaseTool` classes. DarkRP2’s Q → Tools tab only lists `ToolMode`, so the Wire group is registered in `Code/Weapons/ToolGun/Modes/Wire`.
+
 ## Optional IDE
 
 Cursor can edit the C#. For full IntelliSense, open the `.slnx` from the s&box editor (**Project → Open Solution**) in Visual Studio 2026 or Rider. See [IDE setup](https://sbox.game/learn/brax/ide-setup).

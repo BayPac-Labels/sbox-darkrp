@@ -37,7 +37,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="../../../Program Files (x86)/Steam/steamapps/common/sbox/addons/base/code/Base Library.csproj" />
+		<ProjectReference Include="../../External/wirebox/wirelib/Code/wirelib.csproj" />
 	</ItemGroup>
 
 </Project>

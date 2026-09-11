@@ -56,7 +56,7 @@
 
         MoveSlot(-(int)Input.MouseWheel.y);
 
-        if ( Input.Pressed( "invprev" ) && prev.IsValid() )
+        if ( (Input.Pressed( "invprev" ) || Input.Pressed( "PreviousWeapon" )) && prev.IsValid() )
         {
             var weapon = prev;
             prev = inventory.ActiveWeapon;
