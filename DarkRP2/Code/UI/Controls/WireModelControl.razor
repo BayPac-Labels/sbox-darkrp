@@ -1,0 +1,74 @@
+@using Sandbox;
+@using Sandbox.UI;
+@namespace Sandbox
+@inherits BaseControl
+@attribute [CustomEditor( typeof( string ), WithAllAttributes = [typeof( WireModelAttribute )] )]
+
+<root>
+	<div class="preview">
+		@if ( !string.IsNullOrWhiteSpace( Thumb ) )
+		{
+			<div class="thumb" style="background-image: url( @Thumb )"></div>
+		}
+		else
+		{
+			<div class="ext-badge">MDL</div>
+		}
+	</div>
+
+	<div class="content">
+		@if ( string.IsNullOrWhiteSpace( CurrentPath ) )
+		{
+			<div class="title empty">None Selected</div>
+		}
+		else
+		{
+			<div class="title">@DisplayName</div>
+			<div class="subtitle">Model</div>
+		}
+	</div>
+</root>
+
+@code
+{
+	string CurrentPath;
+	string DisplayName;
+	string Thumb;
+	string[] SpawnLists = [];
+
+	public override void Rebuild()
+	{
+		base.Rebuild();
+
+		if ( Property.TryGetAttribute<WireModelAttribute>( out var attr ) )
+			SpawnLists = attr.SpawnLists ?? [];
+
+		OnValueChanged();
+	}
+
+	public void OnValueChanged()
+	{
+		CurrentPath = Property.As.String;
+		DisplayName = WireSpawnLists.DisplayName( CurrentPath );
+		Thumb = WireSpawnLists.ThumbUrl( CurrentPath );
+	}
+
+	void SelectModel( string path )
+	{
+		Property.As.String = path;
+		OnValueChanged();
+		StateHasChanged();
+	}
+
+	protected override void OnClick( MousePanelEvent e )
+	{
+		base.OnClick( e );
+
+		var popup = new WireModelPopup();
+		popup.Title = "Select Model";
+		popup.SpawnLists = SpawnLists;
+		popup.CurrentValue = Property.As.String;
+		popup.Parent = FindPopupPanel();
+		popup.OnSelected = SelectModel;
+	}
+}

@@ -1,0 +1,2 @@
+.cursor/ffmpeg/avcodec-63.dll filter=lfs diff=lfs merge=lfs -text
+.cursor/ffmpeg/ffmpeg-master-latest-win64-gpl-shared/bin/avcodec-63.dll filter=lfs diff=lfs merge=lfs -text

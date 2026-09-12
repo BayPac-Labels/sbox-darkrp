@@ -194,6 +194,19 @@
         "OnComponentUpdate": null
       },
       {
+        "__type": "PlayerPocket",
+        "__guid": "c4e8a1f2-9b3d-4e6a-8f1c-2d5a7b9e0c4d",
+        "__enabled": true,
+        "Flags": 0,
+        "MaxSlots": 18,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+      {
         "__type": "PlayerStats",
         "__guid": "4bae6484-751b-47f2-8a10-50066416f125",
         "__enabled": true,

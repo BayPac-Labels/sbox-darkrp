@@ -24,7 +24,7 @@
           "Flags": 0,
           "__version": 1,
           "EnableCollision": true,
-          "MapName": "thieves.rpdowntown3t",
+          "MapName": "thieves.rpdowntown3tcompact",
           "NoOrigin": false,
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,

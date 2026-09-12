@@ -6,33 +6,108 @@ Vitals
 	width: 100%;
 	height: 100%;
 	pointer-events: none;
+	font-family: Tahoma, "Segoe UI", sans-serif;
+
+	// Identical to Inventory .hotbar — corners only anchor on position:relative.
+	.hud-box
+	{
+		position: relative;
+		overflow: visible;
+		background-color: $hud-panel-bg;
+
+		.corner
+		{
+			position: absolute;
+			width: 14px;
+			height: 14px;
+			pointer-events: none;
+			z-index: 10;
+
+			.arm-h, .arm-v
+			{
+				position: absolute;
+				background-color: #ffffff;
+			}
+
+			.arm-h
+			{
+				width: 14px;
+				height: 2px;
+			}
+
+			.arm-v
+			{
+				width: 2px;
+				height: 14px;
+			}
+		}
+
+		.corner.tl
+		{
+			top: -1px;
+			left: -1px;
+
+			.arm-h { top: 0px; left: 0px; }
+			.arm-v { top: 0px; left: 0px; }
+		}
+
+		.corner.tr
+		{
+			top: -1px;
+			right: -1px;
+
+			.arm-h { top: 0px; left: 0px; }
+			.arm-v { top: 0px; right: 0px; }
+		}
+
+		.corner.bl
+		{
+			bottom: -1px;
+			left: -1px;
+
+			.arm-h { bottom: 0px; left: 0px; }
+			.arm-v { top: 0px; left: 0px; }
+		}
+
+		.corner.br
+		{
+			bottom: -1px;
+			right: -1px;
+
+			.arm-h { bottom: 0px; left: 0px; }
+			.arm-v { top: 0px; right: 0px; }
+		}
+	}
 
 	.arrest-status
 	{
 		position: absolute;
 		top: $deadzone-y;
 		left: 50%;
-		min-width: 280px;
-		flex-direction: column;
-		align-items: center;
-		gap: 2px;
-		padding: 12px 18px;
 		transform: translateX(-50%);
-		background-color: #160b0bcc;
+		pointer-events: none;
+
+		.hud-box
+		{
+			min-width: 286px;
+			flex-direction: column;
+			align-items: center;
+			gap: 2px;
+			padding: 9px 18px;
+		}
 
 		.title
 		{
 			font-size: 18px;
-			font-weight: 800;
+			font-weight: 700;
 			text-transform: uppercase;
 			color: #ff8f70;
 		}
 
 		.timer
 		{
-			font-family: $body-font;
 			font-size: 15px;
-			font-weight: 600;
+			font-weight: 500;
 			color: $hud-text;
 		}
 	}
@@ -42,83 +117,42 @@ Vitals
 		position: absolute;
 		bottom: $deadzone-y;
 		left: $deadzone-x;
-		min-width: 0;
-		padding: 12px 14px;
-		flex-direction: column;
-		align-items: stretch;
-		gap: 8px;
-		transition: transform 0.2s ease, opacity 0.2s ease;
 		pointer-events: none;
+		transition: opacity 0.2s ease;
 
-		.identity
+		.hud-box
 		{
-			flex-direction: row;
-			align-items: center;
-			gap: 10px;
+			min-width: 242px;
+			flex-direction: column;
+			align-items: stretch;
+			gap: 1px;
+			padding: 11px 15px;
+		}
+
+		.line
+		{
+			font-size: 17px;
+			font-weight: 500;
+			color: $hud-text;
+			white-space: pre;
 		}
 
 		.name
 		{
-			font-size: 18px;
-			font-weight: 700;
-			color: $hud-text;
-		}
-
-		.job
-		{
-			margin-left: auto;
-			font-family: $body-font;
-			font-size: 11px;
 			font-weight: 600;
+		}
+
+		.hp, .armor
+		{
+			font-family: Consolas, "Courier New", monospace;
+			font-size: 15px;
 			letter-spacing: 0.5px;
-			text-transform: uppercase;
-			color: #fffa;
 		}
 
-		.stats
+		.wanted
 		{
-			flex-direction: row;
-			align-items: center;
-			gap: 10px;
-		}
-
-		.stat
-		{
-			flex-direction: row;
-			align-items: center;
-			gap: 6px;
-		}
-
-		.value
-		{
-			font-size: 18px;
-		}
-
-		.money
-		{
-			margin-left: auto;
-			gap: 2px;
-		}
-
-		.money-icon
-		{
-			width: 24px;
-			min-width: 24px;
-			height: 36px;
-			align-items: center;
-			justify-content: center;
-			font-family: $title-font;
-			font-size: 30px;
-			font-weight: 700;
-			line-height: 36px;
-			text-align: center;
-			color: #7ee08a;
-			background-color: transparent;
-		}
-
-		.armour .icon
-		{
-			background-tint: #7ec0ff;
+			color: #ff6b5a;
+			font-size: 15px;
 		}
 	}
 
@@ -127,22 +161,44 @@ Vitals
 		position: absolute;
 		bottom: $deadzone-y;
 		right: $deadzone-x;
-		min-width: 150px;
-		justify-content: center;
-		transition: transform 0.2s ease, opacity 0.2s ease;
+		pointer-events: none;
+		transition: opacity 0.2s ease;
+
+		.hud-box
+		{
+			min-width: 0;
+			flex-direction: row;
+			align-items: baseline;
+			gap: 4px;
+			padding: 9px 13px;
+		}
+
+		.clip
+		{
+			font-size: 20px;
+			font-weight: 700;
+			color: $hud-text;
+		}
+
+		.reserve
+		{
+			font-size: 15px;
+			font-weight: 500;
+			color: #fffa;
+		}
 	}
 
 	&.spawnmenu-open
 	{
 		.player-card
 		{
-			transform: translateX(-40px);
+			transform: translateX(-44px);
 			opacity: 0;
 		}
 
 		.ammo
 		{
-			transform: translateX(40px);
+			transform: translateX(44px);
 			opacity: 0;
 		}
 	}

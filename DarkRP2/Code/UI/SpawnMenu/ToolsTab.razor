@@ -17,14 +17,14 @@
                 {
                     @if ( !string.IsNullOrWhiteSpace( group.Key ) )
                     {
-                        <h2>@group.Key</h2>
+                        <h2>@Game.Language.GetPhrase( group.Key.TrimStart( '#' ) )</h2>
                     }
 
                     @foreach (var type in group.OrderBy(x => x.Title))
                     {
                         if (type.IsAbstract) continue;
 
-                        <MenuOption Text="@type.Title" Icon="@type.Icon" @onclick="@(() => SwitchMode(type))" Value="@type.TargetType"></MenuOption>
+                        <MenuOption Text="@Game.Language.GetPhrase( type.Title.TrimStart( '#' ) )" Icon="@type.Icon" @onclick="@(() => SwitchMode(type))" Value="@type.TargetType"></MenuOption>
                     }
                 }
             </Options>
@@ -36,7 +36,7 @@
         {
             @foreach ( var component in PostProcessManager.GetSelectedComponents() )
             {
-                <h2>@(Game.TypeLibrary.GetType( component.GetType() )?.Title ?? component.GetType().Name)</h2>
+                <h2>@ResolveTypeTitle( Game.TypeLibrary.GetType( component.GetType() ) )</h2>
                 <ControlSheet Target="@component" PropertyFilter="@FilterProperties"></ControlSheet>
             }
         }
@@ -90,6 +90,17 @@
 		var localPlayer = Player.FindLocalPlayer();
 		var toolgun = localPlayer?.GetWeapon<Toolgun>();
 		return toolgun?.GetCurrentMode();
+	}
+
+	static string ResolveTypeTitle( TypeDescription type )
+	{
+		if ( type is null )
+			return "Unknown";
+
+		if ( string.IsNullOrWhiteSpace( type.Title ) )
+			return type.Name ?? "Unknown";
+
+		return Game.Language.GetPhrase( type.Title.TrimStart( '#' ) );
 	}
 
 	static bool FilterProperties(SerializedProperty o)

@@ -1,0 +1,41 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "MdlToVmdlConverter/1.0.0": {
+        "dependencies": {
+          "KeyValues2": "0.8.0"
+        },
+        "runtime": {
+          "MdlToVmdlConverter.dll": {}
+        }
+      },
+      "KeyValues2/0.8.0": {
+        "runtime": {
+          "lib/net9.0/Datamodel.NET.dll": {
+            "assemblyVersion": "1.2.0.0",
+            "fileVersion": "1.2.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "MdlToVmdlConverter/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "KeyValues2/0.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-B6QSRGR32KJibr4XiVTUW2taJmVMNwhhREFtZ8WUg/bEv8hwOlLDAcUpPgZVewTplR2T1Tl0J5o4ZkwPt7aOiA==",
+      "path": "keyvalues2/0.8.0",
+      "hashPath": "keyvalues2.0.8.0.nupkg.sha512"
+    }
+  }
+}

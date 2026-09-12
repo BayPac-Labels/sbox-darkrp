@@ -24,7 +24,7 @@
           "$compiler": "texture",
           "$source": "imagefile",
           "data": {
-            "FilePath": "ui/weapons/toolgun_trans.png",
+            "FilePath": "ui/weapons/toolgun_hud.png",
             "MaxSize": 4096,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,

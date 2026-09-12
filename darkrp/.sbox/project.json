@@ -1,0 +1,47 @@
+{
+  "LocalAssetBrowser.History": {
+    "Value": "[\u0022D:\\\\Sandbox DarkRP\\\\darkrp\\\\Assets\u0022]",
+    "Timeout": 1791706638,
+    "DeleteAt": 0
+  },
+  "LocalAssetBrowser.HistoryIdx": {
+    "Value": "0",
+    "Timeout": 1791706638,
+    "DeleteAt": 0
+  },
+  "editor.openscenes": {
+    "Value": "[\u0022scenes/minimal.scene\u0022]",
+    "Timeout": 1791706646,
+    "DeleteAt": 0
+  },
+  "editor.activescene": {
+    "Value": "\u0022scenes/minimal.scene\u0022",
+    "Timeout": 1791706646,
+    "DeleteAt": 0
+  },
+  "scenes/minimal.scene.Viewport0": {
+    "Value": "{\u0022CameraPosition\u0022:\u0022-0.00499999896,-0.00499999989,0.00707106804\u0022,\u0022CameraRotation\u0022:\u0022-0.14644663,0.353553414,0.353553414,0.853553355\u0022,\u0022CameraOrthoHeight\u0022:1000,\u0022CameraOrtho\u0022:false}",
+    "Timeout": 1791706645,
+    "DeleteAt": 0
+  },
+  "SceneView.Viewport0.Settings": {
+    "Value": "{\u0022CameraPosition\u0022:\u0022-0.00499999896,-0.00499999989,0.00707106804\u0022,\u0022CameraRotation\u0022:\u0022-0.14644663,0.353553414,0.353553414,0.853553355\u0022,\u0022View\u0022:0,\u0022RenderMode\u0022:0,\u0022WireframeMode\u0022:false,\u0022EnablePostProcessing\u0022:true,\u0022EnablePrefabLighting\u0022:true,\u0022ShowSkyIn2D\u0022:true,\u0022ShowGrid\u0022:true,\u0022GridOpacity\u0022:0.2,\u0022GridAxis\u0022:0,\u0022CameraOrthoHeight\u0022:1000}",
+    "Timeout": 1791706645,
+    "DeleteAt": 0
+  },
+  "gizmo.settings": {
+    "Value": "{\u0022EditMode\u0022:\u0022position\u0022,\u0022Selection\u0022:true,\u0022ViewMode\u0022:\u00223d\u0022,\u0022GizmosEnabled\u0022:true,\u0022GizmoScale\u0022:1,\u0022WorldSpaceGizmos\u0022:false,\u0022GizmoDepthTest\u0022:false,\u0022GizmoRenderDistance\u0022:0,\u0022GridSpacing\u0022:32,\u0022SnapToGrid\u0022:false,\u0022SnapToAngles\u0022:true,\u0022AngleSpacing\u0022:15,\u0022GlobalSpace\u0022:false,\u0022DebugActionGraphs\u0022:false,\u0022DisabledGizmos\u0022:{}}",
+    "Timeout": 1791706646,
+    "DeleteAt": 0
+  },
+  "Window.SboxSceneEditor.Dock": {
+    "Value": "AAAER3jajZRvT8IwEMbf\u002Bykue4/jTzAsGSOIQUlEUZi\u002Brts5G0pL2oJg/PDeBsIYMH219u7p82t7t/qd1UzAErXhSrad2mXVAZSRirlM2k446VdaTifwn2w3XjIZYXyjoinlxmtjcQYvu4UOhAZ1ft5T0jIuKbKZorSaiVceJ2jbzsHUCfydGvpCMZvhqxQfzwW3lsKPmtMSyqT236n9QpJPgzRdjQwm7G0LWmiNaeqOo2Y6\u002BliTZMOBBzbDfAJ6QhmMU5Qb\u002BG5qdA5Z\u002BQ/y8FR0FJZkisIGCrJTm8gB6nmAkkYJLBp2jaHxtVafVISC4SF5u/4vppdjFmG3oxCe0aiFjtDsnWpHsDEKjNLbgzHaUmUoY1WWH6F\u002BV3qWdmCZrCuEirJ6ldLu\u002BRvVfw1DJlmSv68TGxvAiEkUpX5Dvip3GaolR8JNj2S/Lce/0ARey4NG3YMq\u002BO4mQt9tM55tuYE0c7plpYtl2idOd3kGaFY9qDXrV5AOTlHd3Y9J4zPPQHDxAzTpZH4=",
+    "Timeout": 1791706646,
+    "DeleteAt": 0
+  },
+  "SceneView.Layout": {
+    "Value": "{\u0022Layout\u0022:0,\u0022SplitterState\u0022:[]}",
+    "Timeout": 1791706646,
+    "DeleteAt": 0
+  }
+}

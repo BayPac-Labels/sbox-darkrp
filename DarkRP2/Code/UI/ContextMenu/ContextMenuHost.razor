@@ -53,7 +53,9 @@
 
     protected override void OnMouseDown(MousePanelEvent e)
     {
-        Sandbox.UI.InputFocus.Clear();
+        // Keep focus while binding a key — clearing it makes presses never register.
+        if ( !Sandbox.UI.KeyBindControl.IsCapturing )
+            Sandbox.UI.InputFocus.Clear();
 
         if ( e.MouseButton == MouseButtons.Right )
         {

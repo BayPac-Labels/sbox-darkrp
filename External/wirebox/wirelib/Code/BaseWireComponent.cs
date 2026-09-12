@@ -38,7 +38,7 @@ namespace Sandbox
 			return false;
 		}
 	}
-	public class BaseWireComponent : Component, IWireComponent
+	public partial class BaseWireComponent : Component, IWireComponent
 	{
 		public WirePortData WirePorts { get; } = new();
 

@@ -30,7 +30,7 @@
           "$compiler": "texture",
           "$source": "imagefile",
           "data": {
-            "FilePath": "ui/weapons/grenades/he_grenade_01.png",
+            "FilePath": "ui/weapons/grenades/he_grenade_wide.png",
             "MaxSize": 4096,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,

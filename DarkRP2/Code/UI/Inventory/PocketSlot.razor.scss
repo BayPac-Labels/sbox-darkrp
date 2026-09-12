@@ -1,0 +1,131 @@
+@import "/UI/Theme.scss";
+
+PocketSlot
+{
+    width: 64px;
+    height: 72px;
+    background-color: rgba( 0, 0, 0, 0.25 );
+    border-top: 1px solid rgba( 94, 177, 255, 0.25 );
+    border-bottom: 1px solid rgba( 94, 177, 255, 0.25 );
+    border-right: 1px solid rgba( 94, 177, 255, 0.25 );
+    transition: border-color 0.08s ease, background-color 0.08s ease;
+    position: relative;
+    overflow: visible;
+    pointer-events: all;
+
+    &:last-child
+    {
+        border-right: 0;
+    }
+
+    .selection
+    {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        border: 1px solid transparent;
+        background-color: transparent;
+        pointer-events: none;
+        z-index: 1;
+        transition: border-color 0.08s ease, background-color 0.08s ease;
+    }
+}
+
+PocketSlot .index
+{
+    position: absolute;
+    left: 3px;
+    top: 1px;
+    width: 14px;
+    height: 14px;
+    opacity: 0.9;
+    font-size: 11px;
+    font-family: Tahoma, "Segoe UI", sans-serif;
+    color: white;
+    font-weight: 600;
+    pointer-events: none;
+    z-index: 2;
+}
+
+PocketSlot .divider
+{
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    bottom: 16px;
+    height: 1px;
+    background-color: rgba( 255, 255, 255, 0.35 );
+    pointer-events: none;
+}
+
+PocketSlot .icon
+{
+    position: absolute;
+    top: 14px;
+    left: 5px;
+    right: 5px;
+    bottom: 22px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-tint: white;
+    pointer-events: none;
+}
+
+PocketSlot .fallback-icon
+{
+    position: absolute;
+    top: 14px;
+    left: 5px;
+    right: 5px;
+    bottom: 22px;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    color: white;
+    font-size: 22px;
+    opacity: 0.9;
+}
+
+PocketSlot .name
+{
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    bottom: 0px;
+    height: 14px;
+    font-size: 11px;
+    font-family: Tahoma, "Segoe UI", sans-serif;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: center;
+    white-space: nowrap;
+    overflow: visible;
+    letter-spacing: 0.2px;
+    pointer-events: none;
+    line-height: 14px;
+    opacity: 1;
+    z-index: 2;
+}
+
+PocketSlot.empty
+{
+    opacity: 1;
+}
+
+PocketSlot.drag-hover
+{
+    background-color: rgba( $hud-outline, 0.18 );
+
+    .selection
+    {
+        border-color: $hud-outline;
+    }
+
+    .index
+    {
+        opacity: 1;
+    }
+}

@@ -1,0 +1,336 @@
+is_global = true
+build_property.TargetFramework = net10.0
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v10.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property.EntryPointFilePath = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Sandbox
+build_property.RootNamespace = Sandbox
+build_property.ProjectDir = D:\Sandbox DarkRP\DarkRP2\Code\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 10.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = D:\Sandbox DarkRP\DarkRP2\Code
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 10.0
+build_property.EnableCodeStyleSeverity = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/FreeCam/FreeCamOverlay.razor]
+build_metadata.AdditionalFiles.TargetPath = RnJlZUNhbVxGcmVlQ2FtT3ZlcmxheS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Chat.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ2hhdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Components/MenuOption.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29tcG9uZW50c1xNZW51T3B0aW9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Components/MenuPanel.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29tcG9uZW50c1xNZW51UGFuZWwucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Components/PanelSwitcher.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29tcG9uZW50c1xQYW5lbFN3aXRjaGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Components/SpawnMenuContent.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29tcG9uZW50c1xTcGF3bk1lbnVDb250ZW50LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Components/SpawnMenuFilter.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29tcG9uZW50c1xTcGF3bk1lbnVGaWx0ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Components/SpawnMenuIconOptions.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29tcG9uZW50c1xTcGF3bk1lbnVJY29uT3B0aW9ucy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Components/SpawnMenuPage.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29tcG9uZW50c1xTcGF3bk1lbnVQYWdlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Components/SpawnMenuPath.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29tcG9uZW50c1xTcGF3bk1lbnVQYXRoLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Components/SpawnMenuToolbar.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29tcG9uZW50c1xTcGF3bk1lbnVUb29sYmFyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Components/VerticalMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29tcG9uZW50c1xWZXJ0aWNhbE1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/ContextMenu/ContextMenuHost.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29udGV4dE1lbnVcQ29udGV4dE1lbnVIb3N0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/ContextMenu/GameObjectInspector.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29udGV4dE1lbnVcR2FtZU9iamVjdEluc3BlY3Rvci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/ContextMenu/Inspector.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29udGV4dE1lbnVcSW5zcGVjdG9yLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Controls/GameResourceControl.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29udHJvbHNcR2FtZVJlc291cmNlQ29udHJvbC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Controls/ResourceSelectControl.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29udHJvbHNcUmVzb3VyY2VTZWxlY3RDb250cm9sLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Controls/ResourceSelectPopup.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29udHJvbHNcUmVzb3VyY2VTZWxlY3RQb3B1cC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Controls/StringQueryPopup.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29udHJvbHNcU3RyaW5nUXVlcnlQb3B1cC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Controls/WireModelControl.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29udHJvbHNcV2lyZU1vZGVsQ29udHJvbC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Controls/WireModelPopup.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcQ29udHJvbHNcV2lyZU1vZGVsUG9wdXAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Door/DoorRadialMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcRG9vclxEb29yUmFkaWFsTWVudS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/DragDrop/DragHandler.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcRHJhZ0Ryb3BcRHJhZ0hhbmRsZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Dresser/DresserEditor.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcRHJlc3NlclxEcmVzc2VyRWRpdG9yLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Effects/EffectsHost.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcRWZmZWN0c1xFZmZlY3RzSG9zdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Effects/EffectsList.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcRWZmZWN0c1xFZmZlY3RzTGlzdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Effects/EffectsProperties.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcRWZmZWN0c1xFZmZlY3RzUHJvcGVydGllcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/FacePoser/FacePoseEditor.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcRmFjZVBvc2VyXEZhY2VQb3NlRWRpdG9yLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/FacePoser/FacePoseMorphRow.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcRmFjZVBvc2VyXEZhY2VQb3NlTW9ycGhSb3cucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Feed.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcRmVlZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Inventory/HotbarPresetsButton.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcSW52ZW50b3J5XEhvdGJhclByZXNldHNCdXR0b24ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Inventory/Inventory.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcSW52ZW50b3J5XEludmVudG9yeS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Inventory/InventorySlot.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcSW52ZW50b3J5XEludmVudG9yeVNsb3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Inventory/PocketSlot.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcSW52ZW50b3J5XFBvY2tldFNsb3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/JobVotePanel.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcSm9iVm90ZVBhbmVsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/LockpickIndicator.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcTG9ja3BpY2tJbmRpY2F0b3IucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Nameplate.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcTmFtZXBsYXRlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/OwnerLabel/OwnerLabel.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcT3duZXJMYWJlbFxPd25lckxhYmVsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Pressable/PressableHud.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcUHJlc3NhYmxlXFByZXNzYWJsZUh1ZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Pressable/PressableTooltip.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcUHJlc3NhYmxlXFByZXNzYWJsZVRvb2x0aXAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Scoreboard.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU2NvcmVib2FyZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/ScoreboardRow.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU2NvcmVib2FyZFJvdy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenuHost.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51SG9zdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenuIcon.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51SWNvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenuModeBar.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51TW9kZUJhci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/AiSettingsPage.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XEFpU2V0dGluZ3NQYWdlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/CleanupPage.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XENsZWFudXBQYWdlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Dupes/DupesFooter.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XER1cGVzXER1cGVzRm9vdGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Dupes/DupesLocal.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XER1cGVzXER1cGVzTG9jYWwucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Dupes/DupesWorkshop.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XER1cGVzXER1cGVzV29ya3Nob3AucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Dupes/LocalDupeIcon.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XER1cGVzXExvY2FsRHVwZUljb24ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Dupes/WorkshopIcon.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XER1cGVzXFdvcmtzaG9wSWNvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Ents/BaseSpawnMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XEVudHNcQmFzZVNwYXduTWVudS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Ents/EntityListCloud.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XEVudHNcRW50aXR5TGlzdENsb3VkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Ents/EntityListLocal.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XEVudHNcRW50aXR5TGlzdExvY2FsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Mounts/MountContent.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XE1vdW50c1xNb3VudENvbnRlbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Props/PackageInformationPopup.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFByb3BzXFBhY2thZ2VJbmZvcm1hdGlvblBvcHVwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Props/SpawnPageCloud.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFByb3BzXFNwYXduUGFnZUNsb3VkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Props/SpawnPageFavourites.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFByb3BzXFNwYXduUGFnZUZhdm91cml0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Props/SpawnPageLocal.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFByb3BzXFNwYXduUGFnZUxvY2FsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/SaveMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFNhdmVNZW51LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Spawnlists/SpawnlistCreatePopup.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFNwYXdubGlzdHNcU3Bhd25saXN0Q3JlYXRlUG9wdXAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Spawnlists/SpawnlistFooter.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFNwYXdubGlzdHNcU3Bhd25saXN0Rm9vdGVyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Spawnlists/SpawnlistSkeleton.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFNwYXdubGlzdHNcU3Bhd25saXN0U2tlbGV0b24ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Spawnlists/SpawnlistView.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFNwYXdubGlzdHNcU3Bhd25saXN0Vmlldy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/Spawnlists/SpawnlistWorkshop.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFNwYXdubGlzdHNcU3Bhd25saXN0V29ya3Nob3AucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/SpawnMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFNwYXduTWVudS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/ToolsTab.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFRvb2xzVGFiLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/UsersPage.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFVzZXJzUGFnZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/UtilitiesPage.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFV0aWxpdGllc1BhZ2UucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/UtilityTab.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFV0aWxpdHlUYWIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/WeaponSettingsPage.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFdlYXBvblNldHRpbmdzUGFnZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/SpawnMenu/WireToolsTab.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcU3Bhd25NZW51XFdpcmVUb29sc1RhYi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/TipJarDonationPopup.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcVGlwSmFyRG9uYXRpb25Qb3B1cC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/ToolInfo/ToolInfoPanel.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcVG9vbEluZm9cVG9vbEluZm9QYW5lbC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Vitals/Vitals.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcVml0YWxzXFZpdGFscy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Voices.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcVm9pY2VzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sandbox DarkRP/DarkRP2/Code/UI/Wire/WireToolHud.razor]
+build_metadata.AdditionalFiles.TargetPath = VUlcV2lyZVxXaXJlVG9vbEh1ZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 

@@ -1,0 +1,4 @@
+newmtl keypad_sheet
+Kd 1 1 1
+map_Kd keypad_sheet.png
+

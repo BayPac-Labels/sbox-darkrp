@@ -1,0 +1,230 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:modeldoc29:version{3cec427c-1b0e-4d48-a90a-0436f33a6041} -->
+{
+	rootNode =
+	{
+		_class = "RootNode"
+		children =
+		[
+			{
+				_class = "RenderMeshList"
+				children =
+				[
+					{
+						_class = "RenderMeshFile"
+						name = "__skeleton_anchor"
+						filename = "./keypad_skeleton_anchor.smd"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = ""
+						import_filter =
+						{
+							exclude_by_default = false
+							exception_list = [ ]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						name = "Body_0"
+						filename = "./keypad_0_0.smd"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = ""
+						import_filter =
+						{
+							exclude_by_default = false
+							exception_list = [ ]
+						}
+					},
+				]
+			},
+			{
+				_class = "BodyGroupList"
+				children =
+				[
+					{
+						_class = "BodyGroup"
+						name = "Body"
+						children =
+						[
+							{
+								_class = "BodyGroupChoice"
+								name = "keypad_reference"
+								meshes =
+								[
+									"Body_0",
+								]
+							},
+							{
+								_class = "BodyGroupChoice"
+								name = "off"
+								meshes =
+								[
+								]
+							},
+						]
+						hidden_in_tools = false
+					},
+					{
+						_class = "BodyGroup"
+						name = "__internal"
+						children =
+						[
+							{
+								_class = "BodyGroupChoice"
+								name = "off"
+								meshes =
+								[
+								]
+							},
+							{
+								_class = "BodyGroupChoice"
+								name = "skeleton_anchor"
+								meshes =
+								[
+									"__skeleton_anchor",
+								]
+							},
+						]
+						hidden_in_tools = true
+					},
+				]
+			},
+			{
+				_class = "MaterialGroupList"
+				children =
+				[
+					{
+						_class = "DefaultMaterialGroup"
+						remaps =
+						[
+							{
+								from = "keypad_denied.vmat"
+								to = "materials/models/props_lab/keypad_denied.vmat"
+							},
+							{
+								from = "keypad_granted.vmat"
+								to = "materials/models/props_lab/keypad_granted.vmat"
+							},
+							{
+								from = "keypad_sheet.vmat"
+								to = "materials/models/props_lab/keypad_sheet.vmat"
+							},
+						]
+						use_global_default = false
+						global_default_material = ""
+					},
+					{
+						_class = "MaterialGroup"
+						name = "skin_1"
+						remaps =
+						[
+							{
+								from = "materials/models/props_lab/keypad_sheet.vmat"
+								to = "materials/models/props_lab/keypad_granted.vmat"
+							},
+						]
+					},
+					{
+						_class = "MaterialGroup"
+						name = "skin_2"
+						remaps =
+						[
+							{
+								from = "materials/models/props_lab/keypad_sheet.vmat"
+								to = "materials/models/props_lab/keypad_denied.vmat"
+							},
+						]
+					},
+				]
+			},
+			{
+				_class = "AttachmentList"
+				children =
+				[
+					{
+						_class = "Attachment"
+						name = "button"
+						parent_bone = "center_button"
+						relative_origin = [ 0, -0, -0 ]
+						relative_angles = [ -90, -90, 0 ]
+						weight = 1
+						ignore_rotation = false
+					},
+				]
+			},
+			{
+				_class = "HitboxSetList"
+				children =
+				[
+					{
+						_class = "HitboxSet"
+						name = "default"
+						children =
+						[
+							{
+								_class = "HitboxCapsule"
+								name = "hitbox_0"
+								parent_bone = "base"
+								surface_property = "flesh"
+								translation_only = false
+								tags = "group_0"
+								radius = 0.50454
+								point0 = [ 0, -5.005695, 0.504539 ]
+								point1 = [ 0, 4.985224, 0.504539 ]
+							},
+						]
+					},
+				]
+			},
+			{
+				_class = "PhysicsShapeList"
+				children =
+				[
+					{
+						_class = "PhysicsShapeBox"
+						parent_bone = "base"
+						surface_prop = "metalpanel"
+						collision_tags = "solid"
+						origin = [ 0.50454, 0, -0.010236 ]
+						angles = [ 0.0, 0.0, 0.0 ]
+						dimensions = [ 1.00908, 6.000003, 11.00001 ]
+					},
+				]
+			},
+			{
+				_class = "PhysicsBodyMarkupList"
+				children =
+				[
+					{
+						_class = "PhysicsBodyMarkup"
+						target_body = "base"
+						mass_override = 0
+						inertia_scale = 1
+						linear_damping = 0
+						angular_damping = 0
+						use_mass_center_override = false
+						mass_center_override = [ 0, 0, 0 ]
+					},
+				]
+			},
+			{
+				_class = "PhysicsJointList"
+				children =
+				[
+				]
+			},
+		]
+		model_archetype = ""
+		primary_associated_entity = ""
+		anim_graph_name = ""
+		base_model_name = ""
+	}
+}

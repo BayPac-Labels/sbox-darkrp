@@ -11,11 +11,43 @@
     return;
 
 <root>
-	@for (int i = 0; i < inventory.MaxSlots; i++)
-	{
-		<InventorySlot Index=@i Inventory=@inventory Active=@(activeSlot == i)></InventorySlot>
-	}
-	<HotbarPresetsButton Inventory=@inventory></HotbarPresetsButton>
+	@* Pocket + hotbar share one column so they keep identical width; presets sits beside the stack. *@
+	<div class="hotbar-row">
+		<div class="slot-stack">
+			@if ( inspectOpen && pocket.IsValid() )
+			{
+				<div class="pocket">
+					<div class="corner tl"><div class="arm-h"></div><div class="arm-v"></div></div>
+					<div class="corner tr"><div class="arm-h"></div><div class="arm-v"></div></div>
+					<div class="corner bl"><div class="arm-h"></div><div class="arm-v"></div></div>
+					<div class="corner br"><div class="arm-h"></div><div class="arm-v"></div></div>
+					<div class="pocket-rows">
+						@for ( int row = 0; row < 2; row++ )
+						{
+							<div class="pocket-row">
+								@for ( int col = 0; col < 9; col++ )
+								{
+									<PocketSlot Index=@(row * 9 + col) Pocket=@pocket></PocketSlot>
+								}
+							</div>
+						}
+					</div>
+				</div>
+			}
+
+			<div class="hotbar">
+				<div class="corner tl"><div class="arm-h"></div><div class="arm-v"></div></div>
+				<div class="corner tr"><div class="arm-h"></div><div class="arm-v"></div></div>
+				<div class="corner bl"><div class="arm-h"></div><div class="arm-v"></div></div>
+				<div class="corner br"><div class="arm-h"></div><div class="arm-v"></div></div>
+				@for ( int i = 0; i < inventory.MaxSlots; i++ )
+				{
+					<InventorySlot Index=@i Inventory=@inventory Active=@(activeSlot == i)></InventorySlot>
+				}
+			</div>
+		</div>
+		<HotbarPresetsButton Inventory=@inventory></HotbarPresetsButton>
+	</div>
 </root>
 
 @code
@@ -25,10 +57,35 @@
     Player Player => Player.FindLocalPlayer();
 
     PlayerInventory inventory;
+    PlayerPocket pocket;
     int activeSlot = -1;
+    bool inspectOpen;
     BaseCarryable prev;
 
-    protected override int BuildHash() => HashCode.Combine( inventory, activeSlot, Player?.WantsHideHud );
+    protected override int BuildHash()
+    {
+        var pocketHash = 0;
+        if ( pocket.IsValid() )
+        {
+            foreach ( var item in pocket.Items )
+                pocketHash = HashCode.Combine( pocketHash, item?.GameObject?.Id, item?.Slot, item?.GetDisplayName() );
+
+            if ( pocket.SlotObjectIds is not null )
+            {
+                foreach ( var pair in pocket.SlotObjectIds.ToList() )
+                    pocketHash = HashCode.Combine( pocketHash, pair.Key, pair.Value );
+            }
+        }
+
+        var weaponHash = 0;
+        if ( inventory.IsValid() )
+        {
+            foreach ( var weapon in inventory.Weapons )
+                weaponHash = HashCode.Combine( weaponHash, weapon, weapon?.InventorySlot );
+        }
+
+        return HashCode.Combine( inventory, pocket, activeSlot, inspectOpen, Player?.WantsHideHud, pocketHash, weaponHash );
+    }
 
     void Global.IPlayerEvents.OnPlayerPickup(PlayerPickupEvent e)
     {
@@ -41,12 +98,27 @@
 	    return host?.Panel?.HasClass("open") ?? false;
     }
 
+    bool IsInspectMenuOpen()
+    {
+	    if ( !IsSpawnMenuOpen() )
+		    return false;
+
+	    return SpawnMenuHost.GetActiveMode() is ContextMenuHost;
+    }
+
     protected override void OnUpdate()
     {
-        inventory = Game.ActiveScene.GetAllComponents<PlayerInventory>().Where(x => x.Network.IsOwner).FirstOrDefault();
+		inventory = Player?.GetComponent<PlayerInventory>();
+        pocket = Player?.GetComponent<PlayerPocket>();
         activeSlot = inventory?.ActiveWeapon?.InventorySlot ?? -1;
 
-        Panel.SetClass( "spawnmenu-open", IsSpawnMenuOpen() );
+        var spawnMenuOpen = IsSpawnMenuOpen();
+        inspectOpen = IsInspectMenuOpen();
+        Panel.SetClass( "spawnmenu-open", spawnMenuOpen );
+        Panel.SetClass( "inspect-open", inspectOpen );
+
+        // Style.Transform overrides stylesheet transforms, so bake spawnmenu dip in here.
+        HudSway.Apply( Panel, extraOffset: spawnMenuOpen ? new Vector2( 0f, 24f ) : Vector2.Zero );
     }
 
     public void HandleInput()
@@ -54,7 +126,7 @@
         if (inventory is null)
             return;
 
-        MoveSlot(-(int)Input.MouseWheel.y);
+        MoveSlot( WireToolHud.SuppressScrollWheel ? 0 : -(int)Input.MouseWheel.y );
 
         if ( (Input.Pressed( "invprev" ) || Input.Pressed( "PreviousWeapon" )) && prev.IsValid() )
         {

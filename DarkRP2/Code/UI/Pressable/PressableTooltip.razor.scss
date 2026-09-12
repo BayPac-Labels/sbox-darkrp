@@ -30,7 +30,27 @@
 		align-items: flex-end;
 		justify-content: center;
 		font-size: 1.5rem;
+		font-weight: 700;
+		text-align: center;
+		white-space: pre-line;
+		// Same gap to the crosshair whether or not a door name is shown.
 		margin-bottom: 80px;
+	}
+
+	// Out of flow so named doors keep the same Open / crosshair / prompt layout.
+	.subtitle
+	{
+		position: absolute;
+		left: 0;
+		right: 0;
+		// Midpoint between Open (below 180px icon) and crosshair (panel center).
+		top: 212px;
+		align-items: flex-end;
+		justify-content: center;
+		font-size: 1.5rem;
+		font-weight: 700;
+		text-align: center;
+		pointer-events: none;
 	}
 
 	.description

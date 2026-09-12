@@ -9,55 +9,61 @@
 <root>
     @if ( Player.IsArrested )
     {
-        <div class="arrest-status hud-panel">
-            <label class="title">Arrested</label>
-            <label class="timer">Released in @ArrestSecondsRemaining seconds</label>
+        <div class="arrest-status">
+            <div class="hud-box">
+                <div class="corner tl"><div class="arm-h"></div><div class="arm-v"></div></div>
+                <div class="corner tr"><div class="arm-h"></div><div class="arm-v"></div></div>
+                <div class="corner bl"><div class="arm-h"></div><div class="arm-v"></div></div>
+                <div class="corner br"><div class="arm-h"></div><div class="arm-v"></div></div>
+                <label class="title">Arrested</label>
+                <label class="timer">Released in @ArrestSecondsRemaining seconds</label>
+            </div>
         </div>
     }
 
-    <div class="player-card hud-panel">
-        <div class="identity">
-            <label class="name">@Player.DisplayName</label>
-            <label class="job">@JobTitle</label>
-        </div>
+    <div class="player-card">
+        <div class="hud-box">
+            <div class="corner tl"><div class="arm-h"></div><div class="arm-v"></div></div>
+            <div class="corner tr"><div class="arm-h"></div><div class="arm-v"></div></div>
+            <div class="corner bl"><div class="arm-h"></div><div class="arm-v"></div></div>
+            <div class="corner br"><div class="arm-h"></div><div class="arm-v"></div></div>
 
-        <div class="stats">
-            <div class="stat health">
-                <Image class="icon" Texture=@HealthIcon />
-                <label class="value">@DisplayHealth</label>
-            </div>
-
-            <div class="stat money">
-                <label class="icon money-icon">$</label>
-                <label class="value">@MoneyDisplay</label>
-            </div>
-
+            <label class="line name">Name: @Player.DisplayName</label>
+            <label class="line job">Job: @JobTitle</label>
+            <label class="line hp">@HealthLine</label>
             @if ( Player.Armour > 0 )
             {
-                <div class="stat armour">
-                    <Image class="icon" Texture=@ArmourIcon />
-                    <label class="value">@DisplayArmour</label>
-                </div>
+                <label class="line armor">@ArmourLine</label>
+            }
+            <label class="line money">Money: @MoneyDisplay</label>
+            @if ( Player.IsWanted )
+            {
+                <label class="line wanted">Wanted: @WantedReason</label>
             }
         </div>
     </div>
 
     @if ( Weapon.IsValid() && Weapon.UsesAmmo )
     {
-        <div class="ammo hud-panel">
-            @if ( WeaponConVars.UnlimitedAmmo )
-            {
-                <label class="value">∞</label>
-            }
-            else
-            {
-                <label class="value">@(Weapon.UsesClips ? Weapon.ClipContents.ToString() : (WeaponConVars.InfiniteReserves ? "∞" : Weapon.ReserveAmmo.ToString()))</label>
-                @if ( Weapon.UsesClips )
+        <div class="ammo">
+            <div class="hud-box">
+                <div class="corner tl"><div class="arm-h"></div><div class="arm-v"></div></div>
+                <div class="corner tr"><div class="arm-h"></div><div class="arm-v"></div></div>
+                <div class="corner bl"><div class="arm-h"></div><div class="arm-v"></div></div>
+                <div class="corner br"><div class="arm-h"></div><div class="arm-v"></div></div>
+                @if ( WeaponConVars.UnlimitedAmmo )
                 {
-                    <label class="alternate">@(WeaponConVars.InfiniteReserves ? "∞" : Weapon.ReserveAmmo.ToString())</label>
+                    <label class="clip">∞</label>
                 }
-            }
-            <Image class="icon" Texture=@AmmoIcon />
+                else
+                {
+                    <label class="clip">@(Weapon.UsesClips ? Weapon.ClipContents.ToString() : (WeaponConVars.InfiniteReserves ? "∞" : Weapon.ReserveAmmo.ToString()))</label>
+                    @if ( Weapon.UsesClips )
+                    {
+                        <label class="reserve">/ @(WeaponConVars.InfiniteReserves ? "∞" : Weapon.ReserveAmmo.ToString())</label>
+                    }
+                }
+            </div>
         </div>
     }
 </root>
@@ -68,14 +74,28 @@
     [Property] public Texture ArmourIcon { get; set; }
     [Property] public Texture AmmoIcon { get; set; }
 
+    const int BarSegments = 10;
+
     Player Player => Player.FindLocalPlayer();
     BaseWeapon Weapon => Player?.GetComponent<PlayerInventory>()?.ActiveWeapon as BaseWeapon;
 
     int DisplayHealth => (int)Player.Health;
     int DisplayArmour => (int)Player.Armour;
     int ArrestSecondsRemaining => Math.Max( 0, (int)MathF.Ceiling( Player.ArrestTimeRemaining ) );
-    string MoneyDisplay => MoneyFormatter.FormatCompact( Player.Money );
+    string MoneyDisplay => "$" + Player.Money.ToString( "N0", System.Globalization.CultureInfo.InvariantCulture );
     string JobTitle => string.IsNullOrWhiteSpace( Player.JobTitle ) ? "Citizen" : Player.JobTitle;
+    string WantedReason => string.IsNullOrWhiteSpace( Player.WantedReason ) ? "Yes" : Player.WantedReason;
+    string HealthLine => $"HP: [{BuildBar( Player.Health, Player.MaxHealth )}] {DisplayHealth}";
+    string ArmourLine => $"AR: [{BuildBar( Player.Armour, Player.MaxArmour )}] {DisplayArmour}";
+
+    string BuildBar( float value, float max )
+    {
+        var filled = 0;
+        if ( max > 0f )
+            filled = (int)MathF.Round( (value / max).Clamp( 0f, 1f ) * BarSegments );
+
+        return new string( '|', filled ) + new string( '.', BarSegments - filled );
+    }
 
     bool IsSpawnMenuOpen()
     {
@@ -86,13 +106,16 @@
     protected override void OnUpdate()
     {
         Panel.SetClass( "spawnmenu-open", IsSpawnMenuOpen() );
+        HudSway.Apply( Panel );
     }
 
     protected override int BuildHash()
     {
         if ( !Player.IsValid() || Player.WantsHideHud ) return 0;
 
-        var arrestHash = System.HashCode.Combine( Player.IsArrested, ArrestSecondsRemaining );
-        return System.HashCode.Combine( Player.DisplayName, Player.Health, Player.Armour, Player.Money, Player.JobTitle, arrestHash, Weapon?.ClipContents, Weapon?.ReserveAmmo );
+        var identity = System.HashCode.Combine( Player.DisplayName, Player.JobTitle, Player.IsWanted, Player.WantedReason );
+        var vitals = System.HashCode.Combine( Player.Health, Player.Armour, Player.Money, Player.IsArrested, ArrestSecondsRemaining );
+        var ammo = System.HashCode.Combine( Weapon?.ClipContents, Weapon?.ReserveAmmo );
+        return System.HashCode.Combine( identity, vitals, ammo );
     }
 }

@@ -1,0 +1,520 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+
+<root class="@RootClass">
+	@if ( _isOpen )
+	{
+		<div class="door-radial-backdrop" @onclick=@Close></div>
+		<div class="door-radial">
+			@if ( _mode == Mode.Wheel )
+			{
+				<div class="@WheelClass" @onclick=@ActivateHotSlice>
+					<div class="wedge add @WashHot( "add" )">
+						<div class="wedge-fill"></div>
+					</div>
+					<div class="wedge kick @WashHot( "kick" )">
+						<div class="wedge-fill"></div>
+					</div>
+					<div class="wedge sell @WashHot( "sell" )">
+						<div class="wedge-fill"></div>
+					</div>
+					<div class="spoke one"></div>
+					<div class="spoke two"></div>
+					<div class="spoke three"></div>
+					<div class="slice add @SliceHot( "add" )">
+						<div class="icon">person_add</div>
+						<label>Add User</label>
+					</div>
+					<div class="slice kick @SliceHot( "kick" )">
+						<div class="icon">person_remove</div>
+						<label>Kick User</label>
+					</div>
+					<div class="slice sell @SliceHot( "sell" )">
+						<div class="icon">sell</div>
+						<label>Sell Door</label>
+						<label class="slice-sub">@SellPriceLabel</label>
+					</div>
+					<div class="hub" @onclick=@StartRename @onclick:stopPropagation=@true>
+						<label class="hub-title">@HubTitle</label>
+						<label class="hub-hint">Rename</label>
+					</div>
+				</div>
+			}
+			else
+			{
+				<div class="user-list">
+					<div class="list-header">
+						<div class="back" @onclick=@ShowWheel>
+							<div class="icon">arrow_back</div>
+						</div>
+						<label>@ListTitle</label>
+					</div>
+					@if ( Entries.Count == 0 )
+					{
+						<label class="empty">@EmptyText</label>
+					}
+					else
+					{
+						@foreach ( var entry in Entries )
+						{
+							var selected = entry;
+							<div class="user-row" @onclick="@(() => SelectUser( selected.Id ))">
+								<label>@selected.Name</label>
+							</div>
+						}
+					}
+				</div>
+			}
+		</div>
+	}
+</root>
+
+@code
+{
+	enum Mode
+	{
+		Wheel,
+		AddUsers,
+		KickUsers
+	}
+
+	static DoorRadialMenu _current;
+	static TimeSince _inputLock;
+
+	RoleplayDoor _target;
+	bool _isOpen;
+	Mode _mode = Mode.Wheel;
+	TimeSince _opened;
+	string _hot;
+
+	public static bool IsOpen => Current.IsValid() && Current._isOpen && Current._target.IsValid();
+
+	public static DoorRadialMenu Current
+	{
+		get
+		{
+			if ( _current.IsValid() )
+				return _current;
+
+			_current = FindInstance();
+			return _current;
+		}
+	}
+
+	string RootClass => _isOpen ? "is-open" : "is-closed";
+	string WheelClass => string.IsNullOrEmpty( _hot ) ? "wheel" : "wheel is-picking";
+
+	string SliceHot( string id ) => _hot == id ? "is-hot" : string.Empty;
+	string WashHot( string id ) => _hot == id ? "is-hot" : string.Empty;
+
+	string HubTitle
+	{
+		get
+		{
+			if ( !_target.IsValid() )
+				return "Door";
+
+			return _target.GetHubTitle();
+		}
+	}
+
+	string SellPriceLabel
+	{
+		get
+		{
+			if ( !_target.IsValid() )
+				return string.Empty;
+
+			return $"${_target.GetGroupPurchasePrice():n0}";
+		}
+	}
+
+	string ListTitle => _mode == Mode.KickUsers ? "Kick User" : "Add User";
+	string EmptyText => _mode == Mode.KickUsers ? "No users on this door." : "No players to add.";
+
+	IReadOnlyList<(Guid Id, string Name)> Entries
+	{
+		get
+		{
+			if ( !_target.IsValid() )
+				return Array.Empty<(Guid, string)>();
+
+			if ( _mode == Mode.KickUsers )
+				return _target.GetAllowedUserEntries();
+
+			return _target.GetAddableUsers()
+				.Select( connection => (connection.Id, connection.DisplayName ?? "Unknown") )
+				.ToList();
+		}
+	}
+
+	protected override void OnEnabled()
+	{
+		_current = this;
+	}
+
+	protected override void OnStart()
+	{
+		_current = this;
+	}
+
+	protected override void OnDestroy()
+	{
+		if ( _current == this )
+			_current = null;
+	}
+
+	public static void Open( RoleplayDoor door )
+	{
+		var menu = Current ?? FindInstance();
+		menu?.OpenInternal( door );
+	}
+
+	public static void Close()
+	{
+		Current?.CloseInternal();
+	}
+
+	public static void TryHandleInput()
+	{
+		if ( !WasMiddleMousePressed() )
+			return;
+
+		if ( _inputLock < 0.05f )
+			return;
+
+		var menu = Current ?? FindInstance();
+		if ( !menu.IsValid() )
+			return;
+
+		if ( !menu.TryToggleFromInput() )
+			return;
+
+		_inputLock = 0;
+		ClearMiddleMouse();
+	}
+
+	bool TryToggleFromInput()
+	{
+		if ( _isOpen )
+		{
+			CloseInternal();
+			return true;
+		}
+
+		var player = global::Player.FindLocalPlayer();
+		if ( !player.IsValid() || player.IsSpawnOrInspectMenuOpen() )
+			return false;
+
+		if ( player.CanOpenDoorRadial( out var door ) )
+		{
+			OpenInternal( door );
+			return true;
+		}
+
+		if ( player.TryGetLookedRoleplayDoor( out var looked ) && !looked.IsGovernment && !looked.IsPublic )
+		{
+			var message = looked.IsOwned ? "Only the door owner can manage it." : "Buy this door first.";
+			Notices.AddNotice( "block", Color.Red, message, 3 );
+			return true;
+		}
+
+		return false;
+	}
+
+	void OpenInternal( RoleplayDoor door )
+	{
+		if ( !door.IsValid() )
+			return;
+
+		_target = door;
+		_mode = Mode.Wheel;
+		_isOpen = true;
+		_opened = 0;
+		_hot = null;
+		Panel?.SetClass( "is-open", true );
+		Panel?.SetClass( "is-closed", false );
+		Panel?.PlaySound( "sounds/kenney/ui/ui.navigate.forward.sound" );
+		StateHasChanged();
+	}
+
+	void CloseInternal()
+	{
+		if ( !_isOpen )
+			return;
+
+		_isOpen = false;
+		_mode = Mode.Wheel;
+		_target = null;
+		_hot = null;
+		Panel?.SetClass( "is-open", false );
+		Panel?.SetClass( "is-closed", true );
+		Panel?.PlaySound( "sounds/kenney/ui/ui.navigate.backward.sound" );
+		StateHasChanged();
+	}
+
+	void ShowWheel()
+	{
+		_mode = Mode.Wheel;
+		_hot = null;
+	}
+
+	void ActivateHotSlice()
+	{
+		if ( !_isOpen || _mode != Mode.Wheel )
+			return;
+
+		_hot = ResolveHotSlice();
+
+		switch ( _hot )
+		{
+			case "add":
+				ShowAddUsers();
+				break;
+			case "kick":
+				ShowKickUsers();
+				break;
+			case "sell":
+				SellDoor();
+				break;
+		}
+	}
+
+	void StartRename()
+	{
+		if ( !_target.IsValid() )
+			return;
+
+		var doorObject = _target.GameObject;
+		var initial = _target.CustomTitle?.Trim() ?? string.Empty;
+
+		CloseInternal();
+
+		var popup = new StringQueryPopup
+		{
+			Title = "Rename Door",
+			Prompt = "Choose a name for this door.",
+			Placeholder = "Door",
+			ConfirmLabel = "Rename",
+			InitialValue = initial,
+			OnConfirm = name =>
+			{
+				var player = global::Player.FindLocalPlayer();
+				if ( player.IsValid() && doorObject.IsValid() )
+					player.RequestRenameDoor( doorObject, name );
+			}
+		};
+
+		var parent = Panel?.FindRootPanel()
+			?? Game.ActiveScene?.Get<PressableHud>()?.Panel?.FindRootPanel()
+			?? Game.ActiveScene?.Get<Notices>()?.Panel?.FindRootPanel();
+		if ( parent is not null )
+			popup.Parent = parent;
+	}
+
+	void ShowAddUsers()
+	{
+		if ( !_target.IsValid() )
+			return;
+
+		if ( _target.GetAllowedUserIds().Count >= RoleplayDoor.MaxAllowedUsers )
+		{
+			Notices.AddNotice( "block", Color.Red, $"This door already has {RoleplayDoor.MaxAllowedUsers} users.", 3 );
+			return;
+		}
+
+		_mode = Mode.AddUsers;
+	}
+
+	void ShowKickUsers()
+	{
+		_mode = Mode.KickUsers;
+	}
+
+	void SelectUser( Guid userId )
+	{
+		var player = global::Player.FindLocalPlayer();
+		if ( !player.IsValid() || !_target.IsValid() )
+			return;
+
+		if ( _mode == Mode.KickUsers )
+		{
+			player.RequestKickDoorUser( _target.GameObject, userId );
+		}
+		else
+		{
+			player.RequestAddDoorUser( _target.GameObject, userId );
+		}
+
+		_mode = Mode.Wheel;
+	}
+
+	void SellDoor()
+	{
+		var player = global::Player.FindLocalPlayer();
+		if ( player.IsValid() && _target.IsValid() )
+		{
+			player.RequestSellDoor( _target.GameObject );
+		}
+
+		CloseInternal();
+	}
+
+	protected override void OnUpdate()
+	{
+		if ( !_current.IsValid() )
+			_current = this;
+
+		TryHandleInput();
+		SyncHotSlice();
+
+		if ( !_isOpen )
+			return;
+
+		if ( Input.Pressed( "cancel" ) )
+		{
+			CloseInternal();
+			return;
+		}
+
+		if ( _opened > 0.1f && !CanRemainOpen() )
+		{
+			CloseInternal();
+		}
+	}
+
+	void SyncHotSlice()
+	{
+		if ( !_isOpen || _mode != Mode.Wheel )
+		{
+			if ( _hot is not null )
+			{
+				_hot = null;
+				StateHasChanged();
+			}
+
+			return;
+		}
+
+		var next = ResolveHotSlice();
+		if ( next == _hot )
+			return;
+
+		_hot = next;
+		StateHasChanged();
+	}
+
+	string ResolveHotSlice()
+	{
+		if ( !_isOpen || _mode != Mode.Wheel || Panel is null )
+			return null;
+
+		var disc = FindChildByClass( Panel, "wheel" ) ?? FindChildByClass( Panel, "door-radial" );
+		if ( disc is null )
+			return null;
+
+		// MousePosition is local to the disc's top-left, in the same space as Box.Rect.
+		var size = disc.Box.Rect.Size;
+		if ( size.x <= 1f || size.y <= 1f )
+			return null;
+
+		var delta = disc.MousePosition - size * 0.5f;
+		var radius = size.x * 0.5f;
+		var dist = delta.Length;
+		var hub = radius * (128f / 420f);
+
+		if ( dist > radius || dist < hub )
+			return null;
+
+		var angle = MathF.Atan2( delta.x, -delta.y ) * (180f / MathF.PI);
+		if ( angle < 0f )
+			angle += 360f;
+
+		if ( angle >= 300f || angle < 60f )
+			return "add";
+
+		if ( angle < 180f )
+			return "kick";
+
+		return "sell";
+	}
+
+	static Panel FindChildByClass( Panel root, string className )
+	{
+		for ( var i = 0; i < root.ChildrenCount; i++ )
+		{
+			var child = root.GetChild( i );
+			if ( child is null )
+				continue;
+
+			if ( child.HasClass( className ) )
+				return child;
+
+			var nested = FindChildByClass( child, className );
+			if ( nested is not null )
+				return nested;
+		}
+
+		return null;
+	}
+
+	bool CanRemainOpen()
+	{
+		var player = global::Player.FindLocalPlayer();
+		if ( !player.IsValid() || player.Health < 1 )
+			return false;
+
+		if ( !_target.IsValid() || !_target.CanManageUsers( player ) )
+			return false;
+
+		return !player.IsSpawnOrInspectMenuOpen();
+	}
+
+	static DoorRadialMenu FindInstance()
+	{
+		var scene = Game.ActiveScene;
+		if ( scene is null )
+			return null;
+
+		var existing = scene.Get<DoorRadialMenu>()
+			?? scene.GetAllComponents<DoorRadialMenu>().FirstOrDefault();
+		if ( existing.IsValid() )
+			return existing;
+
+		var host = scene.Get<PressableHud>()?.GameObject
+			?? scene.Get<SpawnMenuHost>()?.GameObject
+			?? scene.Get<Notices>()?.GameObject;
+		if ( !host.IsValid() )
+			return null;
+
+		return host.GetOrAddComponent<DoorRadialMenu>();
+	}
+
+	static bool WasMiddleMousePressed()
+	{
+		return Input.Pressed( "attack3" )
+			|| Input.Pressed( "mouse3" )
+			|| Input.Pressed( "Mouse3" );
+	}
+
+	static void ClearMiddleMouse()
+	{
+		Input.Clear( "attack3" );
+		Input.Clear( "mouse3" );
+		Input.Clear( "Mouse3" );
+	}
+
+	protected override int BuildHash()
+	{
+		var allowed = _target.IsValid() ? string.Join( ",", _target.GetAllowedUserIds() ) : string.Empty;
+		var title = _target.IsValid() ? _target.GetHubTitle() : string.Empty;
+		return System.HashCode.Combine(
+			_isOpen,
+			_mode,
+			_hot,
+			_target.IsValid() ? _target.GameObject.Id : Guid.Empty,
+			System.HashCode.Combine( allowed, title, Connection.All.Count, Entries.Count ) );
+	}
+}

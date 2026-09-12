@@ -21,8 +21,8 @@
         }
 
         <span class="grow">
-            <Button Text=@ConfirmLabel Icon="check" class="menu-action primary" Disabled=@(ShowInput && string.IsNullOrWhiteSpace( Value )) @onclick=@OnConfirmClick />
             <Button Text="Cancel" Icon="close" class="menu-action primary" @onclick=@(() => Delete()) />
+            <Button Text=@ConfirmLabel Icon="check" class="menu-action primary" Disabled=@(ShowInput && string.IsNullOrWhiteSpace( Value )) @onclick=@OnConfirmClick />
         </span>
     </div>
 

@@ -26,17 +26,38 @@
         "DeployTime": 0.35,
         "DisplayIcon": {
           "$compiler": "texture",
-          "$source": "svgsource",
+          "$source": "imagefile",
           "data": {
-            "Size": "512,512",
-            "Source": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\">\n  <rect x=\"72\" y=\"132\" width=\"368\" height=\"276\" rx=\"34\" fill=\"#fff\"/>\n  <rect x=\"178\" y=\"84\" width=\"156\" height=\"76\" rx=\"22\" fill=\"#fff\"/>\n  <rect x=\"222\" y=\"194\" width=\"68\" height=\"154\" rx=\"10\" fill=\"#d92535\"/>\n  <rect x=\"179\" y=\"237\" width=\"154\" height=\"68\" rx=\"10\" fill=\"#d92535\"/>\n</svg>\n",
-            "Colorize": false,
-            "TargetColor": "1,1,1,1",
-            "Scale": 1,
-            "Offset": "0,0",
+            "FilePath": "ui/weapons/medkit_wide.png",
+            "MaxSize": 4096,
+            "ConvertHeightToNormals": false,
+            "NormalScale": 1,
             "Rotate": 0,
             "FlipVertical": false,
-            "FlipHorizontal": false
+            "FlipHorizontal": false,
+            "Cropping": {
+              "Left": 0,
+              "Top": 0,
+              "Right": 0,
+              "Bottom": 0
+            },
+            "Padding": {
+              "Left": 0,
+              "Top": 0,
+              "Right": 0,
+              "Bottom": 0
+            },
+            "InvertColor": false,
+            "Tint": "1,1,1,1",
+            "Blur": 0,
+            "Sharpen": 0,
+            "Brightness": 1,
+            "Contrast": 1,
+            "Saturation": 1,
+            "Hue": 0,
+            "Colorize": false,
+            "TargetColor": "1,1,1,1",
+            "CacheToDisk": true
           },
           "compiled": null
         },

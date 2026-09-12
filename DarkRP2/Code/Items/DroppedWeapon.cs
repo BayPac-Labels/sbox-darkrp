@@ -10,8 +10,17 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 		var name = weapon.DisplayName.ToUpper();
 
 		if ( HasInput() ) return new IPressable.Tooltip( "Can't pick this up", "block", name );
-		if ( IsInventoryFull() ) return new IPressable.Tooltip( "Inventory Full", "block", name );
-		return new IPressable.Tooltip( "Pick up", "inventory_2", name );
+
+		if ( !IsInventoryFull() )
+		{
+			var description = CanPocket( e ) ? $"{name} · MMB Pocket" : name;
+			return new IPressable.Tooltip( "Pick up", "inventory_2", description );
+		}
+
+		if ( CanPocket( e ) )
+			return new IPressable.Tooltip( "Pocket", "inventory_2", "Press MMB to pocket" );
+
+		return new IPressable.Tooltip( "Inventory Full", "block", name );
 	}
 
 	private bool IsInventoryFull()
@@ -35,16 +44,29 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 		return weapon.ShootInput.IsEnabled || weapon.SecondaryInput.IsEnabled;
 	}
 
+	bool CanPocket( IPressable.Event e )
+	{
+		var weapon = GetComponent<BaseCarryable>();
+		if ( !Pocketable.IsRpGun( weapon ) )
+			return false;
+
+		var player = e.Source.GameObject.Root.GetComponent<Player>() ?? Player.FindLocalPlayer();
+		if ( !player.IsValid() )
+			return false;
+
+		var pocket = player.GetComponent<PlayerPocket>();
+		if ( !pocket.IsValid() || pocket.IsFull )
+			return false;
+
+		return Pocketable.CanPlayerAccess( player, GameObject );
+	}
+
 	bool IPressable.CanPress( IPressable.Event e )
 	{
-		//
-		// Can't pick up weapons that are fireable by a contraption
-		//
 		if ( HasInput() ) return false;
 
-		if ( IsInventoryFull() ) return false;
-
-		return true;
+		// E is Use — equip to hotbar only. Pocketing is middle-mouse.
+		return !IsInventoryFull();
 	}
 
 	bool IPressable.Press( IPressable.Event e )
@@ -64,7 +86,14 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 		var inventory = player.GetComponent<PlayerInventory>();
 		if ( !inventory.IsValid() ) return;
 
-		TakeIntoInventory( inventory );
+		var weapon = GetComponent<BaseCarryable>();
+		if ( weapon.IsValid() && inventory.CanTake( weapon ) )
+		{
+			TakeIntoInventory( inventory );
+			return;
+		}
+
+		ShowInventoryFull();
 	}
 
 	/// <summary>

@@ -4,6 +4,8 @@
 @inherits Panel
 
 <root>
+    <div class="selection"></div>
+
     @if ( !Input.UsingController )
     {
         <label class="index">@(Index + 1)</label>
@@ -16,7 +18,8 @@
     @if (weapon.IsValid())
     {
         <div class="icon" @ref="IconPanel"></div>
-        <div class="name">@weapon.DisplayName</div>
+        <div class="divider"></div>
+        <label class="name" @ref="NamePanel"></label>
     }
 </root>
 
@@ -29,8 +32,12 @@
     public int Index { get; set; }
 
     Panel IconPanel { get; set; }
+    Label NamePanel { get; set; }
 
     static InventorySlot _hoveredDragSlot;
+
+    /// <summary>True while the mouse is over a hotbar slot during a drag (used by PocketSlot.OnDragEnd).</summary>
+    public static bool HasDragHover => _hoveredDragSlot is not null;
 
     public override bool WantsDrag
     {
@@ -69,17 +76,25 @@
             return;
         }
 
-        // Mouse is hovering over a different slot — OnDrop will fire and handle the swap.
+        // Mouse is hovering over a different hotbar or pocket slot — OnDrop will handle it.
         // Don't clear UserData yet so OnDrop can still retrieve it via e.Target.UserData.
         if ( _hoveredDragSlot is not null && _hoveredDragSlot != this )
             return;
 
+        if ( PocketSlot.HasDragHover )
+            return;
+
         // No slot handled it — clean up.
         if ( data?.Source is not null ) data.Source.UserData = null;
+        DragHandler.ClearEnded();
 
         // If the mouse is still over this slot the user dragged back to the source — no-op.
         var mousePos = Mouse.Position * ScaleFromScreen;
         if ( Box.RectOuter.IsInside( mousePos ) ) return;
+
+        // While holding C (inspect), move via pocket slots only — no world drop from drag.
+        if ( IsInspectMenuOpen() )
+            return;
 
         var weapon = GetWeapon();
         if ( !weapon.IsValid() || weapon.IsJobLocked ) return;
@@ -95,10 +110,29 @@
         return Inventory.GetSlot(Index);
     }
 
+    string GetDisplayName( BaseCarryable weapon )
+    {
+        if ( !weapon.IsValid() )
+            return string.Empty;
+
+        if ( weapon is SpawnerWeapon spawner && !string.IsNullOrWhiteSpace( spawner.Spawner?.DisplayName ) )
+            return spawner.Spawner.DisplayName;
+
+        return weapon.DisplayName ?? string.Empty;
+    }
+
     bool IsSpawnMenuOpen()
     {
         var host = Game.ActiveScene.Get<SpawnMenuHost>();
         return host?.Panel?.HasClass("open") ?? false;
+    }
+
+    bool IsInspectMenuOpen()
+    {
+        if ( !IsSpawnMenuOpen() )
+            return false;
+
+        return SpawnMenuHost.GetActiveMode() is ContextMenuHost;
     }
 
     public override void Tick()
@@ -131,6 +165,11 @@
                 IconPanel.Style.SetBackgroundImage(weapon.DisplayIcon);
             }
         }
+
+        if ( hasWeapon && NamePanel is not null )
+        {
+            NamePanel.Text = GetDisplayName( weapon );
+        }
     }
 
     protected override void OnDragEnter(PanelEvent e)
@@ -150,12 +189,11 @@
         RemoveClass( "drag-hover" );
         _hoveredDragSlot = null;
 
-        // Use DragHandler.Current first; fall back to UserData for the case where
-        // OnDragEnd fired first and cleared Current (but preserved UserData).
-        var data = DragHandler.Current ?? e.Target.UserData as DragData;
+        var data = DragHandler.Resolve( e );
 
         // Clean up UserData now that the drop is being processed.
         if ( data?.Source is not null ) data.Source.UserData = null;
+        DragHandler.ClearEnded();
 
         if ( data is null ) return;
 
@@ -170,8 +208,23 @@
             return;
         }
 
+        // Pocket → hotbar (inspect menu).
+        if ( data.Source is PocketSlot pocketSlot && pocketSlot.Pocket.IsValid() )
+        {
+            data.Handled = true;
+            pocketSlot.Pocket.MoveToHotbar( pocketSlot.Index, Index );
+            return;
+        }
+
         GameManager.GiveSpawnerWeaponAt( data.Type, data.Path, Index, data.Data as string, data.Icon, data.Title );
     }
 
-    protected override int BuildHash() => HashCode.Combine(GetWeapon(), Hovered, Active, Input.UsingController);
+    protected override int BuildHash()
+    {
+        var weapon = GetWeapon();
+        var name = weapon is SpawnerWeapon spawner
+            ? spawner.Spawner?.DisplayName
+            : weapon?.DisplayName;
+        return HashCode.Combine( weapon, name, Hovered, Active, Input.UsingController );
+    }
 }

@@ -3,6 +3,7 @@ using Sandbox.UI;
 public sealed class WeaponShipment : Component, Component.IPressable, IPhysgunEvent
 {
 	public const string PrefabPath = "entities/shipment/weapon_shipment.prefab";
+	public const int MaxStackSize = 10;
 
 	static readonly Dictionary<string, BBox> CachedBounds = new();
 	const float GhostHeight = 60.0f;
@@ -17,6 +18,25 @@ public sealed class WeaponShipment : Component, Component.IPressable, IPhysgunEv
 
 	[Property, Sync( SyncFlags.FromHost ), Change( nameof( OnRemainingWeaponsChanged ) )]
 	public int RemainingWeapons { get; set; }
+
+	public bool IsSameStackAs( WeaponShipment other )
+	{
+		if ( !other.IsValid() )
+			return false;
+
+		if ( string.IsNullOrWhiteSpace( WeaponPrefabPath ) || string.IsNullOrWhiteSpace( other.WeaponPrefabPath ) )
+			return false;
+
+		return string.Equals( WeaponPrefabPath, other.WeaponPrefabPath, StringComparison.OrdinalIgnoreCase );
+	}
+
+	public bool CanStackWith( WeaponShipment other )
+	{
+		if ( !IsSameStackAs( other ) )
+			return false;
+
+		return RemainingWeapons + other.RemainingWeapons <= MaxStackSize;
+	}
 
 	TimeSince _timeSinceDispense;
 
@@ -42,15 +62,42 @@ public sealed class WeaponShipment : Component, Component.IPressable, IPhysgunEv
 
 	IPressable.Tooltip? IPressable.GetTooltip( IPressable.Event e )
 	{
-		var title = RemainingWeapons > 0 ? "Dispense Weapon" : "Shipment Empty";
-		var icon = RemainingWeapons > 0 ? "inventory_2" : "block";
 		var description = $"{ShipmentTitle} - {RemainingWeapons} left";
-		return new IPressable.Tooltip( title, icon, description );
+
+		if ( RemainingWeapons > 0 && !string.IsNullOrWhiteSpace( WeaponPrefabPath ) )
+		{
+			if ( CanPocket( e ) )
+				description = $"{description} · MMB Pocket";
+
+			return new IPressable.Tooltip( "Dispense Weapon", "inventory_2", description );
+		}
+
+		if ( CanPocket( e ) )
+			return new IPressable.Tooltip( "Pocket", "inventory_2", "Press MMB to pocket" );
+
+		return new IPressable.Tooltip( "Shipment Empty", "block", description );
 	}
 
 	bool IPressable.CanPress( IPressable.Event e )
 	{
+		// E is Use — dispense a weapon. Pocketing is middle-mouse.
 		return RemainingWeapons > 0 && !string.IsNullOrWhiteSpace( WeaponPrefabPath );
+	}
+
+	bool CanPocket( IPressable.Event e )
+	{
+		var player = e.Source.GameObject.Root.GetComponent<Player>() ?? Player.FindLocalPlayer();
+		if ( !player.IsValid() )
+			return false;
+
+		var pocket = player.GetComponent<PlayerPocket>();
+		if ( !pocket.IsValid() )
+			return false;
+
+		if ( pocket.IsFull && !pocket.CanMergeShipment( GameObject ) )
+			return false;
+
+		return Pocketable.CanPlayerAccess( player, GameObject );
 	}
 
 	bool IPressable.Press( IPressable.Event e )
@@ -69,6 +116,12 @@ public sealed class WeaponShipment : Component, Component.IPressable, IPhysgunEv
 
 	void OnRemainingWeaponsChanged( int oldCount, int newCount )
 	{
+		if ( Networking.IsHost && newCount > MaxStackSize )
+		{
+			RemainingWeapons = MaxStackSize;
+			return;
+		}
+
 		RefreshLabels();
 
 		if ( !Networking.IsHost || newCount > 0 )
@@ -175,7 +228,7 @@ public sealed class WeaponShipment : Component, Component.IPressable, IPhysgunEv
 
 		shipment.WeaponPrefabPath = definition.WeaponPrefabPath;
 		shipment.ShipmentTitle = definition.Title;
-		shipment.RemainingWeapons = definition.WeaponsPerShipment;
+		shipment.RemainingWeapons = Math.Clamp( definition.WeaponsPerShipment, 1, MaxStackSize );
 
 		shipmentObject.Tags.Add( "removable" );
 		Ownable.Set( shipmentObject, owner.Network.Owner );
@@ -221,7 +274,7 @@ public sealed class WeaponShipment : Component, Component.IPressable, IPhysgunEv
 			CacheLabels();
 		}
 
-		var labelText = $"{ShipmentTitle} | {RemainingWeapons} LEFT";
+		var labelText = $"{ShipmentTitle} ({RemainingWeapons})";
 		foreach ( var label in Labels )
 		{
 			if ( !label.IsValid() )

@@ -94,30 +94,29 @@ Open `C:\sbox-darkrp\DarkRP2` (the folder) or `DarkRP2\sandbox.sbproj` in the s&
 
 ## Installed addons (Wiremod)
 
-Official Wirebox is a **SandboxPlus workshop addon**, not a DarkRP2 package.
+DarkRP2 installs **Wirebox + WireLib + Autotool** using the official Wirebox layout (vendored source + junctions), not Workshop packages.
 
-On [SandboxPlus](https://sbox.game/wiremod/sandboxplus) the install is a launch-config addon list:
+Do **not** add `wiremod.wireboxaddon`, `wiremod.sandboxplus`, or `wiremod.sbox_tool_auto` as `PackageReferences` — those load SandboxPlus / Entity-era APIs and break Facepunch DarkRP2.
 
-`Addons: wiremod.wireboxaddon`
+| Piece | How it is installed |
+|---|---|
+| Wirebox | Vendored in `External/wirebox`; Facepunch `ToolMode` port in `DarkRP2/Code/Weapons/ToolGun/Modes/Wire` + `Code/Wirebox` |
+| WireLib | `DarkRP2/Libraries/WireLib` (Code junction → External wirelib) |
+| Autotool | Scene port in `Code/Weapons/ToolGun/ToolAuto.cs` (`sbox_tool_auto` / attack3) |
 
-`wiremod.wireboxaddon` also references `wiremod.sandboxplus`. Adding that package to DarkRP2’s `PackageReferences` loads a second `Player` type and breaks spawn, physgun, and the Q menu. That is why a Workshop “add package” install cannot be used here.
-
-DarkRP2 is Facepunch Sandbox (`ToolMode`). Wirebox tools are SandboxPlus `BaseTool`. This game’s Q → Tools tab only lists `ToolMode`, so Wire tools are registered in `Code/Weapons/ToolGun/Modes/Wire`. WireLib is the official library in `Libraries/WireLib`.
-
-Do **not** add `wiremod.wireboxaddon` or `wiremod.sbox_tool_auto` as `PackageReferences`.
-
-Wirebox source/assets are vendored in `External/wirebox`. After clone, recreate the junctions (once per machine):
+After clone, recreate the junctions (once per machine):
 
 ```powershell
-cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Libraries\WireLib\Code C:\sbox-darkrp\External\wirebox\wirelib\Code
-cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Assets\materials\wirebox C:\sbox-darkrp\External\wirebox\Assets\materials\wirebox
-cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Assets\models\wirebox C:\sbox-darkrp\External\wirebox\Assets\models\wirebox
-cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Assets\particles\wirebox C:\sbox-darkrp\External\wirebox\Assets\particles\wirebox
-cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Assets\entity\wirebox C:\sbox-darkrp\External\wirebox\Assets\entity\wirebox
-cmd /c mklink /J C:\sbox-darkrp\DarkRP2\Assets\spawnlists\wirebox C:\sbox-darkrp\External\wirebox\Assets\spawnlists
+$root = "D:\Sandbox DarkRP"
+cmd /c mklink /J "$root\DarkRP2\Libraries\WireLib\Code" "$root\External\wirebox\wirelib\Code"
+cmd /c mklink /J "$root\DarkRP2\Assets\materials\wirebox" "$root\External\wirebox\Assets\materials\wirebox"
+cmd /c mklink /J "$root\DarkRP2\Assets\models\wirebox" "$root\External\wirebox\Assets\models\wirebox"
+cmd /c mklink /J "$root\DarkRP2\Assets\particles\wirebox" "$root\External\wirebox\Assets\particles\wirebox"
+cmd /c mklink /J "$root\DarkRP2\Assets\entity\wirebox" "$root\External\wirebox\Assets\entity\wirebox"
+cmd /c mklink /J "$root\DarkRP2\Assets\spawnlists\wirebox" "$root\External\wirebox\Assets\spawnlists"
 ```
 
-WireLib is installed as a Facepunch library (`Libraries/WireLib`). Official Wirebox tools stay in `External/wirebox/Code/wirebox` because they are SandboxPlus `BaseTool` classes. DarkRP2’s Q → Tools tab only lists `ToolMode`, so the Wire group is registered in `Code/Weapons/ToolGun/Modes/Wire`.
+Official SandboxPlus `BaseTool` sources stay in `External/wirebox/Code/wirebox` and are not compiled into DarkRP2.
 
 ## Optional IDE
 

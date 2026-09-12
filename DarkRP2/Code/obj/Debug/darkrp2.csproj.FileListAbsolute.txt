@@ -1,0 +1,36 @@
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\EmbeddedAttribute.cs
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\ValidatableTypeAttribute.cs
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\darkrp2.csproj.AssemblyReference.cache
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\rpswa.dswa.cache.json
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\darkrp2.GeneratedMSBuildEditorConfig.editorconfig
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\darkrp2.AssemblyInfoInputs.cache
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\darkrp2.AssemblyInfo.cs
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\darkrp2.csproj.CoreCompileInputs.cache
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\darkrp2.sourcelink.json
+C:\Program Files (x86)\Steam\steamapps\common\sbox\.vs\output\wirelib.staticwebassets.endpoints.json
+C:\Program Files (x86)\Steam\steamapps\common\sbox\.vs\output\Properties\launchSettings.json
+C:\Program Files (x86)\Steam\steamapps\common\sbox\.vs\output\darkrp2.staticwebassets.endpoints.json
+C:\Program Files (x86)\Steam\steamapps\common\sbox\.vs\output\darkrp2.xml
+C:\Program Files (x86)\Steam\steamapps\common\sbox\.vs\output\darkrp2.deps.json
+C:\Program Files (x86)\Steam\steamapps\common\sbox\.vs\output\darkrp2.dll
+C:\Program Files (x86)\Steam\steamapps\common\sbox\.vs\output\darkrp2.pdb
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\rjimswa.dswa.cache.json
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\rjsmrazor.dswa.cache.json
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\rjsmcshtml.dswa.cache.json
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\scopedcss\bundle\darkrp2.styles.css
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\staticwebassets.build.json
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\staticwebassets.build.json.cache
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\staticwebassets.development.json
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\staticwebassets.build.endpoints.json
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\swae.build.ex.cache
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\staticwebassets\msbuild.darkrp2.Microsoft.AspNetCore.StaticWebAssets.props
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\staticwebassets\msbuild.darkrp2.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\staticwebassets\msbuild.build.darkrp2.props
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\staticwebassets\msbuild.buildMultiTargeting.darkrp2.props
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\staticwebassets\msbuild.buildTransitive.darkrp2.props
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\staticwebassets.pack.json
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\darkrp2.csproj.Up2Date
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\darkrp2.dll
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\refint\darkrp2.dll
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\darkrp2.pdb
+D:\Sandbox DarkRP\DarkRP2\Code\obj\Debug\ref\darkrp2.dll

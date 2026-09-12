@@ -25,7 +25,7 @@
           "$compiler": "texture",
           "$source": "imagefile",
           "data": {
-            "FilePath": "ui/weapons/melee/crowbar.png",
+            "FilePath": "ui/weapons/crowbar_wide.png",
             "MaxSize": 4096,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,

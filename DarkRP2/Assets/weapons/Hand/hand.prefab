@@ -23,17 +23,38 @@
         "Damage": 10,
         "DisplayIcon": {
           "$compiler": "texture",
-          "$source": "svgsource",
+          "$source": "imagefile",
           "data": {
-            "Size": "512,512",
-            "Source": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\">\n  <g fill=\"#fff\">\n    <rect x=\"90\" y=\"145\" width=\"62\" height=\"140\" rx=\"22\"/>\n    <rect x=\"156\" y=\"130\" width=\"62\" height=\"155\" rx=\"22\"/>\n    <rect x=\"222\" y=\"125\" width=\"62\" height=\"160\" rx=\"22\"/>\n    <rect x=\"288\" y=\"132\" width=\"62\" height=\"153\" rx=\"22\"/>\n    <rect x=\"106\" y=\"266\" width=\"260\" height=\"136\" rx=\"44\"/>\n    <rect x=\"307\" y=\"260\" width=\"112\" height=\"72\" rx=\"28\" transform=\"rotate(22 363 296)\"/>\n  </g>\n</svg>\n",
-            "Colorize": true,
-            "TargetColor": "1,1,1,1",
-            "Scale": 1,
-            "Offset": "0,0",
+            "FilePath": "ui/weapons/hands_hud.png",
+            "MaxSize": 4096,
+            "ConvertHeightToNormals": false,
+            "NormalScale": 1,
             "Rotate": 0,
             "FlipVertical": false,
-            "FlipHorizontal": false
+            "FlipHorizontal": false,
+            "Cropping": {
+              "Left": 0,
+              "Top": 0,
+              "Right": 0,
+              "Bottom": 0
+            },
+            "Padding": {
+              "Left": 0,
+              "Top": 0,
+              "Right": 0,
+              "Bottom": 0
+            },
+            "InvertColor": false,
+            "Tint": "1,1,1,1",
+            "Blur": 0,
+            "Sharpen": 0,
+            "Brightness": 1,
+            "Contrast": 1,
+            "Saturation": 1,
+            "Hue": 0,
+            "Colorize": false,
+            "TargetColor": "1,1,1,1",
+            "CacheToDisk": true
           },
           "compiled": null
         },

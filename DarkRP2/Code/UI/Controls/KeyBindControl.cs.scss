@@ -1,0 +1,108 @@
+KeyBindControl
+{
+	flex-direction: row;
+	align-items: center;
+	flex-grow: 0;
+	flex-shrink: 0;
+	padding: 0.15rem;
+	gap: 0.5rem;
+	border-radius: 6px;
+	cursor: pointer;
+	background-color: transparent;
+	border: 1px solid transparent;
+
+	&:hover .preview
+	{
+		background-color: rgba( 255, 255, 255, 0.1 );
+	}
+
+	&.listening
+	{
+		flex-grow: 1;
+		background-color: #ffaa0018;
+		border-color: #ffaa0066;
+		animation: keybind-pulse 1s ease-in-out infinite;
+	}
+
+	&.no-binding .preview
+	{
+		background-color: rgba( 255, 255, 255, 0.04 );
+		border: 1px dashed rgba( 255, 255, 255, 0.2 );
+	}
+
+	.preview
+	{
+		width: 2.5rem;
+		height: 2.5rem;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+		background-color: rgba( 255, 255, 255, 0.06 );
+		border-radius: 4px;
+
+		.key-glyph
+		{
+			font-size: 1rem;
+			font-weight: 700;
+			color: #fff;
+			font-family: Poppins, sans-serif;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: 100%;
+			text-align: center;
+
+			&.compact
+			{
+				font-size: 0.75rem;
+				letter-spacing: 0.02em;
+			}
+
+			&.hidden { display: none; }
+		}
+
+		.fallback
+		{
+			font-size: 1.1rem;
+			color: rgba( 255, 255, 255, 0.5 );
+
+			&.hidden { display: none; }
+		}
+	}
+
+	.bind-label
+	{
+		flex-grow: 1;
+		min-width: 0;
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: #ffcc66;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+
+		&.hidden { display: none; }
+	}
+
+	.key-capture
+	{
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		opacity: 0;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+		cursor: pointer;
+		z-index: 5;
+	}
+}
+
+@keyframes keybind-pulse
+{
+	0%, 100% { border-color: #ffaa0044; }
+	50% { border-color: #ffaa00aa; }
+}

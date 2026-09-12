@@ -1,0 +1,83 @@
+@using Sandbox;
+@using Sandbox.UI;
+@namespace Sandbox
+@inherits BasePopup
+
+<root class="popup">
+	<div class="inner" onclick:preventDefault=@true>
+		<div class="popup-header">
+			<h2>@Title</h2>
+		</div>
+
+		<VirtualGrid Items=@(_items) ItemSize=@(new Vector2( 160, 180 )) class="grid">
+			<Item Context="path">
+				@{
+					var modelPath = path as string;
+					var selected = string.Equals( modelPath, _pending ?? CurrentValue, StringComparison.OrdinalIgnoreCase );
+					var itemClass = selected ? "item active" : "item";
+					var thumb = WireSpawnLists.ThumbUrl( modelPath );
+					var title = WireSpawnLists.DisplayName( modelPath );
+				}
+				<div @key=@modelPath class="@itemClass" @onclick=@(() => Pick( modelPath ))>
+					<div class="icon" style="background-image: url( @thumb )"></div>
+					<div class="title">@title</div>
+				</div>
+			</Item>
+		</VirtualGrid>
+
+		<div class="popup-footer">
+			<div class="clear-button" @onclick=@Clear>Clear</div>
+			<div class="select-button" @onclick=@Confirm>Select</div>
+		</div>
+	</div>
+</root>
+
+@code
+{
+	public string Title { get; set; } = "Select Model";
+	public string[] SpawnLists { get; set; } = [];
+	public string CurrentValue { get; set; }
+	public Action<string> OnSelected;
+
+	string _pending;
+	List<object> _items = new();
+
+	protected override void OnParametersSet()
+	{
+		_items = WireSpawnLists.GetModels( SpawnLists ).Cast<object>().ToList();
+
+		if ( !string.IsNullOrWhiteSpace( CurrentValue )
+			&& !_items.OfType<string>().Any( x => x.Equals( CurrentValue, StringComparison.OrdinalIgnoreCase ) ) )
+		{
+			_items.Insert( 0, CurrentValue );
+		}
+
+		_pending = CurrentValue;
+	}
+
+	void Pick( string path )
+	{
+		_pending = path;
+		StateHasChanged();
+	}
+
+	void Clear()
+	{
+		_pending = null;
+		OnSelected?.Invoke( null );
+		StateHasChanged();
+	}
+
+	void Confirm()
+	{
+		OnSelected?.Invoke( _pending );
+		Delete();
+	}
+
+	protected override void OnMouseDown( MousePanelEvent e )
+	{
+		base.OnMouseDown( e );
+		if ( e.Target == this )
+			Delete();
+	}
+}

@@ -1,0 +1,11 @@
+"Layer0"
+{
+	"shader"		"shaders/gmod_pbr.shader"
+	"Color"		"materials/models/props_lab/keypad_denied_color.tga"
+	"Normal"		"materials/models/props_lab/keypad_denied_normal.tga"
+	"Roughness"		"materials/models/props_lab/keypad_denied_roughness.tga"
+	"Metalness"		"materials/models/props_lab/keypad_denied_metalness.tga"
+	"AmbientOcclusion"		"materials/models/props_lab/keypad_denied_ao.tga"
+	"g_flRoughnessScaleFactor"		"1.000000"
+	"g_flMetalnessScale"		"1.000000"
+}

@@ -34,7 +34,14 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	/// </summary>
 	void Component.INetworkListener.OnDisconnected( Connection channel )
 	{
-		Player.FindForConnection( channel )?.SaveRoleplayData();
+		var player = Player.FindForConnection( channel );
+		RoleplayDoor.ReleaseOwnershipFor( channel, out var doorRefund );
+		if ( player.IsValid() && doorRefund > 0 )
+		{
+			player.GiveMoney( doorRefund );
+		}
+
+		player?.SaveRoleplayData();
 		CleanupSystem.CleanupPlayer( channel );
 
 		var pd = PlayerData.For( channel );

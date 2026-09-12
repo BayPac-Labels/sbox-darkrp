@@ -6,19 +6,22 @@
 
 <root>
 
-    <div class="output">
-        @foreach (var entry in Entries)
-        {
-            <div class="chat_entry">
-                @if (entry.steamid > 0)
-                {
-                    <div class="avatar" style="background-image: url( avatar:@entry.steamid )"></div>
-                }
-                <div class="author">@entry.author</div>
-                <div class="message">@entry.message</div>
-            </div>
-        }
-    </div>
+    @if ( Entries.Count > 0 )
+    {
+        <div class="output">
+            @foreach (var entry in Entries)
+            {
+                <div class="chat_entry">
+                    @if (entry.steamid > 0)
+                    {
+                        <div class="avatar" style="background-image: url( avatar:@entry.steamid )"></div>
+                    }
+                    <div class="author">@entry.author</div>
+                    <div class="message">@entry.message</div>
+                </div>
+            }
+        </div>
+    }
 
     <div class="input">
         <TextEntry @ref="InputBox" onsubmit="@ChatFinished"></TextEntry>

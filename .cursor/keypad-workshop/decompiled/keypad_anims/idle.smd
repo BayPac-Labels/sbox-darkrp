@@ -1,0 +1,11 @@
+// Created by CrowbarDecompiler 0.71
+version 1
+nodes
+  0 "base" -1
+  1 "center_button" 0
+end
+skeleton
+  time 0
+    0 0.000000 0.000000 0.000000 1.570674 0.000061 -0.000061
+    1 0.000000 -2.116224 0.996426 0.000000 0.000000 0.000000
+end

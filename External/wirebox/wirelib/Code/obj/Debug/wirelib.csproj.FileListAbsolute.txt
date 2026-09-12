@@ -1,0 +1,33 @@
+C:\Program Files (x86)\Steam\steamapps\common\sbox\.vs\output\Properties\launchSettings.json
+C:\Program Files (x86)\Steam\steamapps\common\sbox\.vs\output\wirelib.staticwebassets.endpoints.json
+C:\Program Files (x86)\Steam\steamapps\common\sbox\.vs\output\wirelib.xml
+C:\Program Files (x86)\Steam\steamapps\common\sbox\.vs\output\wirelib.deps.json
+C:\Program Files (x86)\Steam\steamapps\common\sbox\.vs\output\wirelib.dll
+C:\Program Files (x86)\Steam\steamapps\common\sbox\.vs\output\wirelib.pdb
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\wirelib.csproj.AssemblyReference.cache
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\rpswa.dswa.cache.json
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\wirelib.GeneratedMSBuildEditorConfig.editorconfig
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\wirelib.AssemblyInfoInputs.cache
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\wirelib.AssemblyInfo.cs
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\wirelib.csproj.CoreCompileInputs.cache
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\wirelib.sourcelink.json
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\rjimswa.dswa.cache.json
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\rjsmrazor.dswa.cache.json
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\rjsmcshtml.dswa.cache.json
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\scopedcss\bundle\wirelib.styles.css
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\staticwebassets.build.json
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\staticwebassets.build.json.cache
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\staticwebassets.development.json
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\staticwebassets.build.endpoints.json
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\swae.build.ex.cache
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\staticwebassets\msbuild.wirelib.Microsoft.AspNetCore.StaticWebAssets.props
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\staticwebassets\msbuild.wirelib.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\staticwebassets\msbuild.build.wirelib.props
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\staticwebassets\msbuild.buildMultiTargeting.wirelib.props
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\staticwebassets\msbuild.buildTransitive.wirelib.props
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\staticwebassets.pack.json
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\wirelib.csproj.Up2Date
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\wirelib.dll
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\refint\wirelib.dll
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\wirelib.pdb
+D:\Sandbox DarkRP\External\wirebox\wirelib\Code\obj\Debug\ref\wirelib.dll

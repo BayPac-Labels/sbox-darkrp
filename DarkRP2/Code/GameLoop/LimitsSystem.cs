@@ -211,7 +211,7 @@ public sealed class LimitsSystem : GameObjectSystem<LimitsSystem>, Global.ISpawn
 		if ( CheckToolLimit<WheelTool, WheelEntity>( e, MaxWheels, ToolInput.Primary ) ) return;
 
 		// TODO: same here :S
-		if ( MaxConstraints >= 0 && ( e.Tool is BaseConstraintToolMode || e.Tool is KeepUpright ) )
+		if ( MaxConstraints >= 0 && ( e.Tool is BaseConstraintToolMode || e.Tool is KeepUpright || (e.Tool is PrecisionTool precision && precision.Mode == PrecisionMode.Weld) ) )
 		{
 			var count = Count( e.Player.SteamId, go => go.Tags.Contains( "constraint" ) );
 			if ( IsExceeded( MaxConstraints, count ) )

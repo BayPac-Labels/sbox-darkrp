@@ -1,9 +1,15 @@
 $hud-element-bg: #0006;
-$hud-text: #fafaff;
+$hud-text: #ffffff;
 
-$hud-radius: 8px;
-$hud-radius-sm: 4px;
+$hud-radius: 0px;
+$hud-radius-sm: 0px;
 $hud-icon-size: 30px;
+
+// Classic DarkRP HUD accents
+$hud-outline: #5eb1ff;
+$hud-panel-bg: rgba( 20, 20, 20, 0.85 );
+// Neutral edge only — cyan lives on L-corner accents. A cyan perimeter AA-bleeds under HudSway.
+$hud-panel-border: rgba( 0, 0, 0, 0.55 );
 
 .hud-panel
 {

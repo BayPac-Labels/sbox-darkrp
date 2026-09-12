@@ -10,22 +10,21 @@ HotbarPresetsButton
 
 HotbarPresetsButton .presets-toggle
 {
-    width: 28px;
-    height: 96px;
-    background-color: #0003;
-    border-radius: $hud-radius;
+    width: 26px;
+    height: 76px;
+    background-color: $hud-panel-bg;
+    border: 1px solid $hud-panel-border;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     color: rgba( white, 0.5 );
-    font-size: 20px;
+    font-size: 18px;
     pointer-events: all;
     transition: background-color 0.1s, color 0.1s;
 
     &:hover
     {
-        background-color: #0006;
+        background-color: rgba( $hud-outline, 0.15 );
         color: white;
     }
 }
-

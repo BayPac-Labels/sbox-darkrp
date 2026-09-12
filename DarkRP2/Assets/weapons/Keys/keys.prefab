@@ -23,17 +23,38 @@
         "Damage": 0,
         "DisplayIcon": {
           "$compiler": "texture",
-          "$source": "svgsource",
+          "$source": "imagefile",
           "data": {
-            "Size": "512,512",
-            "Source": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\">\n  <path fill=\"#fff\" d=\"M196 104c-70 0-128 57-128 128s58 128 128 128c48 0 90-27 112-66h42v54h54v-54h40v-54H324c0-3 0-5 0-8 0-71-58-128-128-128zm0 74c30 0 54 24 54 54s-24 54-54 54-54-24-54-54 24-54 54-54z\"/>\n</svg>\n",
-            "Colorize": true,
-            "TargetColor": "1,1,1,1",
-            "Scale": 1,
-            "Offset": "0,0",
+            "FilePath": "ui/weapons/keys_hud.png",
+            "MaxSize": 4096,
+            "ConvertHeightToNormals": false,
+            "NormalScale": 1,
             "Rotate": 0,
             "FlipVertical": false,
-            "FlipHorizontal": false
+            "FlipHorizontal": false,
+            "Cropping": {
+              "Left": 0,
+              "Top": 0,
+              "Right": 0,
+              "Bottom": 0
+            },
+            "Padding": {
+              "Left": 0,
+              "Top": 0,
+              "Right": 0,
+              "Bottom": 0
+            },
+            "InvertColor": false,
+            "Tint": "1,1,1,1",
+            "Blur": 0,
+            "Sharpen": 0,
+            "Brightness": 1,
+            "Contrast": 1,
+            "Saturation": 1,
+            "Hue": 0,
+            "Colorize": false,
+            "TargetColor": "1,1,1,1",
+            "CacheToDisk": true
           },
           "compiled": null
         },

@@ -5,7 +5,6 @@
   },
   "slang.additionalSearchPaths": [
     "C:\\Program Files (x86)\\Steam\\steamapps\\common\\sbox\\core\\shaders",
-    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\sbox\\addons\\base\\Assets\\shaders",
     "C:\\Program Files (x86)\\Steam\\steamapps\\common\\sbox\\addons\\menu\\Assets\\shaders",
     "C:\\Program Files (x86)\\Steam\\steamapps\\common\\sbox\\addons\\tools\\Assets\\shaders",
     "C:\\Program Files (x86)\\Steam\\steamapps\\common\\sbox\\editor\\ShaderGraph\\Assets\\shaders",
@@ -13,7 +12,7 @@
     "C:\\Program Files (x86)\\Steam\\steamapps\\common\\sbox\\editor\\MovieMaker\\Assets\\shaders",
     "C:\\Program Files (x86)\\Steam\\steamapps\\common\\sbox\\editor\\Hammer\\Assets\\shaders",
     "C:\\Program Files (x86)\\Steam\\steamapps\\common\\sbox\\editor\\DooEditor\\Assets\\shaders",
-    "C:\\sbox-darkrp\\darkrp\\Assets\\shaders"
+    "D:\\Sandbox DarkRP\\darkrp\\Assets\\shaders"
   ],
   "slang.predefinedMacros": [],
   "slang.workspaceFlavor": "vfx"

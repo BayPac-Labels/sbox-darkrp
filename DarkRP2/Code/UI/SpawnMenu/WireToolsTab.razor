@@ -13,7 +13,7 @@
 			<Options>
 				@foreach ( var type in GetWireTools() )
 				{
-					<MenuOption Text="@type.Title" Icon="@type.Icon" @onclick="@(() => SwitchMode( type ))" Value="@type.TargetType"></MenuOption>
+					<MenuOption Text="@Game.Language.GetPhrase( type.Title.TrimStart( '#' ) )" Icon="@type.Icon" @onclick="@(() => SwitchMode( type ))" Value="@type.TargetType"></MenuOption>
 				}
 			</Options>
 		</VerticalMenu>
@@ -21,14 +21,93 @@
 
 	<div class="body menuinner">
 		<ControlSheet PropertyFilter="@FilterProperties" Target="@GetCurrentMode()"></ControlSheet>
+
+		@if ( CurrentMode is WireGateTool gateTool )
+		{
+			<div class="wire-gate-picker">
+				@foreach ( var category in WireGateComponent.GetGates() )
+				{
+					<div class="wire-gate-category">
+						<div class="wire-gate-category-title">@category.Key</div>
+						<div class="wire-gate-category-buttons">
+							@foreach ( var gateName in category.Value )
+							{
+								var selected = gateTool.GateType == gateName;
+								<button class="@(selected ? "active" : "")" @onclick="@(() => SelectGate( gateTool, gateName ))">@gateName</button>
+							}
+						</div>
+					</div>
+				}
+			</div>
+		}
 	</div>
 </root>
+
+<style>
+	.wire-gate-picker {
+		flex-direction: column;
+		width: 100%;
+		flex-shrink: 0;
+		margin-top: 12px;
+		padding-top: 8px;
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
+		gap: 10px;
+
+		.wire-gate-category {
+			flex-direction: column;
+			width: 100%;
+			flex-shrink: 0;
+			gap: 4px;
+
+			.wire-gate-category-title {
+				width: 100%;
+				flex-shrink: 0;
+				font-size: 12px;
+				font-weight: 700;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				opacity: 0.55;
+				white-space: nowrap;
+				padding: 2px 2px 0;
+			}
+
+			.wire-gate-category-buttons {
+				flex-direction: row;
+				flex-wrap: wrap;
+				width: 100%;
+				gap: 4px;
+			}
+		}
+
+		button {
+			padding: 6px 10px;
+			background-color: rgba(0, 0, 0, 0.35);
+			border-radius: 4px;
+			font-size: 12px;
+			cursor: pointer;
+			pointer-events: all;
+			white-space: nowrap;
+			flex-shrink: 0;
+
+			&:hover {
+				background-color: rgba(255, 255, 255, 0.12);
+			}
+
+			&.active {
+				background-color: rgba(70, 140, 255, 0.45);
+			}
+		}
+	}
+</style>
 
 @code
 {
 	ToolMode CurrentMode => Player.FindLocalPlayer()?.GetWeapon<Toolgun>()?.GetCurrentMode();
 
-	protected override int BuildHash() => HashCode.Combine( CurrentMode );
+	protected override int BuildHash() => HashCode.Combine(
+		CurrentMode,
+		(CurrentMode as WireGateTool)?.GateType,
+		(CurrentMode as WireSpawnToolMode)?.SpawnModel );
 
 	static IEnumerable<TypeDescription> GetWireTools()
 	{
@@ -57,6 +136,12 @@
 		inventory.SetToolMode( t.ClassName );
 	}
 
+	void SelectGate( WireGateTool tool, string gateName )
+	{
+		tool.SetGateType( gateName );
+		StateHasChanged();
+	}
+
 	protected override void OnVisibilityChanged()
 	{
 		if ( !IsVisible )
@@ -80,6 +165,8 @@
 	{
 		if ( o is null || o.PropertyType is null ) return false;
 		if ( o.PropertyType.IsAssignableTo( typeof( Delegate ) ) ) return false;
+
+		if ( o.Name == nameof( WireGateTool.GateType ) ) return false;
 
 		if ( o.IsMethod ) return true;
 		if ( !o.HasAttribute<PropertyAttribute>() ) return false;

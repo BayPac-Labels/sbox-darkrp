@@ -6,27 +6,139 @@ Inventory
     bottom: $deadzone-y;
     left: 0;
     width: 100%;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
     font-size: 18px;
-    color: $color-accent;
-    gap: 4px;
+    color: #ffffff;
+    gap: 0;
     z-index: 1050;
     pointer-events: none;
-    transition: all 0.05s linear;
+    transition: opacity 0.05s linear;
+    font-family: Tahoma, "Segoe UI", sans-serif;
+
+    .hotbar-row
+    {
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 6px;
+    }
+
+    // Pocket sits above hotbar in the same column so left/right edges match.
+    .slot-stack
+    {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+
+    .hotbar,
+    .pocket
+    {
+        position: relative;
+        flex-direction: row;
+        align-items: stretch;
+        gap: 0;
+        padding: 2px;
+        background-color: $hud-panel-bg;
+        overflow: visible;
+
+        // Filled white L-arms — same treatment as vitals.
+        .corner
+        {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            pointer-events: none;
+            z-index: 10;
+
+            .arm-h, .arm-v
+            {
+                position: absolute;
+                background-color: #ffffff;
+            }
+
+            .arm-h
+            {
+                width: 14px;
+                height: 2px;
+            }
+
+            .arm-v
+            {
+                width: 2px;
+                height: 14px;
+            }
+        }
+
+        .corner.tl
+        {
+            top: -1px;
+            left: -1px;
+
+            .arm-h { top: 0px; left: 0px; }
+            .arm-v { top: 0px; left: 0px; }
+        }
+
+        .corner.tr
+        {
+            top: -1px;
+            right: -1px;
+
+            .arm-h { top: 0px; left: 0px; }
+            .arm-v { top: 0px; right: 0px; }
+        }
+
+        .corner.bl
+        {
+            bottom: -1px;
+            left: -1px;
+
+            .arm-h { bottom: 0px; left: 0px; }
+            .arm-v { top: 0px; left: 0px; }
+        }
+
+        .corner.br
+        {
+            bottom: -1px;
+            right: -1px;
+
+            .arm-h { bottom: 0px; left: 0px; }
+            .arm-v { top: 0px; right: 0px; }
+        }
+    }
+
+    .pocket
+    {
+        flex-direction: column;
+        pointer-events: all;
+    }
+
+    .pocket-rows
+    {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .pocket-row
+    {
+        flex-direction: row;
+        align-items: stretch;
+        gap: 0;
+
+        &:first-child PocketSlot
+        {
+            border-bottom: 1px solid rgba( 94, 177, 255, 0.25 );
+        }
+    }
 
     &.spawnmenu-open
     {
-        opacity: 0.75;
-        transform: translateY( 32px );
+        opacity: 0.9;
 
         HotbarPresetsButton
         {
             opacity: 1;
-        }
-
-        InventorySlot .index
-        {
-            opacity: 0;
         }
     }
 }

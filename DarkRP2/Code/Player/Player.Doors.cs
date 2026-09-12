@@ -1,3 +1,4 @@
+using Sandbox;
 using Sandbox.UI;
 
 public sealed partial class Player
@@ -102,13 +103,6 @@ public sealed partial class Player
 		player?.TryToggleLookedDoorLock();
 	}
 
-	[ConCmd( "rp_door_sell", ConVarFlags.Server, Help = "Sell the roleplay door you own and are looking at." )]
-	public static void SellLookedDoorCommand( Connection source )
-	{
-		var player = FindForConnection( source );
-		player?.TrySellLookedDoor();
-	}
-
 	[ConCmd( "rp_door_lockpick", ConVarFlags.Server, Help = "Lockpick the roleplay door you are looking at." )]
 	public static void LockpickLookedDoorCommand( Connection source )
 	{
@@ -182,19 +176,49 @@ public sealed partial class Player
 		Input.Clear( "attack2" );
 	}
 
-	void HandleDoorSellInput()
+	void HandleDoorRadialInput()
 	{
-		if ( !IsLocalPlayer || !Input.Pressed( "reload" ) )
+		if ( !IsLocalPlayer )
 			return;
 
-		if ( !TryGetLookedRoleplayDoor( out var roleplayDoor ) )
-			return;
+		DoorRadialMenu.TryHandleInput();
+	}
 
-		if ( !roleplayDoor.IsOwnedBy( Network.Owner ) )
-			return;
+	public bool IsSpawnOrInspectMenuOpen()
+	{
+		return Game.ActiveScene.Get<SpawnMenuHost>()?.Panel?.HasClass( "open" ) ?? false;
+	}
 
-		RequestSellLookedDoor();
-		Input.Clear( "reload" );
+	public bool CanOpenDoorRadial( out RoleplayDoor roleplayDoor )
+	{
+		roleplayDoor = null;
+
+		if ( !TryGetLookedRoleplayDoor( out roleplayDoor ) )
+			return false;
+
+		return roleplayDoor.CanManageUsers( this );
+	}
+
+	public bool IsHoldingToolgun()
+	{
+		var inventory = GetComponent<PlayerInventory>();
+		return inventory.IsValid() && inventory.ActiveWeapon is Toolgun;
+	}
+
+	public bool TryGetLookedRoleplayDoor( out RoleplayDoor roleplayDoor )
+	{
+		roleplayDoor = null;
+
+		var trace = Scene.Trace.Ray( EyeTransform.ForwardRay, DoorCommandTraceDistance )
+			.IgnoreGameObjectHierarchy( GameObject )
+			.WithoutTags( "player" )
+			.Run();
+
+		if ( !trace.Hit )
+			return false;
+
+		roleplayDoor = FindRoleplayDoor( trace.GameObject );
+		return roleplayDoor.IsValid();
 	}
 
 	void StartDoorPurchaseHold( RoleplayDoor roleplayDoor )
@@ -323,9 +347,13 @@ public sealed partial class Player
 
 		if ( roleplayDoor.TryBuy( this, out var error ) )
 		{
-			var price = Math.Max( 0, roleplayDoor.PurchasePrice );
+			var price = roleplayDoor.GetGroupPurchasePrice();
+			var count = roleplayDoor.GetGroupDoors().Count;
+			var message = count > 1
+				? $"Doors purchased for ${price:n0}."
+				: $"Door purchased for ${price:n0}.";
 			PlayDoorActionSound( "sounds/ui/ui.spawn.sound" );
-			Notices.SendNotice( Network.Owner, "$", Color.Green, $"Door purchased for ${price:n0}.", 3 );
+			Notices.SendNotice( Network.Owner, "$", Color.Green, message, 3 );
 			return;
 		}
 
@@ -371,12 +399,12 @@ public sealed partial class Player
 		TrySetLookedDoorLockState( !roleplayDoor.Door.IsLocked );
 	}
 
-	void TrySellLookedDoor()
+	void TrySellDoor( RoleplayDoor roleplayDoor )
 	{
 		if ( !Networking.IsHost || Network.Owner is null )
 			return;
 
-		if ( !TryGetLookedRoleplayDoor( out var roleplayDoor ) )
+		if ( !roleplayDoor.IsValid() )
 		{
 			Notices.SendNotice( Network.Owner, "block", Color.Red, "Look at a roleplay door first.", 3 );
 			return;
@@ -390,6 +418,79 @@ public sealed partial class Player
 		}
 
 		Notices.SendNotice( Network.Owner, "block", Color.Red, error, 3 );
+	}
+
+	void TryAddDoorUser( RoleplayDoor roleplayDoor, Guid userId )
+	{
+		if ( !Networking.IsHost || Network.Owner is null )
+			return;
+
+		if ( !roleplayDoor.IsValid() )
+		{
+			Notices.SendNotice( Network.Owner, "block", Color.Red, "That door is no longer valid.", 3 );
+			return;
+		}
+
+		if ( !roleplayDoor.TryAddUser( this, userId, out var added, out var error ) )
+		{
+			Notices.SendNotice( Network.Owner, "block", Color.Red, error, 3 );
+			return;
+		}
+
+		var name = added?.DisplayName ?? "Player";
+		PlayDoorActionSound( "sounds/ui/ui.spawn.sound" );
+		Notices.SendNotice( Network.Owner, "person_add", Color.Green, $"{name} can use this door.", 3 );
+		if ( added is not null && added != Network.Owner )
+		{
+			Notices.SendNotice( added, "vpn_key", Color.Green, $"{DisplayName} added you to a door.", 3 );
+		}
+	}
+
+	void TryKickDoorUser( RoleplayDoor roleplayDoor, Guid userId )
+	{
+		if ( !Networking.IsHost || Network.Owner is null )
+			return;
+
+		if ( !roleplayDoor.IsValid() )
+		{
+			Notices.SendNotice( Network.Owner, "block", Color.Red, "That door is no longer valid.", 3 );
+			return;
+		}
+
+		if ( !roleplayDoor.TryRemoveUser( this, userId, out var removed, out var error ) )
+		{
+			Notices.SendNotice( Network.Owner, "block", Color.Red, error, 3 );
+			return;
+		}
+
+		var name = removed?.DisplayName ?? PlayerData.For( userId )?.DisplayName ?? "Player";
+		PlayDoorActionSound( "sounds/ui/ui.undo.sound" );
+		Notices.SendNotice( Network.Owner, "person_remove", Color.Orange, $"{name} was removed from this door.", 3 );
+		if ( removed is not null )
+		{
+			Notices.SendNotice( removed, "person_off", Color.Orange, "You were removed from a door.", 3 );
+		}
+	}
+
+	void TryRenameDoor( RoleplayDoor roleplayDoor, string title )
+	{
+		if ( !Networking.IsHost || Network.Owner is null )
+			return;
+
+		if ( !roleplayDoor.IsValid() )
+		{
+			Notices.SendNotice( Network.Owner, "block", Color.Red, "That door is no longer valid.", 3 );
+			return;
+		}
+
+		if ( !roleplayDoor.TrySetCustomTitle( this, title, out var error ) )
+		{
+			Notices.SendNotice( Network.Owner, "block", Color.Red, error, 3 );
+			return;
+		}
+
+		PlayDoorActionSound( "sounds/ui/ui.spawn.sound" );
+		Notices.SendNotice( Network.Owner, "edit", Color.Green, $"Door renamed to \"{roleplayDoor.CustomTitle}\".", 3 );
 	}
 
 	void TryLockpickLookedDoor()
@@ -457,12 +558,39 @@ public sealed partial class Player
 	}
 
 	[Rpc.Host]
-	void RequestSellLookedDoor()
+	public void RequestSellDoor( GameObject doorObject )
 	{
 		if ( Rpc.Caller != Network.Owner )
 			return;
 
-		TrySellLookedDoor();
+		TrySellDoor( FindRoleplayDoor( doorObject ) );
+	}
+
+	[Rpc.Host]
+	public void RequestAddDoorUser( GameObject doorObject, Guid userId )
+	{
+		if ( Rpc.Caller != Network.Owner )
+			return;
+
+		TryAddDoorUser( FindRoleplayDoor( doorObject ), userId );
+	}
+
+	[Rpc.Host]
+	public void RequestKickDoorUser( GameObject doorObject, Guid userId )
+	{
+		if ( Rpc.Caller != Network.Owner )
+			return;
+
+		TryKickDoorUser( FindRoleplayDoor( doorObject ), userId );
+	}
+
+	[Rpc.Host]
+	public void RequestRenameDoor( GameObject doorObject, string title )
+	{
+		if ( Rpc.Caller != Network.Owner )
+			return;
+
+		TryRenameDoor( FindRoleplayDoor( doorObject ), title );
 	}
 
 	[Rpc.Host]
@@ -484,22 +612,6 @@ public sealed partial class Player
 			return;
 
 		roleplayDoor.TryPlayLockpickAttemptSound( this );
-	}
-
-	bool TryGetLookedRoleplayDoor( out RoleplayDoor roleplayDoor )
-	{
-		roleplayDoor = null;
-
-		var trace = Scene.Trace.Ray( EyeTransform.ForwardRay, DoorCommandTraceDistance )
-			.IgnoreGameObjectHierarchy( GameObject )
-			.WithoutTags( "player" )
-			.Run();
-
-		if ( !trace.Hit )
-			return false;
-
-		roleplayDoor = FindRoleplayDoor( trace.GameObject );
-		return roleplayDoor.IsValid();
 	}
 
 	static RoleplayDoor FindRoleplayDoor( GameObject gameObject )

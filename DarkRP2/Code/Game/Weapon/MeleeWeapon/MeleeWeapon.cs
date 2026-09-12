@@ -39,6 +39,8 @@ public class MeleeWeapon : BaseCarryable
 
 	public bool CanAttack() => timeUntilSwing <= 0;
 
+	protected void SetSwingCooldown( float seconds ) => timeUntilSwing = seconds;
+
 	protected virtual bool WantsPrimaryAttack() => Input.Down( "attack1" );
 
 	public override void OnControl( Player player )

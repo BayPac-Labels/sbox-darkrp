@@ -8,9 +8,12 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 
 	/// <summary>
 	/// All weapons currently in the inventory, ordered by slot.
+	/// Excludes items stashed in <see cref="PlayerPocket"/>.
 	/// </summary>
-	public IEnumerable<BaseCarryable> Weapons => 
-		GetComponentsInChildren<BaseCarryable>( true ).OrderBy( x => x.InventorySlot );
+	public IEnumerable<BaseCarryable> Weapons =>
+		GetComponentsInChildren<BaseCarryable>( true )
+			.Where( x => !x.GetComponent<PocketedItem>().IsValid() )
+			.OrderBy( x => x.InventorySlot );
 
 	[Sync( SyncFlags.FromHost ), Change] public BaseCarryable ActiveWeapon { get; private set; }
 
@@ -82,42 +85,10 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 
 	public void GiveDefaultWeapons()
 	{
-		var handSlot = FindEmptySlot();
-		if ( handSlot >= 0 && Pickup( "weapons/hand/hand.prefab", handSlot, false ) )
-		{
-			if ( GetSlot( handSlot ) is { } hand )
-			{
-				hand.IsJobLocked = true;
-			}
-		}
-
-		var keySlot = FindEmptySlot();
-		if ( keySlot >= 0 && Pickup( "weapons/keys/keys.prefab", keySlot, false ) )
-		{
-			if ( GetSlot( keySlot ) is { } keys )
-			{
-				keys.IsJobLocked = true;
-			}
-		}
-
-		var physgunSlot = FindEmptySlot();
-		if ( physgunSlot >= 0 && Pickup( "weapons/physgun/physgun.prefab", physgunSlot, false ) )
-		{
-			if ( GetSlot( physgunSlot ) is { } physgun )
-			{
-				physgun.IsJobLocked = true;
-			}
-		}
-
-		var toolgunSlot = FindEmptySlot();
-		if ( toolgunSlot >= 0 && Pickup( "weapons/toolgun/toolgun.prefab", toolgunSlot, false ) )
-		{
-			if ( GetSlot( toolgunSlot ) is { } toolgun )
-			{
-				toolgun.IsJobLocked = true;
-			}
-		}
-
+		Pickup( "weapons/hand/hand.prefab", FindEmptySlot(), false );
+		Pickup( "weapons/keys/keys.prefab", FindEmptySlot(), false );
+		Pickup( "weapons/physgun/physgun.prefab", FindEmptySlot(), false );
+		Pickup( "weapons/toolgun/toolgun.prefab", FindEmptySlot(), false );
 		Pickup( "weapons/camera/camera.prefab", 8, false );
 	}
 
@@ -135,13 +106,8 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		if ( !HasWeapon<Toolgun>() )
 		{
 			var toolgunSlot = FindEmptySlot();
-			if ( toolgunSlot >= 0 && Pickup( "weapons/toolgun/toolgun.prefab", toolgunSlot, false ) )
-			{
-				if ( GetSlot( toolgunSlot ) is { } toolgunItem )
-				{
-					toolgunItem.IsJobLocked = true;
-				}
-			}
+			if ( toolgunSlot >= 0 )
+				Pickup( "weapons/toolgun/toolgun.prefab", toolgunSlot, false );
 		}
 
 		var toolgun = GetWeapon<Toolgun>();
@@ -348,6 +314,10 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 
 		item.OnAdded( Player );
 
+		// Reparent / Enabled changes after NetworkSpawn need a refresh for clients.
+		item.GameObject.Network?.Refresh();
+		GameObject.Network?.Refresh();
+
 		var pickupEvent = new PlayerPickupEvent { Player = Player, Weapon = item, Slot = slot };
 		Local.IPlayerEvents.PostToGameObject( GameObject, e => e.OnPickup( pickupEvent ) );
 		Global.IPlayerEvents.Post( e => e.OnPlayerPickup( pickupEvent ) );
@@ -375,7 +345,7 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 
 		if ( !weapon.IsValid() ) return false;
 		if ( weapon.Owner != Player ) return false;
-		if ( weapon.IsJobLocked ) return false;
+		if ( weapon.IsJobLocked || Pocketable.IsPermanentTool( weapon ) ) return false;
 
 		var dropEvent = new PlayerDropEvent { Player = Player, Weapon = weapon };
 		Local.IPlayerEvents.PostToGameObject( Player.GameObject, e => e.OnDrop( dropEvent ) );
@@ -660,7 +630,7 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 	{
 		if ( !weapon.IsValid() ) return;
 		if ( weapon.Owner != Player ) return;
-		if ( weapon.IsJobLocked ) return;
+		if ( weapon.IsJobLocked || Pocketable.IsPermanentTool( weapon ) ) return;
 
 		var removeEvent = new PlayerRemoveWeaponEvent { Player = Player, Weapon = weapon };
 		Local.IPlayerEvents.PostToGameObject( Player.GameObject, e => e.OnRemoveWeapon( removeEvent ) );

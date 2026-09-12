@@ -97,6 +97,10 @@
     // so we can close the menu by pressing the spawnmenu key.
     void OnMenuClicked()
     {
+        // Keep focus while binding a key — clearing it makes presses never register.
+        if ( Sandbox.UI.KeyBindControl.IsCapturing )
+            return;
+
         Sandbox.UI.InputFocus.Clear();
     }
 

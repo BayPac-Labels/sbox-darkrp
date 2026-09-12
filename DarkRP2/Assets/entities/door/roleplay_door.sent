@@ -1,7 +1,7 @@
 {
   "Prefab": "entities/door/roleplay_door.prefab",
   "Title": "Roleplay Door",
-  "Description": "Hold E to buy. Right-click to lock or unlock, R to sell when owned.",
+  "Description": "Hold E to buy. Keys lock or unlock. Middle-click for the owner manage menu (sell, users, rename). Matching DoorGroupId links doors into one buy/sell/user group.",
   "Category": "World",
   "IncludeCode": false,
   "__references": [],

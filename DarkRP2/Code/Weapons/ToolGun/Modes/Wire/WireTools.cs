@@ -1,4 +1,5 @@
 using Sandbox.Rendering;
+using Sandbox.UI;
 
 [Icon( "cable" )]
 [Title( "#tool.name.wiring" )]
@@ -9,6 +10,13 @@ public class WiringTool : ToolMode
 	GameObject _inputEnt;
 	int _inputPortIndex;
 	int _outputPortIndex;
+
+	public string[] HudInputs { get; private set; } = [];
+	public string[] HudOutputs { get; private set; } = [];
+	public int HudInputIndex => _inputPortIndex;
+	public int HudOutputIndex => _outputPortIndex;
+	public bool HudInputSelected => _inputEnt.IsValid();
+	public bool HudOutputSelected => _inputEnt.IsValid();
 
 	public override string Description => _inputEnt.IsValid()
 		? "#tool.hint.wiring.stage1"
@@ -22,8 +30,26 @@ public class WiringTool : ToolMode
 		RegisterAction( ToolInput.Reload, () => _inputEnt.IsValid() ? "#tool.hint.wiring.cancel" : "#tool.hint.wiring.disconnect", OnReload );
 	}
 
+	protected override void OnDisabled()
+	{
+		base.OnDisabled();
+		ResetWiring();
+	}
+
+	public override void OnControl()
+	{
+		base.OnControl();
+		UpdateHudPorts();
+
+		var wheel = Input.MouseWheel.y.FloorToInt();
+		if ( wheel != 0 )
+			CyclePorts( -wheel );
+	}
+
 	void OnPrimary()
 	{
+		if ( Input.Down( "drop" ) ) return;
+
 		var select = TraceSelect();
 		if ( !select.IsValid() || select.IsWorld ) return;
 
@@ -59,9 +85,11 @@ public class WiringTool : ToolMode
 		_inputEnt = null;
 	}
 
-	void OnCycle()
+	void OnCycle() => CyclePorts( Input.Down( "run" ) ? -1 : 1 );
+
+	void CyclePorts( int delta )
 	{
-		var delta = Input.Down( "run" ) ? -1 : 1;
+		if ( delta == 0 ) return;
 		if ( _inputEnt.IsValid() )
 			_outputPortIndex += delta;
 		else
@@ -87,32 +115,93 @@ public class WiringTool : ToolMode
 		ShootEffects( select );
 	}
 
-	public override void DrawHud( HudPainter painter, Vector2 crosshair )
+	void UpdateHudPorts()
 	{
-		base.DrawHud( painter, crosshair );
-
 		var select = TraceSelect();
-		if ( !select.IsValid() ) return;
 
-		if ( _inputEnt.IsValid() )
+		if ( _inputEnt.IsValid() && _inputEnt.GetComponent<IWireInputComponent>() is IWireInputComponent wireInput )
 		{
-			if ( select.GameObject.GetComponent<IWireOutputComponent>() is not IWireOutputComponent output )
-				return;
+			HudInputs = wireInput.GetInputNames( true );
+			_inputPortIndex = Math.Clamp( _inputPortIndex, 0, Math.Max( 0, HudInputs.Length - 1 ) );
 
-			var names = output.GetOutputNames();
-			if ( names.Length == 0 ) return;
-			_outputPortIndex = Math.Clamp( _outputPortIndex, 0, names.Length - 1 );
-			Gizmo.Draw.ScreenText( $"Out: {names[_outputPortIndex]}", crosshair + new Vector2( 24, -18 ) );
+			if ( select.IsValid() && select.GameObject.GetComponent<IWireOutputComponent>() is IWireOutputComponent wireOutput )
+			{
+				HudOutputs = wireOutput.GetOutputNames( true );
+				_outputPortIndex = Math.Clamp( _outputPortIndex, 0, Math.Max( 0, HudOutputs.Length - 1 ) );
+			}
+			else
+			{
+				HudOutputs = [];
+			}
+
 			return;
 		}
 
-		if ( select.GameObject.GetComponent<IWireInputComponent>() is not IWireInputComponent input )
+		if ( select.IsValid() && select.GameObject.GetComponent<IWireInputComponent>() is IWireInputComponent lookInput )
+		{
+			HudInputs = lookInput.GetInputNames( true );
+			_inputPortIndex = Math.Clamp( _inputPortIndex, 0, Math.Max( 0, HudInputs.Length - 1 ) );
+		}
+		else
+		{
+			HudInputs = [];
+		}
+
+		if ( select.IsValid() && select.GameObject.GetComponent<IWireOutputComponent>() is IWireOutputComponent lookOutput )
+		{
+			HudOutputs = lookOutput.GetOutputNames( true );
+			_outputPortIndex = Math.Clamp( _outputPortIndex, 0, Math.Max( 0, HudOutputs.Length - 1 ) );
+		}
+		else
+		{
+			HudOutputs = [];
+		}
+	}
+
+	void ResetWiring()
+	{
+		_inputEnt = null;
+		_inputPortIndex = 0;
+		_outputPortIndex = 0;
+		HudInputs = [];
+		HudOutputs = [];
+	}
+
+	public void RequestSpawnGate( string gateType )
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() ) return;
+
+		if ( !select.IsWorld && select.GameObject.GetComponent<WireGateComponent>() is not null )
+		{
+			UpdateGateType( select, gateType );
+			ShootEffects( select );
+			return;
+		}
+
+		var gateTool = Toolgun?.GetMode<WireGateTool>();
+		if ( gateTool is null ) return;
+
+		if ( string.IsNullOrWhiteSpace( gateTool.SpawnModel ) )
+			gateTool.SpawnModel = "models/wirebox/katlatze/chip_rectangle.vmdl";
+
+		var tx = gateTool.GetPublicPlacement( select );
+		gateTool.SpawnWithType( select, gateTool.SpawnModel, tx, true, gateType );
+		ShootEffects( select );
+	}
+
+	[Rpc.Host]
+	void UpdateGateType( SelectionPoint point, string gateType )
+	{
+		if ( point.GameObject.GetComponent<WireGateComponent>() is not WireGateComponent gate )
 			return;
 
-		var inputNames = input.GetInputNames();
-		if ( inputNames.Length == 0 ) return;
-		_inputPortIndex = Math.Clamp( _inputPortIndex, 0, inputNames.Length - 1 );
-		Gizmo.Draw.ScreenText( $"In: {inputNames[_inputPortIndex]}", crosshair + new Vector2( 24, -18 ) );
+		gate.Update( string.IsNullOrWhiteSpace( gateType ) ? "Add" : gateType );
+	}
+
+	public override void DrawHud( HudPainter painter, Vector2 crosshair )
+	{
+		base.DrawHud( painter, crosshair );
 	}
 }
 
@@ -122,6 +211,9 @@ public class WiringTool : ToolMode
 [Group( "#tool.group.wire" )]
 public class WireButtonTool : WireSpawnToolMode
 {
+	[Property, Title( "Model" ), WireModel( "button" )]
+	public override string SpawnModel { get; set; }
+
 	[Property, Sync, Title( "Toggle" )]
 	public bool IsToggle { get; set; }
 
@@ -146,12 +238,15 @@ public class WireButtonTool : WireSpawnToolMode
 [Group( "#tool.group.wire" )]
 public class WireGpsTool : WireSpawnToolMode
 {
+	[Property, Title( "Model" ), WireModel( "gps", "controller" )]
+	public override string SpawnModel { get; set; }
+
 	public override string Description => "#tool.hint.wiregps.description";
 
 	protected override void OnStart()
 	{
 		if ( string.IsNullOrWhiteSpace( SpawnModel ) )
-			SpawnModel = "models/wirebox/katlatze/apc.vmdl";
+			SpawnModel = "models/wirebox/seal_enthusiast/gps/gps.vmdl";
 		base.OnStart();
 	}
 
@@ -164,6 +259,9 @@ public class WireGpsTool : WireSpawnToolMode
 [Group( "#tool.group.wire" )]
 public class WireWeightTool : WireSpawnToolMode
 {
+	[Property, Title( "Model" ), WireModel( "weight", "controller" )]
+	public override string SpawnModel { get; set; }
+
 	public override string Description => "#tool.hint.wireweight.description";
 
 	protected override void OnStart()
@@ -182,6 +280,9 @@ public class WireWeightTool : WireSpawnToolMode
 [Group( "#tool.group.wire" )]
 public class WireSpeedometerTool : WireSpawnToolMode
 {
+	[Property, Title( "Model" ), WireModel( "speedometer", "controller" )]
+	public override string SpawnModel { get; set; }
+
 	public override string Description => "#tool.hint.wirespeedometer.description";
 
 	protected override void OnStart()
@@ -200,6 +301,9 @@ public class WireSpeedometerTool : WireSpawnToolMode
 [Group( "#tool.group.wire" )]
 public class WireGyroscopeTool : WireSpawnToolMode
 {
+	[Property, Title( "Model" ), WireModel( "gyroscope", "controller" )]
+	public override string SpawnModel { get; set; }
+
 	public override string Description => "#tool.hint.wiregyroscope.description";
 
 	protected override void OnStart()
@@ -218,6 +322,9 @@ public class WireGyroscopeTool : WireSpawnToolMode
 [Group( "#tool.group.wire" )]
 public class WireRangerTool : WireSpawnToolMode
 {
+	[Property, Title( "Model" ), WireModel( "ranger", "controller" )]
+	public override string SpawnModel { get; set; }
+
 	public override string Description => "#tool.hint.wireranger.description";
 
 	protected override void OnStart()
@@ -236,6 +343,9 @@ public class WireRangerTool : WireSpawnToolMode
 [Group( "#tool.group.wire" )]
 public class WireForcerTool : WireSpawnToolMode
 {
+	[Property, Title( "Model" ), WireModel( "ranger", "forcer", "controller" )]
+	public override string SpawnModel { get; set; }
+
 	public override string Description => "#tool.hint.wireforcer.description";
 
 	protected override void OnStart()
@@ -254,6 +364,9 @@ public class WireForcerTool : WireSpawnToolMode
 [Group( "#tool.group.wire" )]
 public class WireGateTool : WireSpawnToolMode
 {
+	[Property, Title( "Model" ), WireModel( "gate", "controller" )]
+	public override string SpawnModel { get; set; }
+
 	[Property, Sync, Title( "Gate Type" )]
 	public string GateType { get; set; } = "Add";
 
@@ -264,11 +377,65 @@ public class WireGateTool : WireSpawnToolMode
 		if ( string.IsNullOrWhiteSpace( SpawnModel ) )
 			SpawnModel = "models/wirebox/katlatze/chip_rectangle.vmdl";
 		base.OnStart();
+		RegisterAction( ToolInput.Reload, () => "#tool.hint.wiregate.update", OnUpdateExisting );
 	}
 
 	protected override void AddWireComponent( GameObject go )
 	{
-		go.AddComponent<WireGateComponent>().GateType = string.IsNullOrWhiteSpace( GateType ) ? "Add" : GateType;
+		var gate = go.AddComponent<WireGateComponent>();
+		gate.GateType = ResolveGateType();
+		gate.WireInitialize();
+	}
+
+	public void SetGateType( string gateType )
+	{
+		if ( string.IsNullOrWhiteSpace( gateType ) ) return;
+		if ( !IsKnownGateType( gateType ) ) return;
+		GateType = gateType;
+	}
+
+	public Transform GetPublicPlacement( SelectionPoint select ) => GetPlacement( select );
+
+	[Rpc.Host]
+	public void SpawnWithType( SelectionPoint point, string modelPath, Transform tx, bool weld, string gateType )
+	{
+		if ( IsKnownGateType( gateType ) )
+			GateType = gateType;
+		else
+			GateType = "Add";
+
+		SpawnInternal( point, modelPath, tx, weld );
+	}
+
+	string ResolveGateType()
+	{
+		return IsKnownGateType( GateType ) ? GateType : "Add";
+	}
+
+	static bool IsKnownGateType( string gateType )
+	{
+		if ( string.IsNullOrWhiteSpace( gateType ) ) return false;
+		return WireGateComponent.GetGates().Values.Any( list => list.Contains( gateType ) );
+	}
+
+	void OnUpdateExisting()
+	{
+		var select = TraceSelect();
+		if ( !select.IsValid() || select.IsWorld ) return;
+		if ( select.GameObject.GetComponent<WireGateComponent>() is not WireGateComponent gate )
+			return;
+
+		UpdateExistingGate( select, ResolveGateType() );
+		ShootEffects( select );
+	}
+
+	[Rpc.Host]
+	void UpdateExistingGate( SelectionPoint point, string gateType )
+	{
+		if ( point.GameObject.GetComponent<WireGateComponent>() is not WireGateComponent gate )
+			return;
+
+		gate.Update( IsKnownGateType( gateType ) ? gateType : "Add" );
 	}
 }
 
@@ -278,6 +445,9 @@ public class WireGateTool : WireSpawnToolMode
 [Group( "#tool.group.wire" )]
 public class WireDigitalScreenTool : WireSpawnToolMode
 {
+	[Property, Title( "Model" ), WireModel( "screen", "controller" )]
+	public override string SpawnModel { get; set; }
+
 	public override string Description => "#tool.hint.wiredigitalscreen.description";
 
 	protected override void OnStart()
@@ -296,8 +466,11 @@ public class WireDigitalScreenTool : WireSpawnToolMode
 [Group( "#tool.group.wire" )]
 public class WireCameraScreenTool : WireSpawnToolMode
 {
-	[Property, Title( "Camera Model" )]
-	public string CameraModel { get; set; } = "models/wirebox/katlatze/apc.vmdl";
+	[Property, Title( "Screen Model" ), WireModel( "screen", "controller" )]
+	public override string SpawnModel { get; set; }
+
+	[Property, Title( "Camera Model" ), WireModel( "camera", "controller" )]
+	public string CameraModel { get; set; } = "camera/camera.vmdl";
 
 	protected override bool RegisterNoWeldSecondary => false;
 	public override string Description => "#tool.hint.wirecamerascreen.description";
@@ -306,6 +479,8 @@ public class WireCameraScreenTool : WireSpawnToolMode
 	{
 		if ( string.IsNullOrWhiteSpace( SpawnModel ) )
 			SpawnModel = "models/television/flatscreen_tv.vmdl";
+		if ( string.IsNullOrWhiteSpace( CameraModel ) )
+			CameraModel = "camera/camera.vmdl";
 		base.OnStart();
 		RegisterAction( ToolInput.Secondary, () => "#tool.hint.wirecamerascreen.place_camera", OnPlaceCamera );
 	}
@@ -324,22 +499,41 @@ public class WireCameraScreenTool : WireSpawnToolMode
 		if ( !select.IsValid() ) return;
 		if ( string.IsNullOrWhiteSpace( CameraModel ) ) return;
 
-		SpawnCamera( select, CameraModel, GetPlacement( select ) );
+		var tx = GetPlacement( select );
+		_ = SpawnCameraResolved( select, CameraModel, tx );
+	}
+
+	async Task SpawnCameraResolved( SelectionPoint select, string modelPath, Transform tx )
+	{
+		var model = await ResolveSpawnModel( modelPath )
+			?? await ResolveSpawnModel( "camera/camera.vmdl" )
+			?? await ResolveSpawnModel( "smlp.camera" )
+			?? await ResolveSpawnModel( "models/wirebox/katlatze/apc.vmdl" );
+		if ( model is null ) return;
+
+		SpawnCamera( select, modelPath, tx );
 		ShootEffects( select );
 	}
 
 	[Rpc.Host]
 	void SpawnCamera( SelectionPoint point, string modelPath, Transform tx )
 	{
+		_ = SpawnCameraAsync( point, modelPath, tx );
+	}
+
+	async Task SpawnCameraAsync( SelectionPoint point, string modelPath, Transform tx )
+	{
 		if ( !CanUseToolOn( point ) ) return;
 		if ( string.IsNullOrWhiteSpace( modelPath ) ) return;
+
+		var model = await ResolveSpawnModel( modelPath )
+			?? await ResolveSpawnModel( "camera/camera.vmdl" )
+			?? await ResolveSpawnModel( "smlp.camera" )
+			?? await ResolveSpawnModel( "models/wirebox/katlatze/apc.vmdl" );
+		if ( model is null ) return;
+
 		if ( !TryUseToolSpawnLimit() ) return;
 		if ( !TryUseToolActionCooldown() ) return;
-
-		var model = Model.Load( modelPath );
-		if ( !model.IsValid() )
-			model = Model.Load( "models/wirebox/katlatze/apc.vmdl" );
-		if ( !model.IsValid() ) return;
 
 		var go = new GameObject( false, "wire" );
 		go.Tags.Add( "removable" );
@@ -358,6 +552,7 @@ public class WireCameraScreenTool : WireSpawnToolMode
 
 		go.AddComponent<WireCameraComponent>();
 
+		var welded = false;
 		if ( !point.IsWorld )
 		{
 			var joint = go.AddComponent<FixedJoint>();
@@ -368,11 +563,19 @@ public class WireCameraScreenTool : WireSpawnToolMode
 			joint.LinearFrequency = 0;
 			joint.Body = point.GameObject;
 			joint.EnableCollision = false;
+			welded = true;
 		}
 
 		ApplyPhysicsProperties( go );
 		RegisterToolSpawnedObject( go );
 		go.NetworkSpawn( true, null );
+
+		if ( !welded )
+		{
+			foreach ( var rb in go.GetComponentsInChildren<Rigidbody>( true ) )
+				rb.MotionEnabled = false;
+		}
+
 		Track( go );
 
 		var undo = Player.Undo.Create();
@@ -388,12 +591,15 @@ public class WireCameraScreenTool : WireSpawnToolMode
 [Group( "#tool.group.wire" )]
 public class WireKeyboardTool : WireSpawnToolMode
 {
+	[Property, Title( "Model" ), WireModel( "keyboard", "controller", "button" )]
+	public override string SpawnModel { get; set; }
+
 	public override string Description => "#tool.hint.wirekeyboard.description";
 
 	protected override void OnStart()
 	{
 		if ( string.IsNullOrWhiteSpace( SpawnModel ) )
-			SpawnModel = "models/wirebox/katlatze/button.vmdl";
+			SpawnModel = "models/wirebox/seal_enthusiast/keyboard/keyboard.vmdl";
 		base.OnStart();
 	}
 
@@ -406,6 +612,9 @@ public class WireKeyboardTool : WireSpawnToolMode
 [Group( "#tool.group.wire" )]
 public class WireLightBridgeTool : WireSpawnToolMode
 {
+	[Property, Title( "Model" ), WireModel( "lightbridge", "controller" )]
+	public override string SpawnModel { get; set; }
+
 	public override string Description => "#tool.hint.wirelightbridge.description";
 
 	protected override void OnStart()
@@ -424,6 +633,9 @@ public class WireLightBridgeTool : WireSpawnToolMode
 [Group( "#tool.group.wire" )]
 public class WireWeightScaleTool : WireSpawnToolMode
 {
+	[Property, Title( "Model" ), WireModel( "weightscale" )]
+	public override string SpawnModel { get; set; }
+
 	public override string Description => "#tool.hint.wireweightscale.description";
 
 	protected override void OnStart()
@@ -490,51 +702,6 @@ public class WireDebuggerTool : ToolMode
 	public override void DrawHud( HudPainter painter, Vector2 crosshair )
 	{
 		base.DrawHud( painter, crosshair );
-
 		TrackedEntities.RemoveWhere( ent => ent is not BaseWireComponent component || !component.IsValid() );
-		if ( TrackedEntities.Count == 0 )
-			return;
-
-		var y = 80f;
-		DrawDebuggerLine( painter, "Wire Debugger", 24, y, Color.Orange, 18 );
-		y += 26f;
-
-		foreach ( var ent in TrackedEntities )
-		{
-			var title = ent is Component c
-				? (c.GameObject?.Name ?? "Wire")
-				: "Wire";
-			DrawDebuggerLine( painter, title, 24, y, Color.White, 15 );
-			y += 18f;
-
-			if ( ent is IWireInputComponent input )
-			{
-				foreach ( var name in input.GetInputNames() )
-				{
-					DrawDebuggerLine( painter, $"  In  {name}: {input.GetInput( name ).value}", 24, y, Color.Gray, 13 );
-					y += 16f;
-				}
-			}
-
-			if ( ent is IWireOutputComponent output )
-			{
-				foreach ( var name in output.GetOutputNames() )
-				{
-					DrawDebuggerLine( painter, $"  Out {name}: {output.GetOutput( name ).value}", 24, y, Color.Gray, 13 );
-					y += 16f;
-				}
-			}
-
-			y += 8f;
-			if ( y > Screen.Height - 80f )
-				break;
-		}
-	}
-
-	static void DrawDebuggerLine( HudPainter painter, string text, float x, float y, Color color, float size )
-	{
-		var scope = new TextRendering.Scope( text, color, size );
-		scope.FontName = "Consolas";
-		painter.DrawText( scope, new Rect( x, y, 640, size + 4 ), TextFlag.Left );
 	}
 }

@@ -6,7 +6,11 @@
 <root class="tt">
 
     <div class="icon">@Icon</div>
-    <div class="title">@Title</div>
+    <div class="title">@ActionTitle</div>
+    @if ( HasSubtitle )
+    {
+        <div class="subtitle">@Subtitle</div>
+    }
     <div class="description">@Description</div>
 
 </root>
@@ -16,4 +20,26 @@
     [Parameter] public string Title { get; set; }
     [Parameter] public string Icon { get; set; }
     [Parameter] public string Description { get; set; }
+
+    string ActionTitle
+    {
+        get
+        {
+            var title = Title ?? "";
+            var split = title.IndexOf( '\n' );
+            return split < 0 ? title : title[..split];
+        }
+    }
+
+    string Subtitle
+    {
+        get
+        {
+            var title = Title ?? "";
+            var split = title.IndexOf( '\n' );
+            return split < 0 ? "" : title[(split + 1)..].Trim();
+        }
+    }
+
+    bool HasSubtitle => !string.IsNullOrWhiteSpace( Subtitle );
 }

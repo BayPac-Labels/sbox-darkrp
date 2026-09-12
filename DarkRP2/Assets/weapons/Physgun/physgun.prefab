@@ -38,7 +38,7 @@
           "$compiler": "texture",
           "$source": "imagefile",
           "data": {
-            "FilePath": "ui/weapons/physgun_trans.png",
+            "FilePath": "ui/weapons/physgun_hud.png",
             "MaxSize": 4096,
             "ConvertHeightToNormals": false,
             "NormalScale": 1,
@@ -71,7 +71,7 @@
           },
           "compiled": null
         },
-        "DisplayName": "Physics Gun",
+        "DisplayName": "Physgun",
         "DroppedGameObject": {
           "_type": "gameobject",
           "go": "eee17487-5a77-418f-b927-43e62b57dbbb"

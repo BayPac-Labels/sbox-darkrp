@@ -1,0 +1,164 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+@attribute [StyleSheet]
+
+@if ( Player.IsValid() && Player.WantsHideHud )
+	return;
+
+<root>
+	@if ( _wiring is not null )
+	{
+		<div class="wiring-tool-hud">
+			<div class="wiring-ports wiring-inputs @(_wiring.HudInputSelected ? "selected" : "")">
+				<div class="h2">Inputs</div>
+				<div class="wiring-ports-list">
+					@for ( var i = 0; i < _wiring.HudInputs.Length; i++ )
+					{
+						<div class="port @(i == _wiring.HudInputIndex ? "active" : "")">@_wiring.HudInputs[i]</div>
+					}
+				</div>
+			</div>
+			@if ( _wiring.HudOutputs.Length != 0 )
+			{
+				<div class="wiring-ports wiring-outputs @(_wiring.HudOutputSelected ? "selected" : "")">
+					<div class="h2">Outputs</div>
+					<div class="wiring-ports-list">
+						@for ( var i = 0; i < _wiring.HudOutputs.Length; i++ )
+						{
+							<div class="port @(i == _wiring.HudOutputIndex ? "active" : "")">@_wiring.HudOutputs[i]</div>
+						}
+					</div>
+				</div>
+			}
+		</div>
+
+		@if ( _showGates )
+		{
+			<div class="wire-gate-container">
+				@foreach ( var category in WireGateComponent.GetGates() )
+				{
+					<div class="wire-gate-category">
+						<div class="wire-gate-category-label">@category.Key</div>
+						<div class="wire-gate-category-list">
+							@foreach ( var gateName in category.Value )
+							{
+								<button class="wire-gate-category-list-button" @onclick="@(() => _wiring.RequestSpawnGate( gateName ))">@gateName</button>
+							}
+						</div>
+					</div>
+				}
+			</div>
+		}
+	}
+
+	@if ( _debugger is not null && WireDebuggerTool.TrackedEntities.Count > 0 )
+	{
+		<div class="debugger-hud">
+			<label class="title">Debugger</label>
+			@foreach ( var ent in WireDebuggerTool.TrackedEntities )
+			{
+				<div class="ent">
+					<label class="name">@(ent is Component c ? (c.GameObject?.Name ?? "Wire") : "Wire")</label>
+					@if ( ent is IWireInputComponent wireInput )
+					{
+						<div class="ports">
+							<label>Inputs:</label>
+							@foreach ( var portName in wireInput.GetInputNames() )
+							{
+								<div class="port">
+									<label class="name">@portName</label>:
+									<label class="value">@(wireInput.GetInput( portName ).value)</label>
+								</div>
+							}
+						</div>
+					}
+					@if ( ent is IWireOutputComponent wireOutput )
+					{
+						<div class="ports">
+							<label>Outputs:</label>
+							@foreach ( var portName in wireOutput.GetOutputNames() )
+							{
+								<div class="port">
+									<label class="name">@portName</label>:
+									<label class="value">@(wireOutput.GetOutput( portName ).value)</label>
+								</div>
+							}
+						</div>
+					}
+				</div>
+			}
+		</div>
+	}
+</root>
+
+@code
+{
+	public static bool SuppressScrollWheel { get; private set; }
+
+	Player Player => Player.FindLocalPlayer();
+	WiringTool _wiring;
+	WireDebuggerTool _debugger;
+	bool _showGates;
+	int _hash;
+
+	protected override void OnUpdate()
+	{
+		var toolgun = Player?.GetWeapon<Toolgun>();
+		var mode = toolgun?.GetCurrentMode();
+
+		_wiring = mode as WiringTool;
+		_debugger = mode as WireDebuggerTool;
+		_showGates = _wiring is not null && Input.Down( "drop" );
+		SuppressScrollWheel = _wiring is not null && (_wiring.HudInputs.Length > 0 || _wiring.HudOutputs.Length > 0 || _showGates);
+
+		if ( _wiring is not null )
+			UpdateWireOverlay();
+
+		var hash = HashCode.Combine(
+			HashCode.Combine( _wiring, _debugger, _showGates, _wiring?.HudInputIndex, _wiring?.HudOutputIndex ),
+			HashCode.Combine( _wiring?.HudInputSelected, _wiring?.HudOutputSelected, _wiring?.HudInputs.Length, _wiring?.HudOutputs.Length, WireDebuggerTool.TrackedEntities.Count ) );
+
+		if ( hash != _hash )
+		{
+			_hash = hash;
+			StateHasChanged();
+		}
+		else if ( _debugger is not null && WireDebuggerTool.TrackedEntities.Count > 0 )
+		{
+			StateHasChanged();
+		}
+
+		SetClass( "visible", _wiring is not null || (_debugger is not null && WireDebuggerTool.TrackedEntities.Count > 0) );
+	}
+
+	protected override void OnDisabled()
+	{
+		SuppressScrollWheel = false;
+		base.OnDisabled();
+	}
+
+	void UpdateWireOverlay()
+	{
+		var player = Player;
+		if ( !player.IsValid() ) return;
+
+		var ray = player.EyeTransform.ForwardRay;
+		var tr = Scene.Trace.Ray( ray, 160 )
+			.UseHitboxes()
+			.WithAnyTags( "solid", "npc", "glass" )
+			.WithoutTags( "debris", "player" )
+			.IgnoreGameObjectHierarchy( player.GameObject )
+			.Size( 2 )
+			.Run();
+
+		if ( !tr.Hit || !tr.GameObject.IsValid() ) return;
+		if ( tr.GameObject.GetComponent<IWireComponent>() is not IWireComponent wire ) return;
+
+		var text = wire.GetOverlayText();
+		if ( string.IsNullOrWhiteSpace( text ) ) return;
+
+		tr.GameObject.DebugOverlay.Text( tr.EndPosition, text, 12, overlay: true );
+	}
+}

@@ -22,13 +22,13 @@ public static class WeaponShipmentCatalog
 {
 	static readonly WeaponShipmentItemDefinition[] Items =
 	[
-		new( "weapons/glock/glock.prefab", "USP Shipment", 4800, "A crate with 10 USP pistols for resale.", 10, true ),
-		new( "weapons/colt1911/colt1911.prefab", "1911 Shipment", 6000, "A crate with 10 Colt 1911 pistols for resale.", 10, true ),
-		new( "weapons/mp5/mp5.prefab", "SMG Shipment", 12800, "A crate with 10 SMGs ready to distribute.", 10, true ),
-		new( "weapons/shotgun/shotgun.prefab", "Shotgun Shipment", 16800, "A crate with 10 shotguns for close-range muscle.", 10, true ),
-		new( "weapons/m4a1/m4a1.prefab", "M4A1 Shipment", 20800, "A crate with 10 M4A1 rifles for heavier loadouts.", 10, true ),
-		new( "weapons/sniper/sniper.prefab", "Sniper Shipment", 25600, "A crate with 10 sniper rifles for long sightlines.", 10, true ),
-		new( "weapons/rpg/rpg.prefab", "Rocket Launcher Shipment", 80000, "A crate with 10 rocket launchers for high-end weapon dealing.", 10, true )
+		new( "weapons/glock/glock.prefab", "USP", 4800, "A crate with 10 USP pistols for resale.", WeaponShipment.MaxStackSize, true ),
+		new( "weapons/colt1911/colt1911.prefab", "1911", 6000, "A crate with 10 Colt 1911 pistols for resale.", WeaponShipment.MaxStackSize, true ),
+		new( "weapons/mp5/mp5.prefab", "SMG", 12800, "A crate with 10 SMGs ready to distribute.", WeaponShipment.MaxStackSize, true ),
+		new( "weapons/shotgun/shotgun.prefab", "Shotgun", 16800, "A crate with 10 shotguns for close-range muscle.", WeaponShipment.MaxStackSize, true ),
+		new( "weapons/m4a1/m4a1.prefab", "M4A1", 20800, "A crate with 10 M4A1 rifles for heavier loadouts.", WeaponShipment.MaxStackSize, true ),
+		new( "weapons/sniper/sniper.prefab", "Sniper", 25600, "A crate with 10 sniper rifles for long sightlines.", WeaponShipment.MaxStackSize, true ),
+		new( "weapons/rpg/rpg.prefab", "Rocket Launcher", 80000, "A crate with 10 rocket launchers for high-end weapon dealing.", WeaponShipment.MaxStackSize, true )
 	];
 
 	public static IReadOnlyList<WeaponShipmentItemDefinition> GetAll()

@@ -1,0 +1,108 @@
+@import "/UI/Popup.scss";
+
+WireModelPopup .inner
+{
+	width: 800px;
+	height: 800px;
+
+	.popup-header h2
+	{
+		flex-grow: 1;
+	}
+}
+
+WireModelPopup .inner .grid
+{
+	width: 100%;
+	flex-grow: 1;
+	gap: 1rem;
+	background-color: #222a;
+	padding: 1rem;
+	border-radius: 10px;
+}
+
+WireModelPopup .inner .grid .item
+{
+	width: 100%;
+	height: 100%;
+	color: #aaa;
+	pointer-events: all;
+	border-radius: 10px;
+	margin: 0.25rem;
+	cursor: pointer;
+	position: relative;
+	flex-direction: column;
+	padding: 1rem;
+	font-size: 1rem;
+	background-color: #0088ff02;
+
+	.icon
+	{
+		height: 100px;
+		overflow: hidden;
+		justify-content: center;
+		align-items: center;
+		flex-shrink: 0;
+		background-position: center;
+		background-size: contain;
+		background-repeat: no-repeat;
+	}
+
+	.title
+	{
+		font-weight: 700;
+		font-size: 1.2rem;
+		color: white;
+		flex-shrink: 0;
+		text-align: center;
+	}
+
+	&:hover,
+	&.active
+	{
+		background-color: #08f5;
+	}
+}
+
+WireModelPopup .inner .popup-footer
+{
+	flex-direction: row;
+	justify-content: flex-end;
+	padding: 0.5rem 0;
+	flex-shrink: 0;
+	gap: 0.5rem;
+
+	.clear-button,
+	.select-button
+	{
+		padding: 0.6rem 2rem;
+		font-weight: 700;
+		font-size: 1.2rem;
+		border-radius: 6px;
+		cursor: pointer;
+		pointer-events: all;
+	}
+
+	.clear-button
+	{
+		background-color: rgba( white, 0.1 );
+		color: rgba( white, 0.7 );
+
+		&:hover
+		{
+			background-color: rgba( white, 0.2 );
+			color: white;
+		}
+	}
+
+	.select-button
+	{
+		background-color: #08f;
+		color: white;
+
+		&:hover
+		{
+			background-color: #09f;
+		}
+	}
+}

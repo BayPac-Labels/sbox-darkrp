@@ -31,11 +31,13 @@ public partial class Toolgun : ScreenWeapon
 			return;
 		}
 
-		bool enabled = true;
+		var existing = GetComponents<ToolMode>( true ).Select( x => x.GetType() ).ToHashSet();
+		bool enabled = existing.Count == 0;
 
 		foreach ( var mode in Game.TypeLibrary.GetTypes<ToolMode>() )
 		{
 			if ( mode.IsAbstract ) continue;
+			if ( existing.Contains( mode.TargetType ) ) continue;
 
 			Components.Create( mode, enabled );
 			enabled = false;
@@ -82,11 +84,17 @@ public partial class Toolgun : ScreenWeapon
 			return;
 		}
 
-		var newMode = GetComponents<ToolMode>( true ).Where( x => x.GetType() == targetMode.TargetType ).FirstOrDefault();
+		var newMode = GetComponents<ToolMode>( true ).FirstOrDefault( x => x.GetType() == targetMode.TargetType );
 		if ( newMode == null )
 		{
-			Log.Warning( $"Toolgun missing mode component for {name}" );
-			return;
+			// Newly added tools won't exist on toolguns that were already spawned.
+			CreateToolComponents();
+			newMode = GetComponents<ToolMode>( true ).FirstOrDefault( x => x.GetType() == targetMode.TargetType );
+			if ( newMode == null )
+			{
+				Log.Warning( $"Toolgun missing mode component for {name}" );
+				return;
+			}
 		}
 
 		var currentMode = GetCurrentMode();

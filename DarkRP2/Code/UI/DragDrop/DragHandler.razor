@@ -31,6 +31,12 @@
     public static DragData Current { get; private set; }
 
     /// <summary>
+    /// Last drag payload after <see cref="StopDragging"/>. OnDrop often runs after OnDragEnd
+    /// clears <see cref="Current"/>; slots read this as a one-shot fallback.
+    /// </summary>
+    public static DragData LastEnded { get; private set; }
+
+    /// <summary>
     /// True if something is actively being dragged.
     /// </summary>
     public static bool IsDragging => Current is not null;
@@ -55,6 +61,7 @@
     public static void StartDragging( DragData data )
     {
         Current = data;
+        LastEnded = null;
         data.Source.UserData = data;
 
         Instance?.StateHasChanged();
@@ -67,8 +74,34 @@
     {
         if (!IsDragging) return;
 
+        LastEnded = Current;
         Current = null;
         Instance?.StateHasChanged();
+    }
+
+    /// <summary>
+    /// Resolve drag payload for OnDrop when Current was already cleared by OnDragEnd.
+    /// </summary>
+    public static DragData Resolve( PanelEvent e )
+    {
+        if ( Current is not null )
+            return Current;
+
+        if ( LastEnded is not null )
+            return LastEnded;
+
+        if ( e?.Target?.UserData is DragData fromTarget )
+            return fromTarget;
+
+        return null;
+    }
+
+    /// <summary>
+    /// Clears the one-shot <see cref="LastEnded"/> fallback after a drop is processed.
+    /// </summary>
+    public static void ClearEnded()
+    {
+        LastEnded = null;
     }
 
     protected override void OnUpdate()

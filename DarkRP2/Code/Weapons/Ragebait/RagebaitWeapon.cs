@@ -3,9 +3,6 @@ using Sandbox.Rendering;
 public sealed class RagebaitWeapon : BaseWeapon
 {
 	const string ThrowSoundPath = "weapons/crowbar/sounds/crowbar.swing.sound";
-	const string InventoryIconPath = "thumb:models/props/fruit/pomegranate.vmdl";
-
-	public override string InventoryIconOverride => InventoryIconPath;
 
 	[Property] public GameObject ProjectilePrefab { get; set; }
 	[Property] public float ThrowPower { get; set; } = 1450.0f;

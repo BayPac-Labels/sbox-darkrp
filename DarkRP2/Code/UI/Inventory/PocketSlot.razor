@@ -1,0 +1,200 @@
+@using Sandbox;
+@using Sandbox.UI;
+@namespace Sandbox
+@inherits Panel
+
+<root>
+    <div class="selection"></div>
+
+    @if ( !Input.UsingController )
+    {
+        <label class="index">@(Index + 1)</label>
+    }
+
+    @{
+        var item = GetItem();
+        var iconPath = item.IsValid() ? item.GetIconPath() : null;
+    }
+
+    @if ( item.IsValid() )
+    {
+        @if ( !string.IsNullOrEmpty( iconPath ) )
+        {
+            <div class="icon" @ref="IconPanel"></div>
+        }
+        else
+        {
+            <div class="fallback-icon"><i>@item.GetFallbackIcon()</i></div>
+        }
+        <div class="divider"></div>
+        <label class="name" @ref="NamePanel"></label>
+    }
+</root>
+
+@code
+{
+    public PlayerPocket Pocket { get; set; }
+    public int Index { get; set; }
+
+    Panel IconPanel { get; set; }
+    Label NamePanel { get; set; }
+
+    static PocketSlot _hoveredDragSlot;
+
+    /// <summary>True while the mouse is over a pocket slot during a drag (used by InventorySlot.OnDragEnd).</summary>
+    public static bool HasDragHover => _hoveredDragSlot is not null;
+
+    public override bool WantsDrag
+    {
+        get
+        {
+            var item = GetItem();
+            return item.IsValid();
+        }
+    }
+
+    PocketedItem GetItem()
+    {
+        if ( !Pocket.IsValid() )
+            return null;
+
+        return Pocket.GetSlot( Index );
+    }
+
+    protected override void OnDragStart( DragEvent e )
+    {
+        var item = GetItem();
+        if ( !item.IsValid() )
+            return;
+
+        DragHandler.StartDragging( new DragData
+        {
+            Source = this,
+            Icon = item.GetIconPath(),
+            Title = item.GetDisplayName(),
+            Type = "pocket"
+        } );
+    }
+
+    protected override void OnDragEnd( DragEvent e )
+    {
+        var data = DragHandler.Current;
+        DragHandler.StopDragging();
+        base.OnDragEnd( e );
+
+        if ( data?.Handled == true )
+        {
+            if ( data.Source is not null )
+                data.Source.UserData = null;
+            return;
+        }
+
+        if ( _hoveredDragSlot is not null && _hoveredDragSlot != this )
+            return;
+
+        // Preserve data when dropping onto a hotbar slot (pocket → hotbar).
+        if ( InventorySlot.HasDragHover )
+            return;
+
+        if ( data?.Source is not null )
+            data.Source.UserData = null;
+        DragHandler.ClearEnded();
+
+        // Pocket items never drop to the world via drag — right-click Drop only.
+    }
+
+    protected override void OnRightClick( MousePanelEvent e )
+    {
+        var item = GetItem();
+        if ( !item.IsValid() )
+            return;
+
+        var menu = MenuPanel.Open( this );
+
+        // Pocketed entities are disabled — must include disabled components.
+        var shipment = item.GetComponent<WeaponShipment>( true );
+        if ( shipment.IsValid() && shipment.RemainingWeapons > 1 )
+        {
+            var half = shipment.RemainingWeapons / 2;
+            menu.AddOption( "call_split", $"Split in Half ({half})", () => Pocket?.SplitShipment( Index, half ) );
+            menu.AddOption( "filter_1", "Split One", () => Pocket?.SplitShipment( Index, 1 ) );
+            menu.AddSpacer();
+        }
+
+        menu.AddOption( "logout", "Drop", () => Pocket?.Drop( Index ) );
+        menu.StateHasChanged();
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        var item = GetItem();
+        var hasItem = item.IsValid();
+
+        SetClass( "droppable", true );
+        SetClass( "empty", !hasItem );
+        SetClass( "no-tint", hasItem && item.IsWeapon );
+
+        if ( hasItem && IconPanel is not null )
+        {
+            var icon = item.GetIconPath();
+            if ( !string.IsNullOrEmpty( icon ) )
+                IconPanel.Style.SetBackgroundImage( icon );
+        }
+
+        if ( hasItem && NamePanel is not null )
+            NamePanel.Text = item.GetDisplayName();
+    }
+
+    protected override void OnDragEnter( PanelEvent e )
+    {
+        AddClass( "drag-hover" );
+        _hoveredDragSlot = this;
+    }
+
+    protected override void OnDragLeave( PanelEvent e )
+    {
+        RemoveClass( "drag-hover" );
+        if ( _hoveredDragSlot == this )
+            _hoveredDragSlot = null;
+    }
+
+    protected override void OnDrop( PanelEvent e )
+    {
+        RemoveClass( "drag-hover" );
+        _hoveredDragSlot = null;
+
+        var data = DragHandler.Resolve( e );
+        if ( data?.Source is not null )
+            data.Source.UserData = null;
+        DragHandler.ClearEnded();
+
+        if ( data is null || !Pocket.IsValid() )
+            return;
+
+        if ( data.Source is PocketSlot sourcePocket && sourcePocket.Pocket == Pocket )
+        {
+            data.Handled = true;
+            Pocket.MoveSlot( sourcePocket.Index, Index );
+            return;
+        }
+
+        if ( data.Source is InventorySlot hotbarSlot )
+        {
+            var weapon = hotbarSlot.Inventory?.GetSlot( hotbarSlot.Index );
+            if ( !Pocketable.IsRpGun( weapon ) )
+                return;
+
+            data.Handled = true;
+            Pocket.MoveFromHotbar( hotbarSlot.Index, Index );
+            return;
+        }
+    }
+
+    protected override int BuildHash()
+    {
+        var item = GetItem();
+        return HashCode.Combine( item, item?.GetDisplayName(), item?.Slot, Input.UsingController );
+    }
+}

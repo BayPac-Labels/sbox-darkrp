@@ -35,10 +35,38 @@ public sealed class MoneyPrinter : Component, Component.IPressable, IPhysgunEven
 			? $"{definition.Title} - ${StoredMoney:n0} - {GetHealthPercent():0}%"
 			: $"{definition.Title} - Empty - {GetHealthPercent():0}%";
 
-		return new IPressable.Tooltip( "Collect", "$", description );
+		if ( StoredMoney > 0 )
+		{
+			if ( CanPocket( e ) )
+				description = $"{description} · MMB Pocket";
+
+			return new IPressable.Tooltip( "Collect", "$", description );
+		}
+
+		if ( CanPocket( e ) )
+			return new IPressable.Tooltip( "Pocket", "inventory_2", "Press MMB to pocket" );
+
+		return new IPressable.Tooltip( "Empty", "block", description );
 	}
 
-	bool IPressable.CanPress( IPressable.Event e ) => StoredMoney > 0;
+	bool IPressable.CanPress( IPressable.Event e )
+	{
+		// E is Use only — collect money. Pocketing is middle-mouse.
+		return StoredMoney > 0;
+	}
+
+	bool CanPocket( IPressable.Event e )
+	{
+		var player = e.Source.GameObject.Root.GetComponent<Player>() ?? Player.FindLocalPlayer();
+		if ( !player.IsValid() )
+			return false;
+
+		var pocket = player.GetComponent<PlayerPocket>();
+		if ( !pocket.IsValid() || pocket.IsFull )
+			return false;
+
+		return Pocketable.CanPlayerAccess( player, GameObject );
+	}
 
 	void IPhysgunEvent.OnPhysgunGrab( IPhysgunEvent.GrabEvent e )
 	{
@@ -50,6 +78,9 @@ public sealed class MoneyPrinter : Component, Component.IPressable, IPhysgunEven
 
 	bool IPressable.Press( IPressable.Event e )
 	{
+		if ( StoredMoney <= 0 )
+			return false;
+
 		CollectMoney( e.Source.GameObject );
 		return true;
 	}

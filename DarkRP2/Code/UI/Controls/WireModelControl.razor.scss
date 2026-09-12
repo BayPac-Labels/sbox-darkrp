@@ -1,0 +1,6 @@
+@import 'resource-picker.scss';
+
+WireModelControl
+{
+	@include resource-picker-control;
+}

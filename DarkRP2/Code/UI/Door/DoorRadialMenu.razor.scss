@@ -1,0 +1,342 @@
+@import "/UI/Theme.scss";
+
+DoorRadialMenu
+{
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1100;
+	pointer-events: none;
+	align-items: center;
+	justify-content: center;
+	font-family: $title-font;
+
+	&.is-closed
+	{
+		display: none;
+		pointer-events: none;
+	}
+
+	&.is-open
+	{
+		display: flex;
+		pointer-events: none;
+	}
+
+	.door-radial-backdrop
+	{
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba( 0, 0, 0, 0.28 );
+		pointer-events: all;
+	}
+
+	.door-radial
+	{
+		position: relative;
+		width: 420px;
+		height: 420px;
+		pointer-events: all;
+		z-index: 1;
+		box-shadow: 0 16px 40px rgba( 0, 0, 0, 0.45 );
+		border-radius: 210px;
+	}
+
+	.wheel
+	{
+		position: relative;
+		width: 100%;
+		height: 100%;
+		border-radius: 210px;
+		background-color: $hud-panel-bg;
+		border: 1px solid $hud-panel-border;
+		overflow: hidden;
+
+		&.is-picking
+		{
+			cursor: pointer;
+		}
+	}
+
+	// Equal 120° dividers from the true disc center (50%/50%).
+	.spoke
+	{
+		position: absolute;
+		left: 50%;
+		top: 0;
+		width: 2px;
+		height: 50%;
+		margin-left: -1px;
+		background-color: rgba( 255, 255, 255, 0.16 );
+		transform-origin: 50% 100%;
+		pointer-events: none;
+		z-index: 2;
+
+		&.one
+		{
+			transform: rotate( 60deg );
+		}
+
+		&.two
+		{
+			transform: rotate( 180deg );
+		}
+
+		&.three
+		{
+			transform: rotate( 300deg );
+		}
+	}
+
+	.hub
+	{
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: 124px;
+		height: 124px;
+		margin-left: -62px;
+		margin-top: -62px;
+		border-radius: 62px;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 2px;
+		background-color: rgba( 8, 14, 22, 1 );
+		border: 1px solid $hud-outline;
+		box-shadow: 0 8px 18px rgba( 0, 0, 0, 0.4 );
+		z-index: 3;
+		pointer-events: all;
+		cursor: pointer;
+		transition: border-color 0.12s ease, background-color 0.12s ease;
+
+		&:hover
+		{
+			border-color: $color-accent;
+			background-color: rgba( 12, 22, 34, 0.98 );
+
+			.hub-hint
+			{
+				opacity: 1;
+			}
+		}
+	}
+
+	.hub-title
+	{
+		font-size: 16px;
+		font-weight: 800;
+		color: $hud-text;
+		text-align: center;
+		pointer-events: none;
+	}
+
+	.hub-hint
+	{
+		font-size: 11px;
+		font-weight: 600;
+		color: $color-accent;
+		text-align: center;
+		opacity: 0.55;
+		pointer-events: none;
+		transition: opacity 0.12s ease;
+	}
+
+	// Three fixed 120° wedges — same geometry as the spokes, no CSS rotate, no textures.
+	// 2× panel keeps border-shape verts in 0–100% while the chord clears the rim.
+	// Host circle clips a smooth outer arc; hub sits on top of the tip.
+	.wedge
+	{
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		z-index: 0;
+		border-radius: 210px;
+		overflow: hidden;
+		opacity: 0;
+
+		&.is-hot
+		{
+			opacity: 1;
+		}
+
+		.wedge-fill
+		{
+			position: absolute;
+			left: -50%;
+			top: -50%;
+			width: 200%;
+			height: 200%;
+			background-color: rgba( 0, 148, 255, 0.22 );
+		}
+
+		// Outer points at r=50% of the 2× box on spokes 300°/60°/180°.
+		// x = 50 + 50·sin(θ), y = 50 - 50·cos(θ)  (θ clockwise from north)
+		&.add .wedge-fill
+		{
+			border-shape: polygon( 50% 50%, 6.6987% 25%, 93.3013% 25% );
+		}
+
+		&.kick .wedge-fill
+		{
+			border-shape: polygon( 50% 50%, 93.3013% 25%, 50% 100% );
+		}
+
+		&.sell .wedge-fill
+		{
+			border-shape: polygon( 50% 50%, 50% 100%, 6.6987% 25% );
+		}
+	}
+
+	.slice
+	{
+		position: absolute;
+		width: 108px;
+		height: 108px;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		background-color: transparent;
+		pointer-events: none;
+		color: $hud-text;
+		z-index: 2;
+
+		.icon
+		{
+			font-family: "Material Icons";
+			font-size: 34px;
+			color: $color-accent;
+		}
+
+		label
+		{
+			font-size: 13px;
+			font-weight: 800;
+		}
+
+		.slice-sub
+		{
+			font-size: 12px;
+			font-weight: 700;
+			color: $color-accent;
+		}
+
+		&.is-hot
+		{
+			sound-in: ui.hover;
+
+			.icon
+			{
+				color: $hud-text;
+			}
+		}
+
+		// Icon centers at 0° / 120° / 240°, 134px from the wheel center.
+		&.add
+		{
+			left: 156px;
+			top: 22px;
+		}
+
+		&.kick
+		{
+			left: 272px;
+			top: 223px;
+		}
+
+		&.sell
+		{
+			left: 40px;
+			top: 223px;
+		}
+	}
+
+	.user-list
+	{
+		width: 320px;
+		max-height: 380px;
+		flex-direction: column;
+		padding: 14px;
+		gap: 8px;
+		overflow: scroll;
+		background-color: $hud-panel-bg;
+		border: 1px solid $hud-panel-border;
+		box-shadow: 0 16px 40px rgba( 0, 0, 0, 0.45 );
+	}
+
+	.list-header
+	{
+		flex-direction: row;
+		align-items: center;
+		gap: 10px;
+		color: $hud-text;
+		font-size: 16px;
+		font-weight: 800;
+	}
+
+	.back
+	{
+		width: 32px;
+		height: 32px;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		color: $color-accent;
+
+		.icon
+		{
+			font-family: "Material Icons";
+			font-size: 22px;
+		}
+
+		&:hover
+		{
+			sound-in: ui.hover;
+		}
+	}
+
+	.empty
+	{
+		padding: 18px 8px;
+		color: rgba( 255, 255, 255, 0.55 );
+		font-size: 14px;
+		font-weight: 600;
+		text-align: center;
+	}
+
+	.user-row
+	{
+		min-height: 40px;
+		padding: 0 12px;
+		align-items: center;
+		background-color: rgba( 8, 14, 22, 0.72 );
+		border: 1px solid rgba( 255, 255, 255, 0.08 );
+		cursor: pointer;
+		color: $hud-text;
+		font-size: 14px;
+		font-weight: 700;
+
+		&:hover
+		{
+			border-color: $hud-outline;
+			background-color: rgba( 0, 148, 255, 0.18 );
+			sound-in: ui.hover;
+		}
+
+		&:active
+		{
+			sound-in: ui.select;
+		}
+	}
+}
