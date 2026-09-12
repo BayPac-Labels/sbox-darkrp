@@ -16,6 +16,10 @@ public sealed class KeypadComponent : BaseWireOutputComponent, Component.IPressa
 	const float ScreenY = 0.04f;
 	const float ScreenW = 0.85f;
 	const float ScreenH = 0.25f;
+	// Keep glyphs inside the baked LCD bezel.
+	const float ScreenInsetU = 0.08f;
+	const float ScreenInsetV = 0.16f;
+	const int ScreenFontWeight = 800;
 
 	public enum StatusType : int
 	{
@@ -107,6 +111,7 @@ public sealed class KeypadComponent : BaseWireOutputComponent, Component.IPressa
 	Sandbox.WorldPanel _worldPanelComponent;
 	GameObject _mountPoint;
 	Sandbox.UI.WorldPanel _worldPanel;
+	Panel _lcdHost;
 	Label _displayLabel;
 	Label _statusLine1;
 	Label _statusLine2;
@@ -147,6 +152,7 @@ public sealed class KeypadComponent : BaseWireOutputComponent, Component.IPressa
 	protected override void OnEnabled()
 	{
 		base.OnEnabled();
+		_screenBuilt = false;
 		EnsureClientPanel();
 	}
 
@@ -181,6 +187,7 @@ public sealed class KeypadComponent : BaseWireOutputComponent, Component.IPressa
 		_displayLabel = null;
 		_statusLine1 = null;
 		_statusLine2 = null;
+		_lcdHost = null;
 		_worldPanel = null;
 		_worldPanelComponent = null;
 		_screenBuilt = false;
@@ -589,6 +596,10 @@ public sealed class KeypadComponent : BaseWireOutputComponent, Component.IPressa
 		if ( !_worldPanel.IsValid() )
 			return;
 
+		// Hotload can leave a prior overlay without the centering host — rebuild.
+		if ( _screenBuilt && (_lcdHost is null || !_lcdHost.IsValid()) )
+			_screenBuilt = false;
+
 		if ( !_screenBuilt )
 			BuildScreenOverlay();
 
@@ -604,21 +615,16 @@ public sealed class KeypadComponent : BaseWireOutputComponent, Component.IPressa
 		if ( _displayLabel is null || _statusLine1 is null || _statusLine2 is null )
 			return;
 
-		ScaleScreenFonts();
-
 		if ( Status == StatusType.None )
 		{
-			_displayLabel.Style.Opacity = 1;
-			_statusLine1.Style.Opacity = 0;
-			_statusLine2.Style.Opacity = 0;
 			_displayLabel.Text = DisplayText ?? "";
 			_displayLabel.Style.FontColor = Color.White;
+			SetLabelVisible( _displayLabel, true );
+			SetLabelVisible( _statusLine1, false );
+			SetLabelVisible( _statusLine2, false );
+			ScaleScreenFonts();
 			return;
 		}
-
-		_displayLabel.Style.Opacity = 0;
-		_statusLine1.Style.Opacity = 1;
-		_statusLine2.Style.Opacity = 1;
 
 		var leet = StatusLeet;
 		if ( Status == StatusType.Granted )
@@ -635,21 +641,58 @@ public sealed class KeypadComponent : BaseWireOutputComponent, Component.IPressa
 			_statusLine1.Style.FontColor = Color.White;
 			_statusLine2.Style.FontColor = new Color( 1f, 0.35f, 0.35f );
 		}
+
+		SetLabelVisible( _displayLabel, false );
+		SetLabelVisible( _statusLine1, true );
+		SetLabelVisible( _statusLine2, true );
+		ScaleScreenFonts();
+	}
+
+	static void SetLabelVisible( Label label, bool visible )
+	{
+		label.Style.Display = visible ? DisplayMode.Flex : DisplayMode.None;
+		label.Style.Opacity = visible ? 1 : 0;
 	}
 
 	void ScaleScreenFonts()
 	{
-		if ( !_worldPanelComponent.IsValid() || _displayLabel is null )
+		if ( !_worldPanelComponent.IsValid() || _displayLabel is null || _statusLine1 is null || _statusLine2 is null )
 			return;
 
-		var h = _worldPanelComponent.PanelSize.y;
-		if ( h < 1f )
-			return;
+		var panel = _worldPanelComponent.PanelSize;
+		var w = MathF.Max( 8f, panel.x );
+		var h = MathF.Max( 8f, panel.y );
 
-		// Fit entry / status inside the green screen panel pixels.
-		_displayLabel.Style.FontSize = Length.Pixels( MathF.Max( 14f, h * 0.5f ) );
-		_statusLine1.Style.FontSize = Length.Pixels( MathF.Max( 10f, h * 0.26f ) );
-		_statusLine2.Style.FontSize = Length.Pixels( MathF.Max( 10f, h * 0.26f ) );
+		var padX = w * 0.06f;
+		var padY = h * 0.08f;
+		if ( _lcdHost is not null )
+		{
+			_lcdHost.Style.PaddingLeft = Length.Pixels( padX );
+			_lcdHost.Style.PaddingRight = Length.Pixels( padX );
+			_lcdHost.Style.PaddingTop = Length.Pixels( padY );
+			_lcdHost.Style.PaddingBottom = Length.Pixels( padY );
+		}
+
+		var innerW = MathF.Max( 4f, w - padX * 2f );
+		var innerH = MathF.Max( 4f, h - padY * 2f );
+
+		if ( Status == StatusType.None )
+		{
+			var entry = DisplayText ?? "";
+			var chars = Math.Max( 1, entry.Length );
+			var size = MathF.Min( innerH * 0.55f, innerW / (chars * 0.72f) );
+			_displayLabel.Style.FontSize = Length.Pixels( Math.Clamp( size, 4f, innerH * 0.6f ) );
+			return;
+		}
+
+		var statusChars = Math.Max(
+			_statusLine1.Text?.Length ?? 7,
+			_statusLine2.Text?.Length ?? 7 );
+		var lineH = innerH * 0.42f;
+		var sizeStatus = MathF.Min( lineH, innerW / (statusChars * 0.62f) );
+		sizeStatus = Math.Clamp( sizeStatus, 4f, innerH * 0.38f );
+		_statusLine1.Style.FontSize = Length.Pixels( sizeStatus );
+		_statusLine2.Style.FontSize = Length.Pixels( sizeStatus );
 	}
 
 	void BuildScreenOverlay()
@@ -662,39 +705,45 @@ public sealed class KeypadComponent : BaseWireOutputComponent, Component.IPressa
 		_worldPanel.Style.Width = Length.Percent( 100 );
 		_worldPanel.Style.Height = Length.Percent( 100 );
 		_worldPanel.Style.BackgroundColor = Color.Transparent;
-		_worldPanel.Style.JustifyContent = Justify.Center;
-		_worldPanel.Style.AlignItems = Align.Center;
-		_worldPanel.Style.FlexDirection = FlexDirection.Column;
 		_worldPanel.Style.Overflow = OverflowMode.Hidden;
-		_worldPanel.Style.Padding = Length.Pixels( 2 );
+		_worldPanel.Style.Padding = Length.Pixels( 0 );
 
-		_displayLabel = _worldPanel.Add.Label( "", "keypad-entry" );
-		_displayLabel.Style.Width = Length.Percent( 100 );
-		_displayLabel.Style.TextAlign = TextAlign.Center;
-		_displayLabel.Style.FontSize = Length.Pixels( 24 );
-		_displayLabel.Style.FontWeight = 800;
-		_displayLabel.Style.FontColor = Color.White;
-		_displayLabel.Style.Overflow = OverflowMode.Hidden;
+		// Full-rect flex host — WorldPanel root often shrink-wraps, which top-aligns text.
+		_lcdHost = _worldPanel.Add.Panel( "keypad-lcd" );
+		_lcdHost.Style.Width = Length.Percent( 100 );
+		_lcdHost.Style.Height = Length.Percent( 100 );
+		_lcdHost.Style.JustifyContent = Justify.Center;
+		_lcdHost.Style.AlignItems = Align.Center;
+		_lcdHost.Style.FlexDirection = FlexDirection.Column;
+		_lcdHost.Style.Overflow = OverflowMode.Hidden;
+		_lcdHost.Style.BackgroundColor = Color.Transparent;
 
-		_statusLine1 = _worldPanel.Add.Label( "", "keypad-status" );
-		_statusLine1.Style.Width = Length.Percent( 100 );
-		_statusLine1.Style.TextAlign = TextAlign.Center;
-		_statusLine1.Style.FontSize = Length.Pixels( 12 );
-		_statusLine1.Style.FontWeight = 800;
-		_statusLine1.Style.Opacity = 0;
-		_statusLine1.Style.Overflow = OverflowMode.Hidden;
+		_displayLabel = _lcdHost.Add.Label( "", "keypad-entry" );
+		ConfigureScreenLabel( _displayLabel );
+		_displayLabel.Style.FontSize = Length.Pixels( 16 );
 
-		_statusLine2 = _worldPanel.Add.Label( "", "keypad-status" );
-		_statusLine2.Style.Width = Length.Percent( 100 );
-		_statusLine2.Style.TextAlign = TextAlign.Center;
-		_statusLine2.Style.FontSize = Length.Pixels( 12 );
-		_statusLine2.Style.FontWeight = 800;
-		_statusLine2.Style.Opacity = 0;
-		_statusLine2.Style.Overflow = OverflowMode.Hidden;
+		_statusLine1 = _lcdHost.Add.Label( "", "keypad-status" );
+		ConfigureScreenLabel( _statusLine1 );
+		SetLabelVisible( _statusLine1, false );
+
+		_statusLine2 = _lcdHost.Add.Label( "", "keypad-status" );
+		ConfigureScreenLabel( _statusLine2 );
+		SetLabelVisible( _statusLine2, false );
 
 		_screenBuilt = true;
 		ApplyScreenTransform();
 		ScaleScreenFonts();
+	}
+
+	static void ConfigureScreenLabel( Label label )
+	{
+		label.Style.TextAlign = TextAlign.Center;
+		label.Style.FontWeight = ScreenFontWeight;
+		label.Style.FontColor = Color.White;
+		label.Style.Overflow = OverflowMode.Hidden;
+		label.Style.WhiteSpace = WhiteSpace.NoWrap;
+		label.Style.JustifyContent = Justify.Center;
+		label.Style.AlignItems = Align.Center;
 	}
 
 	/// <summary>
@@ -710,8 +759,10 @@ public sealed class KeypadComponent : BaseWireOutputComponent, Component.IPressa
 			return;
 
 		var faceNormal = -WorldRotation.Forward;
-		var cu = ScreenX + ScreenW * 0.5f;
-		var cv = ScreenY + ScreenH * 0.5f;
+		var innerW = ScreenW * (1f - ScreenInsetU * 2f);
+		var innerH = ScreenH * (1f - ScreenInsetV * 2f);
+		var cu = ScreenX + ScreenW * ScreenInsetU + innerW * 0.5f;
+		var cv = ScreenY + ScreenH * ScreenInsetV + innerH * 0.5f;
 
 		// u=0 left, v=0 top on the visual face.
 		var x = MathX.Lerp( -halfW, halfW, cu );
@@ -720,9 +771,24 @@ public sealed class KeypadComponent : BaseWireOutputComponent, Component.IPressa
 		_mountPoint.WorldPosition = worldPos;
 		_mountPoint.WorldRotation = Rotation.LookAt( faceNormal, faceUp );
 
-		var screenWorldW = halfW * 2f * ScreenW;
-		var screenWorldH = halfH * 2f * ScreenH;
-		_worldPanelComponent.PanelSize = new Vector2( screenWorldW, screenWorldH ) / Sandbox.UI.WorldPanel.ScreenToWorldScale;
+		var screenWorldW = halfW * 2f * innerW;
+		var screenWorldH = halfH * 2f * innerH;
+		var panelSize = new Vector2( screenWorldW, screenWorldH ) / Sandbox.UI.WorldPanel.ScreenToWorldScale;
+		_worldPanelComponent.PanelSize = panelSize;
+
+		// Pin root bounds to the LCD pixel size so flex centering has a real rect to work in.
+		if ( _worldPanel.IsValid() )
+		{
+			_worldPanel.PanelBounds = new Rect( 0f, 0f, panelSize.x, panelSize.y );
+			_worldPanel.Style.Width = Length.Pixels( panelSize.x );
+			_worldPanel.Style.Height = Length.Pixels( panelSize.y );
+		}
+
+		if ( _lcdHost is not null )
+		{
+			_lcdHost.Style.Width = Length.Pixels( panelSize.x );
+			_lcdHost.Style.Height = Length.Pixels( panelSize.y );
+		}
 	}
 
 	public override PortType[] WireGetOutputs()

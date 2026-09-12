@@ -12,8 +12,8 @@
     "C:\\Program Files (x86)\\Steam\\steamapps\\common\\sbox\\editor\\MovieMaker\\Assets\\shaders",
     "C:\\Program Files (x86)\\Steam\\steamapps\\common\\sbox\\editor\\Hammer\\Assets\\shaders",
     "C:\\Program Files (x86)\\Steam\\steamapps\\common\\sbox\\editor\\DooEditor\\Assets\\shaders",
-    "D:\\Sandbox DarkRP\\DarkRP2\\Assets\\shaders",
-    "D:\\Sandbox DarkRP\\DarkRP2\\Libraries\\WireLib\\Assets\\shaders"
+    "C:\\sbox-darkrp\\DarkRP2\\Assets\\shaders",
+    "C:\\sbox-darkrp\\DarkRP2\\Libraries\\WireLib\\Assets\\shaders"
   ],
   "slang.predefinedMacros": [],
   "slang.workspaceFlavor": "vfx"
